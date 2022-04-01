@@ -44,7 +44,7 @@ int main()
 	try {
 		// Create a window, set some configuration parameters (also relevant for its swap chain), and open it:
 		auto mainWnd = context().create_window(titel);
-		mainWnd->set_resolution({ 1920, 1080 });
+		mainWnd->set_resolution({ 640, 480 });
 		mainWnd->set_additional_back_buffer_attachments({
 			attachment::declare(vk::Format::eD32Sfloat, on_load::clear, depth_stencil(), on_store::dont_care)
 			});
@@ -61,12 +61,14 @@ int main()
 		mainWnd->set_present_queue(singleQueue);
 
 		auto app = Application(singleQueue);
+		auto ui = gvk::imgui_manager(singleQueue);
 
 		// Pass everything to gvk::start and off we go:
 		start(
 			application_name(titel),
 			mainWnd,
-			app
+			app,
+			ui
 		);
 
 
