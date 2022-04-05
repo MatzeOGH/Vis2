@@ -50,8 +50,8 @@ int main()
 			});
 		mainWnd->enable_resizing(true);
 		mainWnd->request_srgb_framebuffer(true);
-		mainWnd->set_presentaton_mode(presentation_mode::mailbox);
-		mainWnd->set_number_of_concurrent_frames(3u);
+		mainWnd->set_presentaton_mode(presentation_mode::fifo);
+		mainWnd->set_number_of_concurrent_frames(1u); // lets not make it more complex than it has to be xD
 		mainWnd->open();
 
 		// Create one single queue which we will submit all command buffers to:
