@@ -33,46 +33,52 @@ public:
 		
 	void initialize() override
 	{
-		
+		using namespace avk;
+		using namespace gvk;
 
-		mPipeline = gvk::context().create_graphics_pipeline_for(
-			avk::from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
-			avk::from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
-			avk::from_buffer_binding(0)->stream_per_vertex(&Vertex::radius)->to_location(2),
+		mVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(mVertexData));
+		mVertexBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
 
-			avk::vertex_shader("shaders/passthrough.vert"),
-			avk::geometry_shader("shaders/billboard_creation.geom"),
-			avk::fragment_shader("shaders/color.frag"),
+		mUniformBuffer = context().create_buffer(memory_usage::host_visible, {}, uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
+		mUniformBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
 
-			avk::cfg::primitive_topology::lines,
+		mPipeline = context().create_graphics_pipeline_for(
+			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
+			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
+			from_buffer_binding(0)->stream_per_vertex(&Vertex::radius)->to_location(2),
 
-			avk::cfg::front_face::define_front_faces_to_be_clockwise(),
-			avk::cfg::viewport_depth_scissors_config::from_framebuffer(gvk::context().main_window()->backbuffer_at_index(0)),
-			avk::attachment::declare(
-				gvk::format_from_window_color_buffer(gvk::context().main_window()),
-				avk::on_load::clear,
-				avk::color(0),
-				avk::on_store::store
-			)
+			vertex_shader("shaders/passthrough.vert"),
+			geometry_shader("shaders/billboard_creation.geom"),
+			fragment_shader("shaders/color.frag"),
+
+			cfg::primitive_topology::lines,
+
+			cfg::front_face::define_front_faces_to_be_clockwise(),
+			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
+			attachment::declare(
+				format_from_window_color_buffer(context().main_window()),
+				on_load::clear,
+				color(0),
+				on_store::store
+			),
+
+			//push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(push_constants) },
+			descriptor_binding(0, 0, mUniformBuffer)
 		);
 
-		mVertexBuffer = gvk::context().create_buffer(avk::memory_usage::device, {}, avk::vertex_buffer_meta::create_from_data(mVertexData));
-		mVertexBuffer->fill(mVertexData.data(), 0, avk::sync::wait_idle());
 
-		mUniformBuffer = gvk::context().create_buffer(avk::memory_usage::host_visible, {}, avk::uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
-
-		//mIndexBuffer = gvk::context().create_buffer(avk::memory_usage::device, {}, avk::index_buffer_meta::create_from_data(mIndices));
-		//mIndexBuffer->fill(mIndices.data(), 0, avk::sync::wait_idle());
+		//mIndexBuffer = context().create_buffer(memory_usage::device, {}, index_buffer_meta::create_from_data(mIndices));
+		//mIndexBuffer->fill(mIndices.data(), 0, sync::wait_idle());
 
 		// Set up an updater for shader hot reload and viewport resize
 		mUpdater.emplace();
 		mPipeline.enable_shared_ownership();
 		mUpdater->on(
-			gvk::swapchain_resized_event(gvk::context().main_window()),
-			gvk::shader_files_changed_event(mPipeline)
+			swapchain_resized_event(context().main_window()),
+			shader_files_changed_event(mPipeline)
 		).update(mPipeline);
 
-		auto imguiManager = gvk::current_composition()->element_by_type<gvk::imgui_manager>();
+		auto imguiManager = current_composition()->element_by_type<imgui_manager>();
 		if (nullptr != imguiManager) {
 			mOpenFileDialog.SetTitle("Open Line-Data File");
 			mOpenFileDialog.SetTypeFilters({ ".dat" });
@@ -86,7 +92,7 @@ public:
 						}
 						if (ImGui::MenuItem("Exit Application", "Alt+F4")) {
 							// Exit
-							gvk::current_composition()->stop(); // stop the current composition
+							current_composition()->stop(); // stop the current composition
 						}
 						ImGui::EndMenu();
 					}
@@ -114,25 +120,27 @@ public:
 			});
 		}
 
-		mQuakeCam = std::make_shared<gvk::quake_camera>();
+		mQuakeCam = std::make_shared<quake_camera>();
 		mQuakeCam->set_translation({ 0.0f, 0.0f, 1.0f });
 		mQuakeCam->look_along({ 0.0f, 0.0f, -1.0f });
-		mQuakeCam->set_perspective_projection(glm::radians(60.0f), gvk::context().main_window()->aspect_ratio(), 0.1f, 100.0f);
+		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.1f, 100.0f);
 		mQuakeCam->disable();
-		gvk::current_composition()->add_element(*mQuakeCam);
+		current_composition()->add_element(*mQuakeCam);
 	}
 
 	void update() override
 	{
+		using namespace avk;
+		using namespace gvk;
 		// Escape tears everything down:
-		if (gvk::input().key_pressed(gvk::key_code::escape) || glfwWindowShouldClose(gvk::context().main_window()->handle()->mHandle)) {
-			gvk::current_composition()->stop(); // stop the current composition
+		if (gvk::input().key_pressed(key_code::escape) || glfwWindowShouldClose(context().main_window()->handle()->mHandle)) {
+			current_composition()->stop(); // stop the current composition
 		}
 
 		// F1 toggles between "quake_cam mode" and "UI mode":
-		if (gvk::input().key_pressed(gvk::key_code::f1)) {
-			auto* quakeCam = gvk::current_composition()->element_by_type<gvk::quake_camera>();
-			auto* imguiManager = gvk:: current_composition()->element_by_type<gvk::imgui_manager>();
+		if (gvk::input().key_pressed(key_code::f1)) {
+			auto* quakeCam = current_composition()->element_by_type<quake_camera>();
+			auto* imguiManager =  current_composition()->element_by_type<imgui_manager>();
 			if (nullptr != quakeCam && nullptr != imguiManager) {
 				if (quakeCam->is_enabled()) {
 					quakeCam->disable();
@@ -148,29 +156,34 @@ public:
 		
 	void render() override
 	{
+		using namespace avk;
+		using namespace gvk;
 		// Update UBO:
 		matrices_and_user_input uni;
 		uni.mViewMatrix = mQuakeCam->view_matrix();
 		uni.mProjMatrix = mQuakeCam->projection_matrix();
 		uni.mCamPos = glm::vec4(mQuakeCam->translation(), 1.0f);
 
-		mUniformBuffer->fill(&uni, 0);
+		buffer& cUBO = mUniformBuffer;
+		cUBO->fill(&uni, 0, sync::wait_idle());
 
-		auto mainWnd = gvk::context().main_window();
+		auto mainWnd = context().main_window();
 
-		auto& commandPool = gvk::context().get_command_pool_for_single_use_command_buffers(*mQueue);
-
+		auto commandPool = context().get_command_pool_for_single_use_command_buffers(*mQueue);
 		auto cmdBfr = commandPool->alloc_command_buffer(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 		cmdBfr->begin_recording();
-		cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), gvk::context().main_window()->current_backbuffer());
-		cmdBfr->handle().bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline->handle());
-		cmdBfr->draw_vertices(avk::const_referenced(mVertexBuffer));
+		cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+		cmdBfr->bindPipeline(const_referenced(mPipeline));
+		cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+			descriptor_binding(0, 0, mUniformBuffer)
+		}));
+		cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
 		cmdBfr->end_render_pass();
 		cmdBfr->end_recording();
 
 		auto imageAvailableSemaphore = mainWnd->consume_current_image_available_semaphore();
 		mQueue->submit(cmdBfr, imageAvailableSemaphore);
-		mainWnd->handle_lifetime(avk::owned(cmdBfr));
+		mainWnd->handle_lifetime(owned(cmdBfr));
 	}
 
 private:
@@ -182,6 +195,9 @@ private:
 
 	std::shared_ptr<gvk::quake_camera> mQuakeCam;
 	avk::buffer mUniformBuffer;
+
+	/** One descriptor cache to use for allocating all the descriptor sets from: */
+	avk::descriptor_cache mDescriptorCache;
 
 	float mClearColor[4] = { 1.0F, 0.0F, 0.0F, 1.0F };
 	ImGui::FileBrowser mOpenFileDialog;

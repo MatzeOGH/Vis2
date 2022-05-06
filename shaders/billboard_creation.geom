@@ -1,8 +1,13 @@
-#version 450
+#version 460
+#extension GL_EXT_nonuniform_qualifier : require
 #extension GL_ARB_separate_shader_objects : enable
+#extension GL_GOOGLE_include_directive : enable
+#include "shader_structures.glsl"
 
 layout (lines) in;
 layout (triangle_strip, max_vertices = 8) out;
+
+layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
 layout(location = 1) in vec4 inColor[];
 layout(location = 2) in float inRadius[];
@@ -11,16 +16,17 @@ layout(location = 0) out vec4 outColor;
 
 void build_house(vec4 position, float radius, vec4 color)
 {    
-    gl_Position = position + vec4(-radius, -radius, 0.0, 0.0);    // 1:bottom-left
+    mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
+    gl_Position = pvMatrix * (position + vec4(-radius, -radius, 0.0, 0.0));    // 1:bottom-left
     outColor = color;
     EmitVertex();   
-    gl_Position = position + vec4( radius, -radius, 0.0, 0.0);    // 2:bottom-right
+    gl_Position = pvMatrix * (position + vec4( radius, -radius, 0.0, 0.0));    // 2:bottom-right
     outColor = color;
     EmitVertex();
-    gl_Position = position + vec4(-radius,  radius, 0.0, 0.0);    // 3:top-left
+    gl_Position = pvMatrix * (position + vec4(-radius,  radius, 0.0, 0.0));    // 3:top-left
     outColor = color;
     EmitVertex();
-    gl_Position = position + vec4( radius,  radius, 0.0, 0.0);    // 4:top-right
+    gl_Position = pvMatrix * (position + vec4( radius,  radius, 0.0, 0.0));    // 4:top-right
     outColor = color;
     EmitVertex();
     EndPrimitive();
