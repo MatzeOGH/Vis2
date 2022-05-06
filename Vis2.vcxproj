@@ -18,15 +18,17 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Gears-Vk\examples\framebuffer\shaders\color.frag" />
-    <None Include="Gears-Vk\examples\framebuffer\shaders\passthrough.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="Gears-Vk\visual_studio\gears_vk\gears-vk.vcxproj">
       <Project>{602f842f-50c1-466d-8696-1707937d8ab9}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\utils\imfilebrowser.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\billboard_creation.geom" />
+    <None Include="shaders\color.frag" />
+    <None Include="shaders\passthrough.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
