@@ -78,6 +78,10 @@ public:
 			shader_files_changed_event(mPipeline)
 		).update(mPipeline);
 
+		mUpdater->on(gvk::swapchain_resized_event(gvk::context().main_window())).invoke([this]() {
+			mQuakeCam->set_aspect_ratio(gvk::context().main_window()->aspect_ratio());
+		});
+
 		auto imguiManager = current_composition()->element_by_type<imgui_manager>();
 		if (nullptr != imguiManager) {
 			mOpenFileDialog.SetTitle("Open Line-Data File");
