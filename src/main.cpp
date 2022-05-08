@@ -1,6 +1,7 @@
 #include <gvk.hpp>
 #include <imgui.h>
 #include "utils/imfilebrowser.h"
+#include "utils/rapidcsv.h"
 
 #include <iostream>
 #include <sstream>
@@ -16,15 +17,17 @@ class line_renderer_app : public gvk::invokee
 	};
 
 	const std::vector<Vertex> mVertexData = {
-		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 1.0f},
-		{{10.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 2.0f}
+		{{0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 0.5f},
+		{{10.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 2.0f}
 	};
 
 	struct matrices_and_user_input {
 		glm::mat4 mViewMatrix;
 		glm::mat4 mProjMatrix;
 		glm::vec4 mCamPos;
+		glm::vec4 mCamDir;
 		glm::vec4 mClearColor;
+		glm::vec4 mHelperLineColor;
 	};
 
 public:
@@ -67,6 +70,27 @@ public:
 			descriptor_binding(0, 0, mUniformBuffer)
 		);
 
+		m2DLinePipeline = context().create_graphics_pipeline_for(
+			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
+
+			vertex_shader("shaders/2d_lines.vert"),
+			fragment_shader("shaders/2d_lines.frag"),
+
+			cfg::primitive_topology::lines,
+			cfg::depth_test::disabled(),
+			cfg::depth_write::disabled(),
+			cfg::culling_mode::disabled(),
+			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
+			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, color(0), on_store::store),
+			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, depth_stencil(0), on_store::store),
+			//push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(push_constants) },
+			descriptor_binding(0, 0, mUniformBuffer),
+
+			[](graphics_pipeline_t& p) {
+				p.rasterization_state_create_info().setPolygonMode(vk::PolygonMode::eLine);
+			}
+		);
+
 		mSkyboxPipeline = context().create_graphics_pipeline_for(
 			vertex_shader("shaders/sky_gradient.vert"),
 			fragment_shader("shaders/sky_gradient.frag"),
@@ -86,29 +110,32 @@ public:
 		// Set up an updater for shader hot reload and viewport resize
 		mUpdater.emplace();
 		mSkyboxPipeline.enable_shared_ownership();
+		m2DLinePipeline.enable_shared_ownership();
 		mPipeline.enable_shared_ownership();
 		mUpdater->on(swapchain_resized_event(context().main_window()))
 			.update(mPipeline)
 			.update(mSkyboxPipeline)
+			.update(m2DLinePipeline)
 			.invoke([this]() { mQuakeCam->set_aspect_ratio(gvk::context().main_window()->aspect_ratio()); });
 		
 		mUpdater->on(shader_files_changed_event(mPipeline)).update(mPipeline);
 		mUpdater->on(shader_files_changed_event(mSkyboxPipeline)).update(mSkyboxPipeline);
+		mUpdater->on(shader_files_changed_event(m2DLinePipeline)).update(m2DLinePipeline);
 
 		auto imguiManager = current_composition()->element_by_type<imgui_manager>();
 		if (nullptr != imguiManager) {
 			mOpenFileDialog.SetTitle("Open Line-Data File");
-			mOpenFileDialog.SetTypeFilters({ ".dat" });
+			mOpenFileDialog.SetTypeFilters({ ".csv" });
 
 			imguiManager->add_callback([this]() {
 				ImGui::Begin("Line Renderer - Tool Box", &mOpenToolbox, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse);
 				ImGui::TextColored(ImVec4(0.f, .6f, .8f, 1.f), "[F1]: Toggle input-mode");
 				if (ImGui::BeginMenuBar()) {
 					if (ImGui::BeginMenu("File")) {
-						if (ImGui::MenuItem("Load Data-File", "Ctrl+O")) {
+						if (ImGui::MenuItem("Load Data-File")) {
 							mOpenFileDialog.Open();
 						}
-						if (ImGui::MenuItem("Exit Application", "Alt+F4")) {
+						if (ImGui::MenuItem("Exit Application", "Esc")) {
 							// Exit
 							current_composition()->stop(); // stop the current composition
 						}
@@ -127,13 +154,29 @@ public:
 				ImGui::ColorEdit4("Background", mClearColor);
 
 				ImGui::Separator();
+
+				ImGui::Checkbox("Show Helper Lines", &mDraw2DHelperLines);
+				ImGui::ColorEdit4("Line-Color", mHelperLineColor);
+
 				ImGui::End();
 
 				mOpenFileDialog.Display();
 				if (mOpenFileDialog.HasSelected()) {
 					// ToDo Load Data-File into buffer
-					std::cout << "Selected Filename: " << mOpenFileDialog.GetSelected().string() << std::endl;
+					std::string filename = mOpenFileDialog.GetSelected().string();
 					mOpenFileDialog.ClearSelected();
+
+					std::cout << "Selected Filename: " << filename << std::endl;
+					rapidcsv::Document doc(filename, 
+						rapidcsv::LabelParams(0,-1), 
+						rapidcsv::SeparatorParams(';'),
+						rapidcsv::ConverterParams(),
+						rapidcsv::LineReaderParams(true /* pSkipCommentLines */,
+							'#' /* pCommentPrefix */,
+							true /* pSkipEmptyLines */)
+					);
+					std::vector<float> aRad = doc.GetColumn<float>("A.rad");
+					
 				}
 			});
 		}
@@ -181,7 +224,9 @@ public:
 		uni.mViewMatrix = mQuakeCam->view_matrix();
 		uni.mProjMatrix = mQuakeCam->projection_matrix();
 		uni.mCamPos = glm::vec4(mQuakeCam->translation(), 1.0f);
+		uni.mCamDir = glm::vec4(mQuakeCam->rotation() * glm::vec3(0, 0, -1), 0.0f);
 		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
+		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0, sync::not_required());
@@ -194,7 +239,7 @@ public:
 		
 		cmdBfr->begin_recording();
 
-			// Draw lines
+			// Draw tubes (ray casting)
 			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
 			cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
 			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
@@ -203,12 +248,23 @@ public:
 			cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
 			cmdBfr->end_render_pass();
 
+			// Draw helper lines (optional)
+			if (mDraw2DHelperLines) {
+				cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
+				cmdBfr->bind_pipeline(avk::const_referenced(m2DLinePipeline));
+				cmdBfr->bind_descriptors(m2DLinePipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+					descriptor_binding(0, 0, mUniformBuffer)
+				}));
+				cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
+				cmdBfr->end_render_pass();
+			}
+
 			// Draw Skybox
 			cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
 			cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
-			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+			cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 				descriptor_binding(0, 0, mUniformBuffer)
-				}));
+			}));
 			cmdBfr->handle().draw(6u, 2u, 0u, 0u);
 			cmdBfr->end_render_pass();
 
@@ -223,6 +279,7 @@ private:
 
 	avk::queue* mQueue;
 	avk::graphics_pipeline mPipeline;
+	avk::graphics_pipeline m2DLinePipeline;
 	avk::graphics_pipeline mSkyboxPipeline;
 	avk::buffer mVertexBuffer;
 
@@ -235,6 +292,9 @@ private:
 	float mClearColor[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 	ImGui::FileBrowser mOpenFileDialog;
 	bool mOpenToolbox = true;
+
+	bool mDraw2DHelperLines = true;
+	float mHelperLineColor[4] = { 64.0f / 255.0f, 224.0f / 255.0f, 208.0f / 255.0f, 1.0f };
 
 };
 

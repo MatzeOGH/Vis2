@@ -24,8 +24,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\utils\imfilebrowser.h" />
+    <ClInclude Include="src\utils\rapidcsv.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\2d_lines.frag" />
+    <None Include="shaders\2d_lines.vert" />
     <None Include="shaders\billboard_creation.geom" />
     <None Include="shaders\ray_casting.frag" />
     <None Include="shaders\passthrough.vert" />

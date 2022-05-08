@@ -27,6 +27,9 @@
     <ClInclude Include="src\utils\imfilebrowser.h">
       <Filter>src\utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\rapidcsv.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\billboard_creation.geom">
@@ -45,6 +48,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="shaders\sky_gradient.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\2d_lines.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\2d_lines.vert">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

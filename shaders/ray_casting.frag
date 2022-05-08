@@ -6,7 +6,7 @@
 
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
-layout(location = 0) in vec4 fragColor;
+layout(location = 1) in vec4 fragColor;
 
 layout(location = 0) out vec4 outColor;
 

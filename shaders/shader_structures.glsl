@@ -10,8 +10,12 @@ struct matrices_and_user_input {
 	mat4 mProjMatrix;
 	// transformation matrix which tranforms to camera's position
 	vec4 mCamPos;
+	// Facing Vector of camera
+	vec4 mCamDir;
 	// background color
 	vec4 mClearColor;
+	// The color of the 2d debug lines if activated
+	vec4 mHelperLineColor;
 };
 
 #define SHADER_STRUCTURES_GLSL 1
