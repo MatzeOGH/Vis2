@@ -27,8 +27,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\billboard_creation.geom" />
-    <None Include="shaders\color.frag" />
+    <None Include="shaders\ray_casting.frag" />
     <None Include="shaders\passthrough.vert" />
+    <None Include="shaders\shader_structures.glsl" />
+    <None Include="shaders\sky_gradient.frag" />
+    <None Include="shaders\sky_gradient.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -24,6 +24,7 @@ class line_renderer_app : public gvk::invokee
 		glm::mat4 mViewMatrix;
 		glm::mat4 mProjMatrix;
 		glm::vec4 mCamPos;
+		glm::vec4 mClearColor;
 	};
 
 public:
@@ -45,6 +46,7 @@ public:
 		// Create a descriptor cache that helps us to conveniently create descriptor sets:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
 
+
 		mPipeline = context().create_graphics_pipeline_for(
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
@@ -52,22 +54,29 @@ public:
 
 			vertex_shader("shaders/passthrough.vert"),
 			geometry_shader("shaders/billboard_creation.geom"),
-			fragment_shader("shaders/color.frag"),
+			fragment_shader("shaders/ray_casting.frag"),
 
 			cfg::primitive_topology::lines,
 
 			cfg::culling_mode::disabled(), // should be enabled, just for debugging
 			//cfg::front_face::define_front_faces_to_be_clockwise(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
-			attachment::declare(
-				format_from_window_color_buffer(context().main_window()),
-				on_load::clear,
-				color(0),
-				on_store::store
-			),
-
+			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::clear, color(0), on_store::store),
+			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, depth_stencil(0), on_store::store),
 			//push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(push_constants) },
 			descriptor_binding(0, 0, mUniformBuffer)
+		);
+
+		mSkyboxPipeline = context().create_graphics_pipeline_for(
+			vertex_shader("shaders/sky_gradient.vert"),
+			fragment_shader("shaders/sky_gradient.frag"),
+			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, color(0), on_store::store),
+			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, depth_stencil(0), on_store::store),
+			cfg::culling_mode::disabled(),
+			cfg::depth_test::enabled().set_compare_operation(cfg::compare_operation::less_or_equal),
+			cfg::depth_write::disabled(),
+			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
+			descriptor_binding(0, 0, mUniformBuffer) // Doesn't have to be the exact buffer, but one that describes the correct layout for the pipeline.
 		);
 
 
@@ -76,15 +85,15 @@ public:
 
 		// Set up an updater for shader hot reload and viewport resize
 		mUpdater.emplace();
+		mSkyboxPipeline.enable_shared_ownership();
 		mPipeline.enable_shared_ownership();
-		mUpdater->on(
-			swapchain_resized_event(context().main_window()),
-			shader_files_changed_event(mPipeline)
-		).update(mPipeline);
-
-		mUpdater->on(gvk::swapchain_resized_event(gvk::context().main_window())).invoke([this]() {
-			mQuakeCam->set_aspect_ratio(gvk::context().main_window()->aspect_ratio());
-		});
+		mUpdater->on(swapchain_resized_event(context().main_window()))
+			.update(mPipeline)
+			.update(mSkyboxPipeline)
+			.invoke([this]() { mQuakeCam->set_aspect_ratio(gvk::context().main_window()->aspect_ratio()); });
+		
+		mUpdater->on(shader_files_changed_event(mPipeline)).update(mPipeline);
+		mUpdater->on(shader_files_changed_event(mSkyboxPipeline)).update(mSkyboxPipeline);
 
 		auto imguiManager = current_composition()->element_by_type<imgui_manager>();
 		if (nullptr != imguiManager) {
@@ -93,6 +102,7 @@ public:
 
 			imguiManager->add_callback([this]() {
 				ImGui::Begin("Line Renderer - Tool Box", &mOpenToolbox, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse);
+				ImGui::TextColored(ImVec4(0.f, .6f, .8f, 1.f), "[F1]: Toggle input-mode");
 				if (ImGui::BeginMenuBar()) {
 					if (ImGui::BeginMenu("File")) {
 						if (ImGui::MenuItem("Load Data-File", "Ctrl+O")) {
@@ -171,6 +181,7 @@ public:
 		uni.mViewMatrix = mQuakeCam->view_matrix();
 		uni.mProjMatrix = mQuakeCam->projection_matrix();
 		uni.mCamPos = glm::vec4(mQuakeCam->translation(), 1.0f);
+		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0, sync::not_required());
@@ -182,13 +193,25 @@ public:
 		auto cmdBfr = commandPool->alloc_command_buffer(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 		
 		cmdBfr->begin_recording();
-		cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
-		cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
-		cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-			descriptor_binding(0, 0, mUniformBuffer)
-		}));
-		cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
-		cmdBfr->end_render_pass();
+
+			// Draw lines
+			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+			cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
+			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+				descriptor_binding(0, 0, mUniformBuffer)
+			}));
+			cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
+			cmdBfr->end_render_pass();
+
+			// Draw Skybox
+			cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+			cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
+			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+				descriptor_binding(0, 0, mUniformBuffer)
+				}));
+			cmdBfr->handle().draw(6u, 2u, 0u, 0u);
+			cmdBfr->end_render_pass();
+
 		cmdBfr->end_recording();
 
 		auto imageAvailableSemaphore = mainWnd->consume_current_image_available_semaphore();
@@ -200,8 +223,8 @@ private:
 
 	avk::queue* mQueue;
 	avk::graphics_pipeline mPipeline;
+	avk::graphics_pipeline mSkyboxPipeline;
 	avk::buffer mVertexBuffer;
-	//avk::buffer mIndexBuffer;
 
 	std::shared_ptr<gvk::quake_camera> mQuakeCam;
 	avk::buffer mUniformBuffer;
@@ -209,7 +232,7 @@ private:
 	/** One descriptor cache to use for allocating all the descriptor sets from: */
 	avk::descriptor_cache mDescriptorCache;
 
-	float mClearColor[4] = { 1.0F, 0.0F, 0.0F, 1.0F };
+	float mClearColor[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 	ImGui::FileBrowser mOpenFileDialog;
 	bool mOpenToolbox = true;
 
@@ -226,9 +249,9 @@ int main()
 		// Create a window, set some configuration parameters (also relevant for its swap chain), and open it:
 		auto mainWnd = gvk::context().create_window(titel);
 		mainWnd->set_resolution({ 1280, 800 });
-		//mainWnd->set_additional_back_buffer_attachments({
-		//	attachment::declare(vk::Format::eD32Sfloat, on_load::clear, depth_stencil(), on_store::dont_care)
-		//	});
+		mainWnd->set_additional_back_buffer_attachments({
+			avk::attachment::declare(vk::Format::eD32Sfloat, avk::on_load::clear, avk::depth_stencil(), avk::on_store::dont_care)
+		});
 		mainWnd->enable_resizing(true);
 		mainWnd->request_srgb_framebuffer(true);
 		mainWnd->set_presentaton_mode(gvk::presentation_mode::fifo);
