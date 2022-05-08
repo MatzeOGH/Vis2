@@ -16,8 +16,8 @@ class line_renderer_app : public gvk::invokee
 	};
 
 	const std::vector<Vertex> mVertexData = {
-		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.1f},
-		{{0.5f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f}
+		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 1.0f},
+		{{10.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 2.0f}
 	};
 
 	struct matrices_and_user_input {
@@ -42,6 +42,9 @@ public:
 		mUniformBuffer = context().create_buffer(memory_usage::host_visible, {}, uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
 		mUniformBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
 
+		// Create a descriptor cache that helps us to conveniently create descriptor sets:
+		mDescriptorCache = gvk::context().create_descriptor_cache();
+
 		mPipeline = context().create_graphics_pipeline_for(
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
@@ -53,7 +56,8 @@ public:
 
 			cfg::primitive_topology::lines,
 
-			cfg::front_face::define_front_faces_to_be_clockwise(),
+			cfg::culling_mode::disabled(), // should be enabled, just for debugging
+			//cfg::front_face::define_front_faces_to_be_clockwise(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
 			attachment::declare(
 				format_from_window_color_buffer(context().main_window()),
@@ -125,9 +129,9 @@ public:
 		}
 
 		mQuakeCam = std::make_shared<quake_camera>();
-		mQuakeCam->set_translation({ 0.0f, 0.0f, 1.0f });
+		mQuakeCam->set_translation({ 0.0f, 0.0f, 5.0f });
 		mQuakeCam->look_along({ 0.0f, 0.0f, -1.0f });
-		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.1f, 100.0f);
+		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.1f, 10000.0f);
 		mQuakeCam->disable();
 		current_composition()->add_element(*mQuakeCam);
 	}
@@ -169,15 +173,17 @@ public:
 		uni.mCamPos = glm::vec4(mQuakeCam->translation(), 1.0f);
 
 		buffer& cUBO = mUniformBuffer;
-		cUBO->fill(&uni, 0, sync::wait_idle());
+		cUBO->fill(&uni, 0, sync::not_required());
 
 		auto mainWnd = context().main_window();
-
-		auto commandPool = context().get_command_pool_for_single_use_command_buffers(*mQueue);
+		
+		
+		auto& commandPool = context().get_command_pool_for_single_use_command_buffers(*mQueue);
 		auto cmdBfr = commandPool->alloc_command_buffer(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+		
 		cmdBfr->begin_recording();
 		cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
-		cmdBfr->bindPipeline(const_referenced(mPipeline));
+		cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
 		cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 			descriptor_binding(0, 0, mUniformBuffer)
 		}));

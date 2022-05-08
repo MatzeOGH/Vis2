@@ -17,18 +17,22 @@ layout(location = 0) out vec4 outColor;
 void build_house(vec4 position, float radius, vec4 color)
 {    
     mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
-    gl_Position = pvMatrix * (position + vec4(-radius, -radius, 0.0, 0.0));    // 1:bottom-left
+    //pvMatrix = uboMatricesAndUserInput.mViewMatrix;
+    //vec4 positionWithOffest = position + uboMatricesAndUserInput.mCamPos;
+
+    position = vec4(position.xyz, 1.0);
+
+    gl_Position = pvMatrix * (position + vec4(0.0, +radius, 0.0, 0.0));    // 1:center top
     outColor = color;
     EmitVertex();   
-    gl_Position = pvMatrix * (position + vec4( radius, -radius, 0.0, 0.0));    // 2:bottom-right
+    gl_Position = pvMatrix * (position + vec4(+radius, -radius, 0.0, 0.0));    // 2:bottom-right
     outColor = color;
     EmitVertex();
-    gl_Position = pvMatrix * (position + vec4(-radius,  radius, 0.0, 0.0));    // 3:top-left
+    gl_Position = pvMatrix * (position + vec4(-radius,  -radius, 0.0, 0.0));    // 3:bottom-left
     outColor = color;
     EmitVertex();
-    gl_Position = pvMatrix * (position + vec4( radius,  radius, 0.0, 0.0));    // 4:top-right
-    outColor = color;
-    EmitVertex();
+
+
     EndPrimitive();
 }
 
