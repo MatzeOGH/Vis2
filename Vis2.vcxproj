@@ -23,10 +23,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\utils\imfilebrowser.h" />
-    <ClInclude Include="src\utils\rapidcsv.h" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="shaders\2d_lines.frag" />
     <None Include="shaders\2d_lines.vert" />
     <None Include="shaders\billboard_creation.geom" />
@@ -35,6 +31,10 @@
     <None Include="shaders\shader_structures.glsl" />
     <None Include="shaders\sky_gradient.frag" />
     <None Include="shaders\sky_gradient.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\thirdparty\imfilebrowser.h" />
+    <ClInclude Include="src\thirdparty\rapidcsv.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -14,26 +14,8 @@ layout(location = 2) in float inRadius[];
 
 layout(location = 1) out vec4 outColor;
 
-void build_house(vec4 position, float radius, vec4 color)
-{    
-    mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
-
-    position = vec4(position.xyz, 1.0);
-
-    gl_Position = pvMatrix * (position + vec4(0.0, +radius, 0.0, 0.0));    // 1:center top
-    outColor = color;
-    EmitVertex();   
-    gl_Position = pvMatrix * (position + vec4(+radius, -radius, 0.0, 0.0));    // 2:bottom-right
-    outColor = color;
-    EmitVertex();
-    gl_Position = pvMatrix * (position + vec4(-radius,  -radius, 0.0, 0.0));    // 3:bottom-left
-    outColor = color;
-    EmitVertex();
-
-
-    EndPrimitive();
-}
-
+// Helper function that i used to first test the geometry shader
+// May be removed in the future
 void construct_simple_billboard(vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos) {
     vec3 up = vec3(0.0, 1.0, 0.0);
     vec3 va = normalize(posA - posB).xyz;
@@ -55,15 +37,12 @@ void construct_simple_billboard(vec4 posA, vec4 posB, float radA, float radB, ve
     gl_Position = pvMatrix * vec4(c0, 1.0);
     outColor = color;
     EmitVertex();   
-        gl_Position = pvMatrix * vec4(c2, 1.0);
+    gl_Position = pvMatrix * vec4(c2, 1.0);
     outColor = color;
     EmitVertex();
-        gl_Position = pvMatrix * vec4(c3, 1.0);
+    gl_Position = pvMatrix * vec4(c3, 1.0);
     outColor = color;
     EmitVertex();
-    
-
-
     EndPrimitive();
 }
 
@@ -129,32 +108,23 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
     //pvMatrix = uboMatricesAndUserInput.mProjMatrix;
 
-    vec4 color = inColor[0];
     gl_Position = pvMatrix * vec4(c0, 1.0);
-    outColor = color;
+    outColor = inColor[0];
     EmitVertex();   
     gl_Position = pvMatrix * vec4(c1, 1.0);
-    outColor = color;
+    outColor = inColor[0];
     EmitVertex();
     gl_Position = pvMatrix * vec4(c2, 1.0);
-    outColor = color;
+    outColor = inColor[1];
     EmitVertex();
     gl_Position = pvMatrix * vec4(c3, 1.0);
-    outColor = color;
+    outColor = inColor[1];
     EmitVertex();
     EndPrimitive();
 
 }
 
 void main() {
-    //for (int i=0; i<gl_in.length(); i++) {
-    //    outColor[i] = fragColor[i];
-    //}
-
-    //build_house(gl_in[0].gl_Position, inRadius[0], inColor[0]);
-    //build_house(gl_in[1].gl_Position, inRadius[1], inColor[1]);
-
-    /*
     construct_billboard_for_line(
         gl_in[0].gl_Position,
         gl_in[1].gl_Position,
@@ -162,11 +132,5 @@ void main() {
         inRadius[1],
         uboMatricesAndUserInput.mCamPos,
         uboMatricesAndUserInput.mCamDir
-    );*/
-
-    construct_simple_billboard(
-        gl_in[0].gl_Position, gl_in[1].gl_Position,
-        inRadius[0], inRadius[1],
-        uboMatricesAndUserInput.mCamPos
     );
 }

@@ -1,11 +1,22 @@
 #include <gvk.hpp>
 #include <imgui.h>
-#include "utils/imfilebrowser.h"
-#include "utils/rapidcsv.h"
+#include "thirdparty/imfilebrowser.h"
+#include "thirdparty/rapidcsv.h"
 
 #include <iostream>
 #include <sstream>
 
+
+glm::vec4 uIntTo4Col(unsigned int val) {
+	// ToDo
+	// Jeweils 8 bit für eine Komponente
+	glm::vec4 tmp(0.0f);
+	tmp.r = (float)((val & 0xFF000000) >> (8 * 3)) / 255.0f;
+	tmp.g = (float)((val & 0x00FF0000) >> (8 * 2)) / 255.0f;
+	tmp.b = (float)((val & 0x0000FF00) >> (8 * 1)) / 255.0f;
+	tmp.a = (float)((val & 0x000000FF) >> (8 * 0)) / 255.0f;
+	return tmp;
+}
 
 class line_renderer_app : public gvk::invokee 
 {
@@ -166,7 +177,7 @@ public:
 					std::string filename = mOpenFileDialog.GetSelected().string();
 					mOpenFileDialog.ClearSelected();
 
-					std::cout << "Selected Filename: " << filename << std::endl;
+					
 					rapidcsv::Document doc(filename, 
 						rapidcsv::LabelParams(0,-1), 
 						rapidcsv::SeparatorParams(';'),
@@ -175,8 +186,88 @@ public:
 							'#' /* pCommentPrefix */,
 							true /* pSkipEmptyLines */)
 					);
-					std::vector<float> aRad = doc.GetColumn<float>("A.rad");
-					
+
+					// A checklist of columns that should be present in the file
+					// Otherwise we'll output an error
+					std::map<std::string, bool> necessaryColumns = {
+						{ "A.x", false }, {"A.y", false}, {"A.z", false},
+						{ "B.x", false }, {"B.y", false}, {"B.z", false},
+						{ "A.rad", false }, {"B.rad", false}
+					};
+					// get column names
+					std::vector<std::string> columnNames = doc.GetColumnNames();
+
+					// Step 1: Make sure we have all the necessary Columns present and add alternative columns (e.g. color)
+					for (std::string colName : columnNames) {
+						if (necessaryColumns.find(colName) != necessaryColumns.end()) {
+							// This column is necessary so check it of the list
+							necessaryColumns[colName] = true;
+						}
+						if (colName == "A.col" || colName == "B.col") necessaryColumns[colName] = true;
+					}
+					for (auto mPair : necessaryColumns) {
+						if (!mPair.second) throw "Column '" + mPair.first + "' is not present in file";
+					}
+
+					// Step 2: Load all columns that we need (saved in necessary columns) and change their values in our vertex array
+					// get number of lines (*2 = vertex count)
+					long rowCount = doc.GetRowCount();
+					// Preallocate vertex array with default vertex data
+					std::vector<Vertex> newVertexData(rowCount * 2l, { {0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 0.0f });
+					for (auto mPair : necessaryColumns) {
+						auto colName = mPair.first;
+						if (colName == "A.col" || colName == "B.col") {
+							auto colData = doc.GetColumn<unsigned int>(colName);
+							if (colName == "A.col") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].color = uIntTo4Col(colData[i]);
+							}
+							else if (colName == "B.col") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].color = uIntTo4Col(colData[i]);
+							}
+						}
+						else {
+							auto colData = doc.GetColumn<float>(colName);
+							if (colName == "A.x") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].pos.x = colData[i];
+							}
+							else if (colName == "A.y") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].pos.y = colData[i];
+							}
+							else if (colName == "A.z") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].pos.z = colData[i];
+							}
+							else if (colName == "B.x") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].pos.x = colData[i];
+							}
+							else if (colName == "B.y") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].pos.y = colData[i];
+							}
+							else if (colName == "B.z") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].pos.z = colData[i];
+							}
+							else if (colName == "A.rad") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].radius = colData[i];
+							}
+							else if (colName == "B.rad") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].radius = colData[i];
+							}
+						}
+					}
+
+					// Override vertex buffer
+					mNewVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(newVertexData));
+					mNewVertexBuffer->fill(newVertexData.data(), 0, sync::wait_idle());
+					mReplaceOldVertexBuffer = true;
 				}
 			});
 		}
@@ -233,6 +324,10 @@ public:
 
 		auto mainWnd = context().main_window();
 		
+		if (mReplaceOldVertexBuffer) {
+			mVertexBuffer = std::move(mNewVertexBuffer);
+			mReplaceOldVertexBuffer = false;
+		}
 		
 		auto& commandPool = context().get_command_pool_for_single_use_command_buffers(*mQueue);
 		auto cmdBfr = commandPool->alloc_command_buffer(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
@@ -248,25 +343,27 @@ public:
 			cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
 			cmdBfr->end_render_pass();
 
-			// Draw helper lines (optional)
+			// Draw Skybox
+			if (uni.mClearColor.a > 0.0f) {
+				cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+				cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
+				cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+					descriptor_binding(0, 0, mUniformBuffer)
+					}));
+				cmdBfr->handle().draw(6u, 2u, 0u, 0u);
+				cmdBfr->end_render_pass();
+			}
+
+			// Draw helper lines
 			if (mDraw2DHelperLines) {
 				cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
 				cmdBfr->bind_pipeline(avk::const_referenced(m2DLinePipeline));
 				cmdBfr->bind_descriptors(m2DLinePipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 					descriptor_binding(0, 0, mUniformBuffer)
-				}));
+					}));
 				cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
 				cmdBfr->end_render_pass();
 			}
-
-			// Draw Skybox
-			cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
-			cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
-			cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-				descriptor_binding(0, 0, mUniformBuffer)
-			}));
-			cmdBfr->handle().draw(6u, 2u, 0u, 0u);
-			cmdBfr->end_render_pass();
 
 		cmdBfr->end_recording();
 
@@ -282,6 +379,8 @@ private:
 	avk::graphics_pipeline m2DLinePipeline;
 	avk::graphics_pipeline mSkyboxPipeline;
 	avk::buffer mVertexBuffer;
+	avk::buffer mNewVertexBuffer;
+	bool mReplaceOldVertexBuffer = false;
 
 	std::shared_ptr<gvk::quake_camera> mQuakeCam;
 	avk::buffer mUniformBuffer;
@@ -289,7 +388,7 @@ private:
 	/** One descriptor cache to use for allocating all the descriptor sets from: */
 	avk::descriptor_cache mDescriptorCache;
 
-	float mClearColor[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+	float mClearColor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
 	ImGui::FileBrowser mOpenFileDialog;
 	bool mOpenToolbox = true;
 
