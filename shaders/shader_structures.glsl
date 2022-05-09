@@ -16,6 +16,9 @@ struct matrices_and_user_input {
 	vec4 mClearColor;
 	// The color of the 2d debug lines if activated
 	vec4 mHelperLineColor;
+	// If actived the lines will be colored according to the vertex colors
+	bool mUseVertexColorForHelperLines;
+	vec3 buff3;	// dont know if thats needed
 };
 
 #define SHADER_STRUCTURES_GLSL 1

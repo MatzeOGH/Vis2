@@ -33,9 +33,6 @@
     <None Include="shaders\passthrough.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\shader_structures.glsl">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\sky_gradient.frag">
       <Filter>shaders</Filter>
     </None>

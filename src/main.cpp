@@ -6,6 +6,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <glm/gtx/string_cast.hpp>
+
 
 glm::vec4 uIntTo4Col(unsigned int val) {
 	// ToDo
@@ -39,6 +41,8 @@ class line_renderer_app : public gvk::invokee
 		glm::vec4 mCamDir;
 		glm::vec4 mClearColor;
 		glm::vec4 mHelperLineColor;
+		VkBool32 mUseVertexColorForHelperLines;
+		glm::vec3 buff3; // dont know if necessary
 	};
 
 public:
@@ -83,6 +87,7 @@ public:
 
 		m2DLinePipeline = context().create_graphics_pipeline_for(
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
+			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
 
 			vertex_shader("shaders/2d_lines.vert"),
 			fragment_shader("shaders/2d_lines.frag"),
@@ -166,8 +171,21 @@ public:
 
 				ImGui::Separator();
 
+				ImGui::Checkbox("Main Render Pass Enabled", &mMainRenderPassEnabled);
+
+				ImGui::Separator();
+
 				ImGui::Checkbox("Show Helper Lines", &mDraw2DHelperLines);
+				ImGui::Checkbox("Use vertex color for Lines", &mUseVertexColorForHelperLines);
 				ImGui::ColorEdit4("Line-Color", mHelperLineColor);
+
+				ImGui::Separator();
+
+				std::string camPos = std::format("Camera Position:\n{}", glm::to_string(mQuakeCam->translation()));
+				ImGui::Text(camPos.c_str());
+
+				std::string camDir = std::format("Camera Direction:\n{}", glm::to_string(mQuakeCam->rotation() * glm::vec3(0, 0, -1)));
+				ImGui::Text(camDir.c_str());
 
 				ImGui::End();
 
@@ -273,9 +291,11 @@ public:
 		}
 
 		mQuakeCam = std::make_shared<quake_camera>();
-		mQuakeCam->set_translation({ 0.0f, 0.0f, 5.0f });
+		mQuakeCam->set_translation({ 0.0f, 0.0f, 1.0f });
 		mQuakeCam->look_along({ 0.0f, 0.0f, -1.0f });
 		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.1f, 10000.0f);
+		//auto wSize = context().main_window()->swap_chain_extent();
+		//mQuakeCam->set_orthographic_projection(0.0, 2.0, 0.0, 2-0, 0.0f, 100.0f);
 		mQuakeCam->disable();
 		current_composition()->add_element(*mQuakeCam);
 	}
@@ -318,6 +338,7 @@ public:
 		uni.mCamDir = glm::vec4(mQuakeCam->rotation() * glm::vec3(0, 0, -1), 0.0f);
 		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
 		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
+		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0, sync::not_required());
@@ -334,13 +355,16 @@ public:
 		
 		cmdBfr->begin_recording();
 
-			// Draw tubes (ray casting)
+			// Draw tubes
 			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
 			cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
 			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 				descriptor_binding(0, 0, mUniformBuffer)
 			}));
-			cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
+			// NOTE: I can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
+			if (mMainRenderPassEnabled) {
+				cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
+			}
 			cmdBfr->end_render_pass();
 
 			// Draw Skybox
@@ -393,7 +417,10 @@ private:
 	bool mOpenToolbox = true;
 
 	bool mDraw2DHelperLines = true;
+	bool mUseVertexColorForHelperLines = false;
 	float mHelperLineColor[4] = { 64.0f / 255.0f, 224.0f / 255.0f, 208.0f / 255.0f, 1.0f };
+
+	bool mMainRenderPassEnabled = true;
 
 };
 
