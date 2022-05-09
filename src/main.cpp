@@ -1,11 +1,24 @@
 #include <gvk.hpp>
 #include <imgui.h>
-#include "utils/imfilebrowser.h"
-#include "utils/rapidcsv.h"
+#include "thirdparty/imfilebrowser.h"
+#include "thirdparty/rapidcsv.h"
 
 #include <iostream>
 #include <sstream>
 
+#include <glm/gtx/string_cast.hpp>
+
+
+glm::vec4 uIntTo4Col(unsigned int val) {
+	// ToDo
+	// Jeweils 8 bit für eine Komponente
+	glm::vec4 tmp(0.0f);
+	tmp.r = (float)((val & 0xFF000000) >> (8 * 3)) / 255.0f;
+	tmp.g = (float)((val & 0x00FF0000) >> (8 * 2)) / 255.0f;
+	tmp.b = (float)((val & 0x0000FF00) >> (8 * 1)) / 255.0f;
+	tmp.a = (float)((val & 0x000000FF) >> (8 * 0)) / 255.0f;
+	return tmp;
+}
 
 class line_renderer_app : public gvk::invokee 
 {
@@ -28,6 +41,8 @@ class line_renderer_app : public gvk::invokee
 		glm::vec4 mCamDir;
 		glm::vec4 mClearColor;
 		glm::vec4 mHelperLineColor;
+		VkBool32 mUseVertexColorForHelperLines;
+		glm::vec3 buff3; // dont know if necessary
 	};
 
 public:
@@ -72,6 +87,7 @@ public:
 
 		m2DLinePipeline = context().create_graphics_pipeline_for(
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
+			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
 
 			vertex_shader("shaders/2d_lines.vert"),
 			fragment_shader("shaders/2d_lines.frag"),
@@ -155,8 +171,21 @@ public:
 
 				ImGui::Separator();
 
+				ImGui::Checkbox("Main Render Pass Enabled", &mMainRenderPassEnabled);
+
+				ImGui::Separator();
+
 				ImGui::Checkbox("Show Helper Lines", &mDraw2DHelperLines);
+				ImGui::Checkbox("Use vertex color for Lines", &mUseVertexColorForHelperLines);
 				ImGui::ColorEdit4("Line-Color", mHelperLineColor);
+
+				ImGui::Separator();
+
+				std::string camPos = std::format("Camera Position:\n{}", glm::to_string(mQuakeCam->translation()));
+				ImGui::Text(camPos.c_str());
+
+				std::string camDir = std::format("Camera Direction:\n{}", glm::to_string(mQuakeCam->rotation() * glm::vec3(0, 0, -1)));
+				ImGui::Text(camDir.c_str());
 
 				ImGui::End();
 
@@ -166,7 +195,7 @@ public:
 					std::string filename = mOpenFileDialog.GetSelected().string();
 					mOpenFileDialog.ClearSelected();
 
-					std::cout << "Selected Filename: " << filename << std::endl;
+					
 					rapidcsv::Document doc(filename, 
 						rapidcsv::LabelParams(0,-1), 
 						rapidcsv::SeparatorParams(';'),
@@ -175,16 +204,98 @@ public:
 							'#' /* pCommentPrefix */,
 							true /* pSkipEmptyLines */)
 					);
-					std::vector<float> aRad = doc.GetColumn<float>("A.rad");
-					
+
+					// A checklist of columns that should be present in the file
+					// Otherwise we'll output an error
+					std::map<std::string, bool> necessaryColumns = {
+						{ "A.x", false }, {"A.y", false}, {"A.z", false},
+						{ "B.x", false }, {"B.y", false}, {"B.z", false},
+						{ "A.rad", false }, {"B.rad", false}
+					};
+					// get column names
+					std::vector<std::string> columnNames = doc.GetColumnNames();
+
+					// Step 1: Make sure we have all the necessary Columns present and add alternative columns (e.g. color)
+					for (std::string colName : columnNames) {
+						if (necessaryColumns.find(colName) != necessaryColumns.end()) {
+							// This column is necessary so check it of the list
+							necessaryColumns[colName] = true;
+						}
+						if (colName == "A.col" || colName == "B.col") necessaryColumns[colName] = true;
+					}
+					for (auto mPair : necessaryColumns) {
+						if (!mPair.second) throw "Column '" + mPair.first + "' is not present in file";
+					}
+
+					// Step 2: Load all columns that we need (saved in necessary columns) and change their values in our vertex array
+					// get number of lines (*2 = vertex count)
+					long rowCount = doc.GetRowCount();
+					// Preallocate vertex array with default vertex data
+					std::vector<Vertex> newVertexData(rowCount * 2l, { {0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 0.0f });
+					for (auto mPair : necessaryColumns) {
+						auto colName = mPair.first;
+						if (colName == "A.col" || colName == "B.col") {
+							auto colData = doc.GetColumn<unsigned int>(colName);
+							if (colName == "A.col") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].color = uIntTo4Col(colData[i]);
+							}
+							else if (colName == "B.col") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].color = uIntTo4Col(colData[i]);
+							}
+						}
+						else {
+							auto colData = doc.GetColumn<float>(colName);
+							if (colName == "A.x") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].pos.x = colData[i];
+							}
+							else if (colName == "A.y") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].pos.y = colData[i];
+							}
+							else if (colName == "A.z") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].pos.z = colData[i];
+							}
+							else if (colName == "B.x") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].pos.x = colData[i];
+							}
+							else if (colName == "B.y") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].pos.y = colData[i];
+							}
+							else if (colName == "B.z") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].pos.z = colData[i];
+							}
+							else if (colName == "A.rad") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i].radius = colData[i];
+							}
+							else if (colName == "B.rad") {
+								for (long i = 0; i < colData.size(); i++)
+									newVertexData[2l * i + 1].radius = colData[i];
+							}
+						}
+					}
+
+					// Override vertex buffer
+					mNewVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(newVertexData));
+					mNewVertexBuffer->fill(newVertexData.data(), 0, sync::wait_idle());
+					mReplaceOldVertexBuffer = true;
 				}
 			});
 		}
 
 		mQuakeCam = std::make_shared<quake_camera>();
-		mQuakeCam->set_translation({ 0.0f, 0.0f, 5.0f });
+		mQuakeCam->set_translation({ 0.0f, 0.0f, 1.0f });
 		mQuakeCam->look_along({ 0.0f, 0.0f, -1.0f });
 		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.1f, 10000.0f);
+		//auto wSize = context().main_window()->swap_chain_extent();
+		//mQuakeCam->set_orthographic_projection(0.0, 2.0, 0.0, 2-0, 0.0f, 100.0f);
 		mQuakeCam->disable();
 		current_composition()->add_element(*mQuakeCam);
 	}
@@ -227,46 +338,56 @@ public:
 		uni.mCamDir = glm::vec4(mQuakeCam->rotation() * glm::vec3(0, 0, -1), 0.0f);
 		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
 		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
+		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0, sync::not_required());
 
 		auto mainWnd = context().main_window();
 		
+		if (mReplaceOldVertexBuffer) {
+			mVertexBuffer = std::move(mNewVertexBuffer);
+			mReplaceOldVertexBuffer = false;
+		}
 		
 		auto& commandPool = context().get_command_pool_for_single_use_command_buffers(*mQueue);
 		auto cmdBfr = commandPool->alloc_command_buffer(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 		
 		cmdBfr->begin_recording();
 
-			// Draw tubes (ray casting)
+			// Draw tubes
 			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
 			cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
 			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 				descriptor_binding(0, 0, mUniformBuffer)
 			}));
-			cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
+			// NOTE: I can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
+			if (mMainRenderPassEnabled) {
+				cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
+			}
 			cmdBfr->end_render_pass();
 
-			// Draw helper lines (optional)
+			// Draw Skybox
+			if (uni.mClearColor.a > 0.0f) {
+				cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+				cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
+				cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+					descriptor_binding(0, 0, mUniformBuffer)
+					}));
+				cmdBfr->handle().draw(6u, 2u, 0u, 0u);
+				cmdBfr->end_render_pass();
+			}
+
+			// Draw helper lines
 			if (mDraw2DHelperLines) {
 				cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
 				cmdBfr->bind_pipeline(avk::const_referenced(m2DLinePipeline));
 				cmdBfr->bind_descriptors(m2DLinePipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 					descriptor_binding(0, 0, mUniformBuffer)
-				}));
+					}));
 				cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
 				cmdBfr->end_render_pass();
 			}
-
-			// Draw Skybox
-			cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
-			cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
-			cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-				descriptor_binding(0, 0, mUniformBuffer)
-			}));
-			cmdBfr->handle().draw(6u, 2u, 0u, 0u);
-			cmdBfr->end_render_pass();
 
 		cmdBfr->end_recording();
 
@@ -282,6 +403,8 @@ private:
 	avk::graphics_pipeline m2DLinePipeline;
 	avk::graphics_pipeline mSkyboxPipeline;
 	avk::buffer mVertexBuffer;
+	avk::buffer mNewVertexBuffer;
+	bool mReplaceOldVertexBuffer = false;
 
 	std::shared_ptr<gvk::quake_camera> mQuakeCam;
 	avk::buffer mUniformBuffer;
@@ -289,12 +412,15 @@ private:
 	/** One descriptor cache to use for allocating all the descriptor sets from: */
 	avk::descriptor_cache mDescriptorCache;
 
-	float mClearColor[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+	float mClearColor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
 	ImGui::FileBrowser mOpenFileDialog;
 	bool mOpenToolbox = true;
 
 	bool mDraw2DHelperLines = true;
+	bool mUseVertexColorForHelperLines = false;
 	float mHelperLineColor[4] = { 64.0f / 255.0f, 224.0f / 255.0f, 208.0f / 255.0f, 1.0f };
+
+	bool mMainRenderPassEnabled = true;
 
 };
 
