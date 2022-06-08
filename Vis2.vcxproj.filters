@@ -22,6 +22,9 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\line_importer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\billboard_creation.geom">
@@ -45,6 +48,9 @@
     <None Include="shaders\2d_lines.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\shader_structures.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thirdparty\imfilebrowser.h">
@@ -52,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="src\thirdparty\rapidcsv.h">
       <Filter>src\thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="src\line_importer.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

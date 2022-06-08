@@ -8,6 +8,8 @@
 
 #include <glm/gtx/string_cast.hpp>
 
+#include "line_importer.h"
+
 
 glm::vec4 uIntTo4Col(unsigned int val) {
 	// ToDo
@@ -27,6 +29,12 @@ class line_renderer_app : public gvk::invokee
 		glm::vec3 pos;
 		glm::vec4 color;
 		float radius;
+	};
+
+	struct draw_call_t
+	{
+		uint32_t firstIndex;
+		uint32_t numberOfPrimitives;
 	};
 
 	const std::vector<Vertex> mVertexData = {
@@ -55,11 +63,13 @@ public:
 		using namespace avk;
 		using namespace gvk;
 
-		mVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(mVertexData));
-		mVertexBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
+		//mVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(mVertexData));
+		//mVertexBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
 
 		mUniformBuffer = context().create_buffer(memory_usage::host_visible, {}, uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
 		mUniformBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
+
+		mDrawCalls.push_back({0, 2});
 
 		// Create a descriptor cache that helps us to conveniently create descriptor sets:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
@@ -74,10 +84,10 @@ public:
 			geometry_shader("shaders/billboard_creation.geom"),
 			fragment_shader("shaders/ray_casting.frag"),
 
-			cfg::primitive_topology::lines,
-
+			cfg::primitive_topology::line_strip_with_adjacency,
 			cfg::culling_mode::disabled(), // should be enabled, just for debugging
 			//cfg::front_face::define_front_faces_to_be_clockwise(),
+			//cfg::color_blending_config::enable_alpha_blending_for_all_attachments(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
 			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::clear, color(0), on_store::store),
 			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, depth_stencil(0), on_store::store),
@@ -92,7 +102,7 @@ public:
 			vertex_shader("shaders/2d_lines.vert"),
 			fragment_shader("shaders/2d_lines.frag"),
 
-			cfg::primitive_topology::lines,
+			cfg::primitive_topology::line_strip_with_adjacency,
 			cfg::depth_test::disabled(),
 			cfg::depth_write::disabled(),
 			cfg::culling_mode::disabled(),
@@ -141,7 +151,7 @@ public:
 		auto imguiManager = current_composition()->element_by_type<imgui_manager>();
 		if (nullptr != imguiManager) {
 			mOpenFileDialog.SetTitle("Open Line-Data File");
-			mOpenFileDialog.SetTypeFilters({ ".csv" });
+			mOpenFileDialog.SetTypeFilters({ ".obj" });
 
 			imguiManager->add_callback([this]() {
 				ImGui::Begin("Line Renderer - Tool Box", &mOpenToolbox, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse);
@@ -195,95 +205,32 @@ public:
 					std::string filename = mOpenFileDialog.GetSelected().string();
 					mOpenFileDialog.ClearSelected();
 
-					
-					rapidcsv::Document doc(filename, 
-						rapidcsv::LabelParams(0,-1), 
-						rapidcsv::SeparatorParams(';'),
-						rapidcsv::ConverterParams(),
-						rapidcsv::LineReaderParams(true /* pSkipCommentLines */,
-							'#' /* pCommentPrefix */,
-							true /* pSkipEmptyLines */)
-					);
+					// load position buffer
+					std::vector<glm::vec3> position_buffer;
+					std::vector<float> radius_buffer;
+					std::vector<line_draw_info_t> line_draw_infos;
+					import_file(std::move(filename), position_buffer, radius_buffer, line_draw_infos);
 
-					// A checklist of columns that should be present in the file
-					// Otherwise we'll output an error
-					std::map<std::string, bool> necessaryColumns = {
-						{ "A.x", false }, {"A.y", false}, {"A.z", false},
-						{ "B.x", false }, {"B.y", false}, {"B.z", false},
-						{ "A.rad", false }, {"B.rad", false}
-					};
-					// get column names
-					std::vector<std::string> columnNames = doc.GetColumnNames();
-
-					// Step 1: Make sure we have all the necessary Columns present and add alternative columns (e.g. color)
-					for (std::string colName : columnNames) {
-						if (necessaryColumns.find(colName) != necessaryColumns.end()) {
-							// This column is necessary so check it of the list
-							necessaryColumns[colName] = true;
-						}
-						if (colName == "A.col" || colName == "B.col") necessaryColumns[colName] = true;
-					}
-					for (auto mPair : necessaryColumns) {
-						if (!mPair.second) throw "Column '" + mPair.first + "' is not present in file";
+					const size_t offset = offsetof(Vertex, color);
+					std::vector<Vertex> newVertexData;
+					for (size_t idx = 0; idx < position_buffer.size(); ++idx)
+					{
+						newVertexData.push_back({
+							position_buffer[idx],
+							{0.5f, 0.5f, 0.5f, 1.0f},
+							radius_buffer[idx]
+							});
 					}
 
-					// Step 2: Load all columns that we need (saved in necessary columns) and change their values in our vertex array
-					// get number of lines (*2 = vertex count)
-					long rowCount = doc.GetRowCount();
-					// Preallocate vertex array with default vertex data
-					std::vector<Vertex> newVertexData(rowCount * 2l, { {0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 0.0f });
-					for (auto mPair : necessaryColumns) {
-						auto colName = mPair.first;
-						if (colName == "A.col" || colName == "B.col") {
-							auto colData = doc.GetColumn<unsigned int>(colName);
-							if (colName == "A.col") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i].color = uIntTo4Col(colData[i]);
-							}
-							else if (colName == "B.col") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i + 1].color = uIntTo4Col(colData[i]);
-							}
-						}
-						else {
-							auto colData = doc.GetColumn<float>(colName);
-							if (colName == "A.x") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i].pos.x = colData[i];
-							}
-							else if (colName == "A.y") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i].pos.y = colData[i];
-							}
-							else if (colName == "A.z") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i].pos.z = colData[i];
-							}
-							else if (colName == "B.x") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i + 1].pos.x = colData[i];
-							}
-							else if (colName == "B.y") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i + 1].pos.y = colData[i];
-							}
-							else if (colName == "B.z") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i + 1].pos.z = colData[i];
-							}
-							else if (colName == "A.rad") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i].radius = colData[i];
-							}
-							else if (colName == "B.rad") {
-								for (long i = 0; i < colData.size(); i++)
-									newVertexData[2l * i + 1].radius = colData[i];
-							}
-						}
+					mDrawCalls.clear();
+					for (auto line_draw_info : line_draw_infos) {
+						mDrawCalls.emplace_back(
+							line_draw_info.vertexIds[0],
+							line_draw_info.vertexIds.size());
 					}
 
-					// Override vertex buffer
 					mNewVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(newVertexData));
+					mNewVertexBuffer.enable_shared_ownership();
 					mNewVertexBuffer->fill(newVertexData.data(), 0, sync::wait_idle());
 					mReplaceOldVertexBuffer = true;
 				}
@@ -362,8 +309,12 @@ public:
 				descriptor_binding(0, 0, mUniformBuffer)
 			}));
 			// NOTE: I can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
-			if (mMainRenderPassEnabled) {
-				cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
+			if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
+				
+				for (draw_call_t draw_call : mDrawCalls)
+				{
+					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced( mVertexBuffer));
+				}
 			}
 			cmdBfr->end_render_pass();
 
@@ -379,12 +330,15 @@ public:
 			}
 
 			// Draw helper lines
-			if (mDraw2DHelperLines) {
+			if (mDraw2DHelperLines && mVertexBuffer.has_value()) {
 				cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
 				cmdBfr->bind_pipeline(avk::const_referenced(m2DLinePipeline));
 				cmdBfr->bind_descriptors(m2DLinePipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 					descriptor_binding(0, 0, mUniformBuffer)
 					}));
+
+				draw_call_t draw_call = mDrawCalls[0];
+				//cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, 0u, draw_call.firstIndex, const_referenced(mVertexBuffer));
 				cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
 				cmdBfr->end_render_pass();
 			}
@@ -408,6 +362,7 @@ private:
 
 	std::shared_ptr<gvk::quake_camera> mQuakeCam;
 	avk::buffer mUniformBuffer;
+	std::vector<draw_call_t> mDrawCalls;
 
 	/** One descriptor cache to use for allocating all the descriptor sets from: */
 	avk::descriptor_cache mDescriptorCache;

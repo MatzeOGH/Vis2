@@ -16,5 +16,6 @@ layout(location = 2) out float outRadius;
 void main() {
     gl_Position =  vec4(inPosition, 1.0);
     outColor = inColor;
-    outRadius = inRadius;
+    outRadius = inRadius /100;
+
 }

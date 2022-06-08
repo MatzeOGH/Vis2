@@ -15,6 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\line_importer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -28,10 +29,12 @@
     <None Include="shaders\billboard_creation.geom" />
     <None Include="shaders\ray_casting.frag" />
     <None Include="shaders\passthrough.vert" />
+    <None Include="shaders\shader_structures.glsl" />
     <None Include="shaders\sky_gradient.frag" />
     <None Include="shaders\sky_gradient.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\line_importer.h" />
     <ClInclude Include="src\thirdparty\imfilebrowser.h" />
     <ClInclude Include="src\thirdparty\rapidcsv.h" />
   </ItemGroup>
@@ -53,7 +56,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Vulkan|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
