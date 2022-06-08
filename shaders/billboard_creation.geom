@@ -18,6 +18,8 @@ layout(location = 1) out vec4 outColor;
 layout(location = 2) out vec3 outPosA;
 layout(location = 3) out vec3 outPosB;
 layout(location = 4) out vec2 outRARB;
+layout(location = 5) out vec3 outN0;
+layout(location = 6) out vec3 outN1;
 
 // Helper function that i used to first test the geometry shader
 // May be removed in the future
