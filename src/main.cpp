@@ -67,13 +67,21 @@ public:
 		//mVertexBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
 
 		mUniformBuffer = context().create_buffer(memory_usage::host_visible, {}, uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
-		mUniformBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
+		mUniformBuffer->fill(mVertexData.data(), 0);
 
 		mDrawCalls.push_back({0, 2});
 
 		// Create a descriptor cache that helps us to conveniently create descriptor sets:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
 
+		const auto resolution = context().main_window()->resolution();
+		auto semaphore = context().create_image(resolution.x, resolution.y, vk::Format::eD16Unorm, 1, memory_usage::device, image_usage::color_attachment | image_usage::input_attachment | image_usage::sampled | image_usage::shader_storage);
+
+		auto fen = context().record_and_submit_with_fence(context().gather_commands(
+			sync::image_memory_barrier(semaphore, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::shader_read_only_optimal),
+			context().main_window()->layout_transitions_for_all_backbuffer_images()
+		), mQueue);
+		fen->wait_until_signalled();
 
 		mPipeline = context().create_graphics_pipeline_for(
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
@@ -85,12 +93,14 @@ public:
 			fragment_shader("shaders/ray_casting.frag"),
 
 			cfg::primitive_topology::line_strip_with_adjacency,
-			cfg::culling_mode::disabled(), // should be enabled, just for debugging
+			cfg::culling_mode::disabled(), // should be disabled for k buffer rendering
+			cfg::depth_test::disabled(),
+			cfg::depth_write::disabled(),
 			//cfg::front_face::define_front_faces_to_be_clockwise(),
 			//cfg::color_blending_config::enable_alpha_blending_for_all_attachments(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
-			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::clear, color(0), on_store::store),
-			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, depth_stencil(0), on_store::store),
+			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::clear, usage::color(0), on_store::store),
+			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, usage::depth_stencil, on_store::store),
 			//push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(push_constants) },
 			descriptor_binding(0, 0, mUniformBuffer)
 		);
@@ -107,8 +117,8 @@ public:
 			cfg::depth_write::disabled(),
 			cfg::culling_mode::disabled(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
-			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, color(0), on_store::store),
-			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, depth_stencil(0), on_store::store),
+			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, usage::color(0), on_store::store),
+			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, usage::depth_stencil, on_store::store),
 			//push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(push_constants) },
 			descriptor_binding(0, 0, mUniformBuffer),
 
@@ -120,8 +130,8 @@ public:
 		mSkyboxPipeline = context().create_graphics_pipeline_for(
 			vertex_shader("shaders/sky_gradient.vert"),
 			fragment_shader("shaders/sky_gradient.frag"),
-			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, color(0), on_store::store),
-			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, depth_stencil(0), on_store::store),
+			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, usage::color(0), on_store::store),
+			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, usage::depth_stencil, on_store::store),
 			cfg::culling_mode::disabled(),
 			cfg::depth_test::enabled().set_compare_operation(cfg::compare_operation::less_or_equal),
 			cfg::depth_write::disabled(),
@@ -231,7 +241,12 @@ public:
 
 					mNewVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(newVertexData));
 					mNewVertexBuffer.enable_shared_ownership();
-					mNewVertexBuffer->fill(newVertexData.data(), 0, sync::wait_idle());
+					auto fenc = context().record_and_submit_with_fence(
+						{ mNewVertexBuffer->fill(newVertexData.data(), 0) },
+						mQueue
+					);
+					fenc->wait_until_signalled();
+
 					mReplaceOldVertexBuffer = true;
 				}
 			});
@@ -288,7 +303,7 @@ public:
 		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
 
 		buffer& cUBO = mUniformBuffer;
-		cUBO->fill(&uni, 0, sync::not_required());
+		cUBO->fill(&uni, 0);
 
 		auto mainWnd = context().main_window();
 		
@@ -391,7 +406,7 @@ int main()
 		auto mainWnd = gvk::context().create_window(titel);
 		mainWnd->set_resolution({ 1280, 800 });
 		mainWnd->set_additional_back_buffer_attachments({
-			avk::attachment::declare(vk::Format::eD32Sfloat, avk::on_load::clear, avk::depth_stencil(), avk::on_store::dont_care)
+			avk::attachment::declare(vk::Format::eD32Sfloat, avk::on_load::clear, avk::usage::depth_stencil, avk::on_store::dont_care)
 		});
 		mainWnd->enable_resizing(true);
 		mainWnd->request_srgb_framebuffer(true);
