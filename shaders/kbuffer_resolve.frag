@@ -13,7 +13,7 @@ layout (location = 0) in VertexData
 layout(location = 0) out vec4 outColor;
 
 
-const uint K_MAX = 16; 
+const uint K_MAX = 8; 
 
 struct Samples{
 	vec4 color;
@@ -32,7 +32,7 @@ void main()
 
 	// load k samples from the data buffers
 	Samples samples[K_MAX];
-	for(int i = 0; i < current_count; ++i)
+	for(int i = 0; i < min(current_count,K_MAX); ++i)
 	{
 		samples[i].color = imageLoad( fragmentSamples, ivec3(coord, i) );
 		samples[i].depth = imageLoad( Depths, ivec3(coord, i)).r;
@@ -40,7 +40,7 @@ void main()
 
 	// insertion sort sort
 	int i = 1;
-	while( i < current_count)
+	while( i < min(current_count,K_MAX))
 	{
 		int j = i;
 
@@ -57,22 +57,16 @@ void main()
 
 	vec3 color = vec3(0, 0.0, 0.0);
 	float alpha = 0.0;
-	for(int i = 0 ; i < current_count; ++i)
+	for(int i = 0; i < min(current_count,K_MAX) ; ++i)
 	{
 		float sampleAlpha = 0.5;
-		color = color + samples[i].color.rgb * sampleAlpha * ( 1 - alpha);
-		alpha = alpha + sampleAlpha * (1 - alpha);
+		//color = color + samples[i].color.rgb * sampleAlpha * ( 1 - alpha);
+		//alpha = alpha + sampleAlpha * (1 - alpha);
+		color = color * (1 - sampleAlpha)+ samples[i].color.rgb * sampleAlpha;
 	}
-	//color = samples[0].color.rgb;
 
-	//color = vec3(1.0) - exp(-color * 0.01);
+	//color = vec3(1.0) - exp(-color * 4);
 	//color = pow(color, vec3(1.0/2.2));
 
 	outColor = vec4(color, 1);
-
-}
-
-vec3 AlphaBlend( vec3 _FrontColor, vec3 _BackColor, float _Aplha )
-{
-	return vec3( _FrontColor * _Aplha + _BackColor * ( 1.0 - _Aplha ) );
 }

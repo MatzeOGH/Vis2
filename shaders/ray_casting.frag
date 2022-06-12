@@ -210,7 +210,7 @@ void insert(ivec2 coord, uint current_count, vec4 color)
     {
         // find index of furthest depth sample
         int furthestIndex = 0;
-        float furthestDepth = 0;
+        float furthestDepth = -1.0;
         for(int i = 0; i < K_MAX; ++i)
         {
             ivec3 coordLayer = ivec3(coord, i);
