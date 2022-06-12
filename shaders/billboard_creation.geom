@@ -14,6 +14,7 @@ layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input ubo
 layout(location = 1) in vec4 inColor[];
 layout(location = 2) in float inRadius[];
 
+layout(location = 0) out vec4 outViewRay;
 layout(location = 1) out vec4 outColor;
 layout(location = 2) out vec3 outPosA;
 layout(location = 3) out vec3 outPosB;
@@ -117,28 +118,32 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
 
     gl_Position = pvMatrix * vec4(c0, 1.0);
     d = c0 - e;
-    outColor = vec4(d.xyz,0);
+    outViewRay = vec4(d.xyz,0);
+    outColor = inColor[0];
     outPosA = x0;
     outPosB = x1;
     outRARB = vec2(r0, r1);
     EmitVertex();   
     gl_Position = pvMatrix * vec4(c1, 1.0);
     d = c1 - e;
-    outColor = vec4(d.xyz,0);
+    outViewRay = vec4(d.xyz,0);
+    outColor = inColor[0];
     outPosA = x0;
     outPosB = x1;
     outRARB = vec2(r0, r1);
     EmitVertex();
     gl_Position = pvMatrix * vec4(c2, 1.0);
     d = c2 - e;
-    outColor = vec4(d.xyz,0);
+    outViewRay = vec4(d.xyz,0);
+    outColor = inColor[0];
     outPosA = x0;
     outPosB = x1;
     outRARB = vec2(r0, r1);
     EmitVertex();
     gl_Position = pvMatrix * vec4(c3, 1.0);
     d = c3 - e;
-    outColor = vec4(d.xyz,0);
+    outViewRay = vec4(d.xyz,0);
+    outColor = inColor[0];
     outPosA = x0;
     outPosB = x1;
     outRARB = vec2(r0, r1);

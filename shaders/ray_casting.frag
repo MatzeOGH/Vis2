@@ -6,7 +6,14 @@
 
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
-layout(location = 1) in vec4 fragColor;
+// kbuffer storage 
+layout (set = 1, binding = 0, r32ui) coherent uniform uimage2D semaphore;
+layout (set = 1, binding = 1, r8ui) coherent uniform uimage2D count;
+layout (set = 1, binding = 2, r32f) coherent uniform image2DArray depths;
+layout (set = 1, binding = 3, rgba16f) coherent uniform image2DArray fragmentSamples;
+
+layout(location = 0) in vec4 inViewRay;
+layout(location = 1) in vec4 infragColor;
 layout(location = 2) in vec3 inPosA;
 layout(location = 3) in vec3 inPosB;
 layout(location = 4) in vec2 inRARB;
@@ -14,6 +21,15 @@ layout(location = 5) in vec3 inN0;
 layout(location = 6) in vec3 inN1;
 
 layout(location = 0) out vec4 outColor;
+
+const uint K_MAX = 8; 
+
+
+// spin lock buffer
+bool acquire_semaphore(ivec2 coord);
+void release_semaphore(ivec2 coord);
+
+void insert(ivec2 coord, uint current_count, vec4 color);
 
 
 // Inigo Quilez https://www.shadertoy.com/view/MlKfzm
@@ -71,16 +87,30 @@ vec4 iRoundedCone( in vec3  ro, in vec3  rd,
     return r;
 }
 
-void main() {
 
-    outColor = vec4(0);
+
+void main() {
+    ivec2 coord = ivec2( gl_FragCoord.xy );
+    uint current_count = imageLoad( count, coord).r;
+
+
 
     vec3 camWS = uboMatricesAndUserInput.mCamPos.xyz;
-    vec3 viewRayWS = normalize(fragColor.xyz);
+    vec3 viewRayWS = normalize(inViewRay.xyz);
 
     vec4 tnor = iRoundedCone(camWS, viewRayWS, inPosA, inPosB, inRARB.x, inRARB.y);
+    
+    // discard pixel if the rounded cone was not intersected
     float t = tnor.x;
     if(t <= 0.0)
+    {
+        discard;
+    }
+
+        // early exit
+    bool isFull = current_count >= K_MAX;
+    bool isFurther = gl_FragCoord.z > imageLoad(depths, ivec3(coord, 0)).r;
+    if(isFull && isFurther)
     {
         discard;
     }
@@ -88,9 +118,131 @@ void main() {
     vec3 lig = normalize(vec3(0.7,0.6,0.3));
     vec3 hal = normalize(-viewRayWS+lig);
     vec3 nor = tnor.yzw;
-    float dif = clamp( dot(nor,lig), 0.0, 1.0 );
+    float ndotl = clamp( dot(nor,lig), 0.0, 1.0 );
 
-    outColor = vec4( vec3(1.0,0.9,0.7)*dif + vec3(0.01), 0.3);
+
+    vec4 color = vec4( infragColor.rgb * ndotl, 0.3);
+
+
+    // write fragment to k buffer
+    bool write = true;
+    while(write)
+    {
+        if(acquire_semaphore(coord))
+        {
+            insert(coord, current_count, color);
+
+            release_semaphore(coord);
+
+            write = false;
+        }
+    }
+
+    discard;
+
+    //outColor = vec4( vec3(1.0,0.9,0.7)*dif + vec3(0.01), 0.3);
     //outColor = vec4(nor, 0.5);
 
+}
+
+
+bool acquire_semaphore(ivec2 coord)
+{
+    if(imageLoad(semaphore, coord).r == 1)
+    {
+        return false;
+    }
+
+    return imageAtomicExchange(semaphore, coord, 1) == 0;
+}
+
+void release_semaphore(ivec2 coord)
+{
+    imageStore(semaphore, coord, uvec4(0));
+}
+
+
+void kbuffer_store(ivec2 coord, int layer, float depth, vec4 fragment)
+{
+    ivec3 coordLayer = ivec3(coord, layer);
+    imageStore(depths, coordLayer, vec4(depth));
+    imageStore(fragmentSamples, coordLayer, fragment);
+}
+
+void insert(ivec2 coord, uint current_count, vec4 color)
+{
+    // k buffer has free slots
+    if(current_count < K_MAX)
+    {
+        // instert into first slot
+        if( current_count == 0 )
+        {
+            kbuffer_store(coord, 0, gl_FragCoord.z, color);
+        }
+        else
+        {
+            ivec3 coordLayer = ivec3(coord, 0);
+
+            float oldDepth = imageLoad(depths, coordLayer).r;
+
+            if(gl_FragCoord.z > oldDepth)
+            {
+                vec4 oldValue = imageLoad(fragmentSamples, coordLayer);
+
+                // store new fragment at slot 0 
+                imageStore(depths, coordLayer, vec4(gl_FragCoord.z));
+                imageStore(fragmentSamples, coordLayer, color);
+                
+                // move old values to next free slot
+                coordLayer = ivec3(coord, current_count);
+                imageStore(depths, coordLayer, vec4(oldDepth));
+                imageStore(fragmentSamples, coordLayer, oldValue);
+            }
+            else
+            {
+                coordLayer = ivec3(coord, current_count);
+                imageStore(depths, coordLayer, vec4(gl_FragCoord.z));
+                imageStore(fragmentSamples, coordLayer, color);
+            }
+        }
+    }
+    else
+    {
+        // find index of furthest depth sample
+        int furthestIndex = 0;
+        float furthestDepth = 0;
+        for(int i = 0; i < K_MAX; ++i)
+        {
+            ivec3 coordLayer = ivec3(coord, i);
+            float depth = imageLoad(depths, coordLayer).r;
+
+            if(depth > furthestDepth)
+            {
+                furthestIndex = i;
+                furthestDepth = depth;
+            }
+        }
+
+        // new sample is the furthest sample
+        if(gl_FragCoord.z > furthestDepth)
+        {
+            kbuffer_store(coord, 0, gl_FragCoord.z, color);
+        }
+        else
+        {
+            // move furthest sample to slot 0
+            ivec3 coordLayer = ivec3(coord, furthestIndex);
+            vec4 oldValue = imageLoad(fragmentSamples, coordLayer);
+
+            kbuffer_store(coord, 0, furthestDepth, oldValue);
+
+            // store current fragment at free slot
+            kbuffer_store(coord, furthestIndex, gl_FragCoord.z, color);
+        }
+
+    }
+
+
+    // increse the count
+    imageStore( count, ivec2(gl_FragCoord.xy), uvec4(current_count + 1));
 }

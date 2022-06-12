@@ -13,9 +13,25 @@ layout(location = 2) in float inRadius;
 layout(location = 1) out vec4 outColor;
 layout(location = 2) out float outRadius;
 
+
+uint compute_hash(uint a)
+{
+   a = (a+0x7ed55d16) + (a<<12);
+   a = (a^0xc761c23c) ^ (a>>19);
+   a = (a+0x165667b1) + (a<<5);
+   a = (a+0xd3a2646c) ^ (a<<9);
+   a = (a+0xfd7046c5) + (a<<3);
+   a = (a^0xb55a4f09) ^ (a>>16);
+   return a;
+}
+
 void main() {
     gl_Position =  vec4(inPosition, 1.0);
-    outColor = inColor;
+
+    uint hash = compute_hash(gl_VertexIndex);
+    vec3 color = vec3(float(hash & 255), float((hash >> 8) & 255), float((hash >> 16) & 255)) / 255.0;
+    outColor = vec4(color, 1);
+
     outRadius = inRadius /100;
 
 }

@@ -1,0 +1,25 @@
+#version 460
+#define WORKGROUP_SIZE          16
+
+layout(set = 0, binding = 0, r32ui) uniform writeonly restrict uimage2D oCount;
+layout (set = 0, binding = 1, r32f) uniform writeonly restrict  image2DArray oDepths;
+layout (set = 0, binding = 2, rgba16f) uniform writeonly restrict  image2DArray oColor;
+
+layout(local_size_x = WORKGROUP_SIZE, local_size_y = WORKGROUP_SIZE, local_size_z = 1) in;
+void main()
+{
+	ivec2 coordinates = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 imgSize = imageSize(oCount);
+	if (any(greaterThanEqual(coordinates, imgSize))) return;
+
+	imageStore(oCount, coordinates, uvec4(0));
+
+	for(int i = 0; i < 16; ++i)
+	{
+		ivec3 coordLayer = ivec3(coordinates, i);
+		imageStore(oDepths, coordLayer, vec4(1));
+		imageStore(oColor, coordLayer, vec4(0));
+	}
+
+}
+

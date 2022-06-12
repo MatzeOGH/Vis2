@@ -51,6 +51,18 @@
     <None Include="shaders\shader_structures.glsl">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\clear_storage_pass.comp">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\kbuffer_resolve.comp">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\kbuffer_resolve.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\kbuffer_resolve.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thirdparty\imfilebrowser.h">
