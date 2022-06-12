@@ -21,6 +21,7 @@ layout(location = 3) out vec3 outPosB;
 layout(location = 4) out vec2 outRARB;
 layout(location = 5) out vec3 outN0;
 layout(location = 6) out vec3 outN1;
+layout(location = 7) out vec3 outPosWS;
 
 // Helper function that i used to first test the geometry shader
 // May be removed in the future
@@ -55,6 +56,7 @@ void construct_simple_billboard(vec4 posA, vec4 posB, float radA, float radB, ve
 }
 
 void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos, vec4 camDir) {
+
     vec3 x0 = posA.xyz;
     vec3 x1 = posB.xyz;
     float r0 = radA;
@@ -112,41 +114,70 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     vec3 c1 = ps + rs*u;
     vec3 c2 = pe - re*u;
     vec3 c3 = pe + re*u;
+
+    // clipping
+    vec3 cx0 = gl_in[0].gl_Position.xyz;
+    vec3 cx3 = gl_in[3].gl_Position.xyz;
+
+    // find start and end cap flag
+    float start = cx0.x < 0 ? 0 : 1;
+    float end = cx3.x < 0 ? 0 : 1;
+
+    cx0 = abs(cx0);
+    cx3 = abs(cx3);
+
+    vec3 n0 = -normalize(x1 - cx0) * start;
+    vec3 n1 = normalize(cx3 - x0) * end;
     
     mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
     //pvMatrix = uboMatricesAndUserInput.mProjMatrix;
 
     gl_Position = pvMatrix * vec4(c0, 1.0);
+    outPosWS = c0;
     d = c0 - e;
     outViewRay = vec4(d.xyz,0);
     outColor = inColor[0];
-    outPosA = x0;
-    outPosB = x1;
+    outPosA = posA.xyz;
+    outPosB = posB.xyz;
     outRARB = vec2(r0, r1);
-    EmitVertex();   
+    outN0 = n0;
+    outN1 = n1;
+    EmitVertex();
+
     gl_Position = pvMatrix * vec4(c1, 1.0);
+    outPosWS = c1;
     d = c1 - e;
     outViewRay = vec4(d.xyz,0);
     outColor = inColor[0];
-    outPosA = x0;
-    outPosB = x1;
+    outPosA = posA.xyz;
+    outPosB = posB.xyz;
     outRARB = vec2(r0, r1);
+    outN0 = n0;
+    outN1 = n1;
     EmitVertex();
+
     gl_Position = pvMatrix * vec4(c2, 1.0);
+    outPosWS = c2;
     d = c2 - e;
     outViewRay = vec4(d.xyz,0);
     outColor = inColor[0];
-    outPosA = x0;
-    outPosB = x1;
+    outPosA = posA.xyz;
+    outPosB = posB.xyz;
     outRARB = vec2(r0, r1);
+    outN0 = n0;
+    outN1 = n1;
     EmitVertex();
+
     gl_Position = pvMatrix * vec4(c3, 1.0);
+    outPosWS = c3;
     d = c3 - e;
     outViewRay = vec4(d.xyz,0);
     outColor = inColor[0];
-    outPosA = x0;
-    outPosB = x1;
+    outPosA = posA.xyz;
+    outPosB = posB.xyz;
     outRARB = vec2(r0, r1);
+    outN0 = n0;
+    outN1 = n1;
     EmitVertex();
     EndPrimitive();
 

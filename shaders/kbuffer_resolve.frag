@@ -62,11 +62,11 @@ void main()
 		float sampleAlpha = 0.5;
 		//color = color + samples[i].color.rgb * sampleAlpha * ( 1 - alpha);
 		//alpha = alpha + sampleAlpha * (1 - alpha);
-		color = color * (1 - sampleAlpha)+ samples[i].color.rgb * sampleAlpha;
+		color = color * (1 - sampleAlpha) + samples[i].color.rgb * sampleAlpha;
 	}
 
 	//color = vec3(1.0) - exp(-color * 4);
-	//color = pow(color, vec3(1.0/2.2));
+	color = pow(color, vec3(1.0/2.2));
 
 	outColor = vec4(color, 1);
 }

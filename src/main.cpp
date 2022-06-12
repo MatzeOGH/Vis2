@@ -144,8 +144,7 @@ public:
 			
 			renderpass,
 
-
-			//push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(push_constants) },
+			push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(int) },
 			descriptor_binding(0, 0, mUniformBuffer),
 			descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
 			descriptor_binding(1, 1, mViewKBufferCount->as_storage_image(layout::general)),
@@ -309,7 +308,13 @@ public:
 						mDrawCalls.emplace_back(
 							line_draw_info.vertexIds[0],
 							line_draw_info.vertexIds.size());
+
+						// set start and end flag 
+						newVertexData[line_draw_info.vertexIds[0]].pos.x *= -1;
+						newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
 					}
+
+					
 
 					mNewVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(newVertexData));
 					mNewVertexBuffer.enable_shared_ownership();
@@ -416,9 +421,15 @@ public:
 			// NOTE: I can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
 			if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
 				
+				int i = 0;
 				for (draw_call_t draw_call : mDrawCalls)
+				//if(mDrawCalls.size() != 0)
 				{
-					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced( mVertexBuffer));
+					i++;
+					//auto draw_call = mDrawCalls[0];
+					cmdBfr->push_constants(mPipeline->layout(), i);
+					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
+					//continue;
 				}
 			}
 

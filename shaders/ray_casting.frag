@@ -7,18 +7,19 @@
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
 // kbuffer storage 
-layout (set = 1, binding = 0, r32ui) coherent uniform uimage2D semaphore;
+layout (set = 1, binding = 0, r32ui) volatile coherent uniform uimage2D semaphore;
 layout (set = 1, binding = 1, r8ui) coherent uniform uimage2D count;
 layout (set = 1, binding = 2, r32f) coherent uniform image2DArray depths;
 layout (set = 1, binding = 3, rgba16f) coherent uniform image2DArray fragmentSamples;
 
 layout(location = 0) in vec4 inViewRay;
-layout(location = 1) in vec4 infragColor;
+layout(location = 1) in vec4 inFragColor;
 layout(location = 2) in vec3 inPosA;
 layout(location = 3) in vec3 inPosB;
 layout(location = 4) in vec2 inRARB;
 layout(location = 5) in vec3 inN0;
 layout(location = 6) in vec3 inN1;
+layout(location = 7) in vec3 inPosWS;
 
 layout(location = 0) out vec4 outColor;
 
@@ -107,7 +108,17 @@ void main() {
         discard;
     }
 
-        // early exit
+    // clip spherical caps
+    vec3 n0 = normalize(inPosWS - inPosA);
+    vec3 n1 = normalize(inPosWS - inPosB);
+    float t0 = dot(n0, inN0);
+    float t1 = dot(n1, inN1);
+    if(max(t1, t0) > 0)
+    {
+        //discard;
+    }
+
+    // early exit
     bool isFull = current_count >= K_MAX;
     bool isFurther = gl_FragCoord.z > imageLoad(depths, ivec3(coord, 0)).r;
     if(isFull && isFurther)
@@ -120,47 +131,21 @@ void main() {
     vec3 nor = tnor.yzw;
     float ndotl = clamp( dot(nor,lig), 0.0, 1.0 );
 
-
-    vec4 color = vec4( infragColor.rgb * ndotl, 0.3);
-
+    vec4 color = vec4(inFragColor * ndotl);
 
     // write fragment to k buffer
-    bool write = true;
-    while(write)
+    bool done = gl_SampleMaskIn[0] == 0; // ignore helper threads
+    while(!done)
     {
-        if(acquire_semaphore(coord))
+        if(imageAtomicCompSwap(semaphore, coord, 0u, 1u) == 0u)
         {
             insert(coord, current_count, color);
 
-            release_semaphore(coord);
-
-            write = false;
+            done = true;
+            imageAtomicExchange(semaphore, coord, 0u);
         }
     }
-
-    discard;
-
-    //outColor = vec4( vec3(1.0,0.9,0.7)*dif + vec3(0.01), 0.3);
-    //outColor = vec4(nor, 0.5);
-
 }
-
-
-bool acquire_semaphore(ivec2 coord)
-{
-    if(imageLoad(semaphore, coord).r == 1)
-    {
-        return false;
-    }
-
-    return imageAtomicExchange(semaphore, coord, 1) == 0;
-}
-
-void release_semaphore(ivec2 coord)
-{
-    imageStore(semaphore, coord, uvec4(0));
-}
-
 
 void kbuffer_store(ivec2 coord, int layer, float depth, vec4 fragment)
 {
@@ -185,7 +170,7 @@ void insert(ivec2 coord, uint current_count, vec4 color)
 
             float oldDepth = imageLoad(depths, coordLayer).r;
 
-            if(gl_FragCoord.z > oldDepth)
+            if(gl_FragCoord.z >= oldDepth)
             {
                 vec4 oldValue = imageLoad(fragmentSamples, coordLayer);
 

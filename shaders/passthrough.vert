@@ -4,6 +4,12 @@
 #extension GL_GOOGLE_include_directive : enable
 #include "shader_structures.glsl"
 
+struct PushConstants {
+	int drawCallIndex;
+};
+
+layout(push_constant) uniform PushConstantsBlock { PushConstants pushConstants; };
+
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
 layout(location = 0) in vec3 inPosition;
@@ -28,10 +34,10 @@ uint compute_hash(uint a)
 void main() {
     gl_Position =  vec4(inPosition, 1.0);
 
-    uint hash = compute_hash(gl_VertexIndex);
+    uint hash = compute_hash(pushConstants.drawCallIndex);
     vec3 color = vec3(float(hash & 255), float((hash >> 8) & 255), float((hash >> 16) & 255)) / 255.0;
     outColor = vec4(color, 1);
 
-    outRadius = inRadius /100;
+    outRadius =  0.005;
 
 }
