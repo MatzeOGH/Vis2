@@ -51,14 +51,14 @@ void main()
 		samples[i].depth = uintBitsToFloat(unpacked.y);
 		sample_count++;
 	}
-	/*
+	
 	// insertion sort sort
-	int i = 1;
+	int i = 0;
 	while( i < sample_count)
 	{
 		int j = i;
 
-		while(j > 0 && samples[j-1].depth < samples[j].depth)
+		while(j > 0 && samples[j-1].depth > samples[j].depth)
 		{
 			// swap
 			Samples temp = samples[j];
@@ -68,10 +68,10 @@ void main()
 		}
 		i++;
 	}
-	*/
+	
 
-	vec3 color = vec3(0, 0.0, 0.0);
-	float sampleAlpha = 1.0;
+	vec3 color = vec3(0);
+	float sampleAlpha = 1;
 	for(uint i = 0; i < sample_count; ++i)
 	{
 		color = color + samples[i].color.rgb * sampleAlpha;
