@@ -38,6 +38,6 @@ void main() {
     vec3 color = vec3(float(hash & 255), float((hash >> 8) & 255), float((hash >> 16) & 255)) / 255.0;
     outColor = vec4(color, 1);
 
-    outRadius =  0.005;
+    outRadius =  inRadius/50;
 
 }

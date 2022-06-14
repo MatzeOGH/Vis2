@@ -22,6 +22,8 @@ glm::vec4 uIntTo4Col(unsigned int val) {
 	return tmp;
 }
 
+		const size_t kBufferLayer = 8;
+
 class line_renderer_app : public gvk::invokee 
 {
 
@@ -49,8 +51,8 @@ class line_renderer_app : public gvk::invokee
 		glm::vec4 mCamDir;
 		glm::vec4 mClearColor;
 		glm::vec4 mHelperLineColor;
+		glm::vec4 mkBufferInfo;
 		VkBool32 mUseVertexColorForHelperLines;
-		glm::vec3 buff3; // dont know if necessary
 	};
 
 public:
@@ -66,6 +68,8 @@ public:
 		//mVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(mVertexData));
 		//mVertexBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
 
+		const auto resolution = context().main_window()->resolution();
+
 		mUniformBuffer = context().create_buffer(memory_usage::host_visible, {}, uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
 		mUniformBuffer->fill(mVertexData.data(), 0);
 
@@ -74,7 +78,10 @@ public:
 		// Create a descriptor cache that helps us to conveniently create descriptor sets:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
 
-		const auto resolution = context().main_window()->resolution();
+
+
+		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayer * sizeof(uint64_t);
+		mkBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer, storage_buffer_meta::create_from_size(kBufferSize));
 
 		auto spinlockBuffer = context().create_image(resolution.x, resolution.y, vk::Format::eR32Uint, 1, memory_usage::device, image_usage::shader_storage);
 		auto kBufferCount = context().create_image(resolution.x, resolution.y, vk::Format::eR8Uint, 1, memory_usage::device, image_usage::shader_storage);
@@ -118,9 +125,8 @@ public:
 
 		mClearStoragePass = context().create_compute_pipeline_for(
 			compute_shader("shaders/clear_storage_pass.comp"),
-			descriptor_binding(0, 0, mViewKBufferCount->as_storage_image(layout::general)), 
-			descriptor_binding(0, 1, mViewKBufferDepth->as_storage_image(layout::general)),
-			descriptor_binding(0, 2, mViewKBufferColor->as_storage_image(layout::general))
+			descriptor_binding(0, 0, mUniformBuffer),
+			descriptor_binding(0, 1, mkBuffer)
 		);
 		mClearStoragePass.enable_shared_ownership();
 
@@ -149,7 +155,8 @@ public:
 			descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
 			descriptor_binding(1, 1, mViewKBufferCount->as_storage_image(layout::general)),
 			descriptor_binding(1, 2, mViewKBufferDepth->as_storage_image(layout::general)),
-			descriptor_binding(1, 3, mViewKBufferColor->as_storage_image(layout::general))
+			descriptor_binding(1, 3, mViewKBufferColor->as_storage_image(layout::general)),
+			descriptor_binding(2, 0, mkBuffer)
 		);
 
 		mResolvePass = context().create_graphics_pipeline_for(
@@ -165,10 +172,8 @@ public:
 
 
 			renderpass,
-
-			descriptor_binding(0, 0, mViewKBufferCount->as_storage_image(layout::general)),
-			descriptor_binding(0, 1, mViewKBufferDepth->as_storage_image(layout::general)),
-			descriptor_binding(0, 2, mViewKBufferColor->as_storage_image(layout::general))
+			descriptor_binding(0, 0, mUniformBuffer),
+			descriptor_binding(1, 0, mkBuffer)
 		);
 		mResolvePass.enable_shared_ownership();
 
@@ -369,6 +374,9 @@ public:
 	{
 		using namespace avk;
 		using namespace gvk;
+
+		const auto resolution = context().main_window()->resolution();
+
 		// Update UBO:
 		matrices_and_user_input uni;
 		uni.mViewMatrix = mQuakeCam->view_matrix();
@@ -377,6 +385,7 @@ public:
 		uni.mCamDir = glm::vec4(mQuakeCam->rotation() * glm::vec3(0, 0, -1), 0.0f);
 		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
 		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
+		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, kBufferLayer, 0);
 		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
 
 		buffer& cUBO = mUniformBuffer;
@@ -398,14 +407,12 @@ public:
 			cmdBfr->bind_descriptors(mClearStoragePass->layout(),
 				mDescriptorCache.get_or_create_descriptor_sets(
 					{
-						descriptor_binding(0, 0, mViewKBufferCount->as_storage_image(layout::general)),
-						descriptor_binding(0, 1, mViewKBufferDepth->as_storage_image(layout::general)),
-						descriptor_binding(0, 2, mViewKBufferColor->as_storage_image(layout::general))
+						descriptor_binding(0, 0, mUniformBuffer),
+						descriptor_binding(0, 1, mkBuffer)
 					}));
 
 
 			constexpr auto WORKGROUP_SIZE = uint32_t{ 16u };
-			const auto resolution = context().main_window()->resolution();
 			cmdBfr->handle().dispatch((resolution.x + 15u) / WORKGROUP_SIZE, (resolution.y + 15u) / WORKGROUP_SIZE, 1);
 
 			// Draw tubes
@@ -416,7 +423,8 @@ public:
 				descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
 				descriptor_binding(1, 1, mViewKBufferCount->as_storage_image(layout::general)),
 				descriptor_binding(1, 2, mViewKBufferDepth->as_storage_image(layout::general)),
-				descriptor_binding(1, 3, mViewKBufferColor->as_storage_image(layout::general))
+				descriptor_binding(1, 3, mViewKBufferColor->as_storage_image(layout::general)),
+				descriptor_binding(2, 0, mkBuffer)
 			}));
 			// NOTE: I can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
 			if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
@@ -438,9 +446,8 @@ public:
 			cmdBfr->begin_render_pass_for_framebuffer(mResolvePass->get_renderpass(), context().main_window()->current_backbuffer());
 			cmdBfr->bind_pipeline(const_referenced(mResolvePass));
 			cmdBfr->bind_descriptors(mResolvePass->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-				descriptor_binding(0, 0, mViewKBufferCount->as_storage_image(layout::general)),
-				descriptor_binding(0, 1, mViewKBufferDepth->as_storage_image(layout::general)),
-				descriptor_binding(0, 2, mViewKBufferColor->as_storage_image(layout::general))
+					descriptor_binding(0, 0, mUniformBuffer),
+					descriptor_binding(1, 0, mkBuffer)
 			}));
 			cmdBfr->handle().draw(6u, 1u, 0u, 1u);
 
@@ -489,6 +496,7 @@ private:
 
 	avk::buffer mVertexBuffer;
 	avk::buffer mNewVertexBuffer;
+	avk::buffer mkBuffer;
 	bool mReplaceOldVertexBuffer = false;
 
 	std::shared_ptr<gvk::quake_camera> mQuakeCam;
