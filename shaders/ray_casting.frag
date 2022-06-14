@@ -14,7 +14,7 @@ layout (set = 1, binding = 0, r32ui) volatile coherent uniform uimage2D semaphor
 layout (set = 1, binding = 1, r8ui) coherent uniform uimage2D count;
 layout (set = 1, binding = 2, r32f) coherent uniform image2DArray depths;
 layout (set = 1, binding = 3, rgba16f) coherent uniform image2DArray fragmentSamples;
-layout (set = 2, binding = 0) buffer volatile coherent KBuffer{ uint64_t data[]; } kBuffer;
+layout (set = 2, binding = 0) buffer coherent KBuffer{ uint64_t data[]; } kBuffer;
 
 layout(location = 0) in vec4 inViewRay;
 layout(location = 1) in vec4 inFragColor;
@@ -126,7 +126,7 @@ void main() {
     float t1 = dot(n1, inN1);
     if(max(t1, t0) > 0)
     {
-        //discard;
+        discard;
     }
 
     vec3 lig = normalize(vec3(0.7,0.6,0.3));
@@ -134,19 +134,19 @@ void main() {
     vec3 nor = tnor.yzw;
     float ndotl = clamp( dot(nor,lig), 0.0, 1.0 );
 
-    vec4 color = vec4(inFragColor * ndotl);
+    vec4 color = vec4(inFragColor.rgb * ndotl * inFragColor.a, 1-inFragColor.a );
 
    
     uint64_t value = pack(gl_FragCoord.z, color);
 
-    bool render = true;
-    if( value > kBuffer.data[listPos(0)])
+    bool insert = true;
+    if( value > kBuffer.data[listPos(K_MAX-1)])
     {
-        render = false;
+        insert = false;
     }
 
-    if(render)
-    for( uint i = 0; i < 4; ++i)
+    if(insert)
+    for( uint i = 0; i < K_MAX; ++i)
     {
         uint64_t old = atomicMin(kBuffer.data[listPos(i)], value);
         if(old == packUint2x32(uvec2(0xFFFFFFFFu, 0xFFFFFFFFu)))
@@ -155,7 +155,7 @@ void main() {
         }
         value = max(old, value);
     }
-
+    memoryBarrierBuffer();
     //discard;
 }
 

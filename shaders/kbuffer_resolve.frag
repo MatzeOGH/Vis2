@@ -51,7 +51,7 @@ void main()
 		samples[i].depth = uintBitsToFloat(unpacked.y);
 		sample_count++;
 	}
-
+	/*
 	// insertion sort sort
 	int i = 1;
 	while( i < sample_count)
@@ -68,22 +68,25 @@ void main()
 		}
 		i++;
 	}
+	*/
 
 	vec3 color = vec3(0, 0.0, 0.0);
+	float sampleAlpha = 1.0;
 	for(uint i = 0; i < sample_count; ++i)
 	{
-		float sampleAlpha = 0.5;
-		color = color * (1 - sampleAlpha) + samples[i].color.rgb * sampleAlpha;
+		color = color + samples[i].color.rgb * sampleAlpha;
+		sampleAlpha *= samples[i].color.a;
 	}
 
-	
-	//uint64_t value = kBuffer.data[listPos(0)];
-	//uvec2 data = unpackUint2x32(value);
-	//color = unpackUnorm4x8(data.x).xyz;
-
+	/*
+	uint64_t value = kBuffer.data[listPos(0)];
+	uvec2 data = unpackUint2x32(value);
+	color = unpackUnorm4x8(data.x).xyz;
+	*/
 
 	//color = vec3(1.0) - exp(-color * 4);
 	//color = pow(color, vec3(1.0/2.2));
 
-	outColor = vec4(color, 1);
+	sampleAlpha = 1 - sampleAlpha;
+	outColor = vec4(color / sampleAlpha, sampleAlpha);
 }
