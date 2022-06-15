@@ -10,6 +10,7 @@
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 layout (set = 1, binding = 0) buffer readonly KBuffer{ uint64_t data[]; } kBuffer;
 
+layout (early_fragment_tests) in;
 layout (location = 0) in VertexData
 {
 	vec2 texCoords;   // texture coordinates
@@ -24,7 +25,7 @@ uint listPos(uint i)
     return coord.x + coord.y * imgSize.x + i * (imgSize.x * imgSize.y);
 }
 
-const uint K_MAX = 8; 
+const uint K_MAX = 16; 
 
 struct Samples{
 	vec4 color;
@@ -51,31 +52,17 @@ void main()
 		samples[i].depth = uintBitsToFloat(unpacked.y);
 		sample_count++;
 	}
-	
-	// insertion sort sort
-	int i = 0;
-	while( i < sample_count)
-	{
-		int j = i;
 
-		while(j > 0 && samples[j-1].depth > samples[j].depth)
-		{
-			// swap
-			Samples temp = samples[j];
-			samples[j] = samples[j-1];
-			samples[j-1] = temp;
-			j--;
-		}
-		i++;
-	}
-	
+	if(sample_count == 0)
+		discard;
+
 
 	vec3 color = vec3(0);
-	float sampleAlpha = 1;
+	float alpha = 1;
 	for(uint i = 0; i < sample_count; ++i)
 	{
-		color = color + samples[i].color.rgb * sampleAlpha;
-		sampleAlpha *= samples[i].color.a;
+		color = color + samples[i].color.rgb * alpha;
+		alpha *= samples[i].color.a;
 	}
 
 	/*
@@ -84,9 +71,11 @@ void main()
 	color = unpackUnorm4x8(data.x).xyz;
 	*/
 
-	//color = vec3(1.0) - exp(-color * 4);
+	//color = vec3(1.0) - exp(-color * 10);
 	//color = pow(color, vec3(1.0/2.2));
 
-	sampleAlpha = 1 - sampleAlpha;
-	outColor = vec4(color / sampleAlpha, sampleAlpha);
+	alpha = 1 - alpha;
+	outColor = vec4(color / alpha, alpha);
+
+	//discard;
 }

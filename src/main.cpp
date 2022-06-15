@@ -22,7 +22,7 @@ glm::vec4 uIntTo4Col(unsigned int val) {
 	return tmp;
 }
 
-		const size_t kBufferLayer = 8;
+		const size_t kBufferLayer = 16;
 
 class line_renderer_app : public gvk::invokee 
 {
@@ -83,7 +83,7 @@ public:
 		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayer * sizeof(uint64_t);
 		mkBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer, storage_buffer_meta::create_from_size(kBufferSize));
 
-		auto spinlockBuffer = context().create_image(resolution.x, resolution.y, vk::Format::eR32Uint, 1, memory_usage::device, image_usage::shader_storage);
+		auto spinlockBuffer = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 1, memory_usage::device, image_usage::shader_storage);
 		auto kBufferCount = context().create_image(resolution.x, resolution.y, vk::Format::eR8Uint, 1, memory_usage::device, image_usage::shader_storage);
 		auto kBufferDepth = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 16, memory_usage::device, image_usage::shader_storage);
 		auto kBufferColor = context().create_image(resolution.x, resolution.y, vk::Format::eR16G16B16A16Sfloat, 16, memory_usage::device, image_usage::shader_storage);
@@ -105,8 +105,8 @@ public:
 
 		auto renderpass = context().create_renderpass(
 			{
-				attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::clear,  usage::color(0), on_store::store),
-				attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, usage::depth_stencil, on_store::store),
+				attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load,  usage::color(0), on_store::store),
+				attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, usage::depth_stencil, on_store::store),
 			},
 			{ 
 				subpass_dependency(subpass::external >> subpass::index(0),
@@ -126,7 +126,8 @@ public:
 		mClearStoragePass = context().create_compute_pipeline_for(
 			compute_shader("shaders/clear_storage_pass.comp"),
 			descriptor_binding(0, 0, mUniformBuffer),
-			descriptor_binding(0, 1, mkBuffer)
+			descriptor_binding(0, 1, mkBuffer),
+			descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general))
 		);
 		mClearStoragePass.enable_shared_ownership();
 
@@ -145,7 +146,7 @@ public:
 			cfg::depth_test::disabled(),
 			cfg::depth_write::disabled(),
 			//cfg::front_face::define_front_faces_to_be_clockwise(),
-			//cfg::color_blending_config::enable_alpha_blending_for_all_attachments(),
+			cfg::color_blending_config::enable_alpha_blending_for_all_attachments(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
 			
 			renderpass,
@@ -153,9 +154,6 @@ public:
 			push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(int) },
 			descriptor_binding(0, 0, mUniformBuffer),
 			descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
-			descriptor_binding(1, 1, mViewKBufferCount->as_storage_image(layout::general)),
-			descriptor_binding(1, 2, mViewKBufferDepth->as_storage_image(layout::general)),
-			descriptor_binding(1, 3, mViewKBufferColor->as_storage_image(layout::general)),
 			descriptor_binding(2, 0, mkBuffer)
 		);
 
@@ -169,7 +167,7 @@ public:
 				context().main_window()->backbuffer_at_index(0) // Just use any compatible framebuffer here
 			),
 			cfg::depth_test::disabled(),
-
+			cfg::color_blending_config::enable_alpha_blending_for_attachment(0),
 
 			renderpass,
 			descriptor_binding(0, 0, mUniformBuffer),
@@ -202,10 +200,11 @@ public:
 		mSkyboxPipeline = context().create_graphics_pipeline_for(
 			vertex_shader("shaders/sky_gradient.vert"),
 			fragment_shader("shaders/sky_gradient.frag"),
-			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, usage::color(0), on_store::store),
-			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, usage::depth_stencil, on_store::store),
+			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::clear, usage::color(0), on_store::store),
+			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, usage::depth_stencil, on_store::store),
+			cfg::front_face::define_front_faces_to_be_counter_clockwise(),
 			cfg::culling_mode::disabled(),
-			cfg::depth_test::enabled().set_compare_operation(cfg::compare_operation::less_or_equal),
+			//cfg::depth_test::enabled().set_compare_operation(cfg::compare_operation::less_or_equal),
 			cfg::depth_write::disabled(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
 			descriptor_binding(0, 0, mUniformBuffer) // Doesn't have to be the exact buffer, but one that describes the correct layout for the pipeline.
@@ -408,12 +407,24 @@ public:
 				mDescriptorCache.get_or_create_descriptor_sets(
 					{
 						descriptor_binding(0, 0, mUniformBuffer),
-						descriptor_binding(0, 1, mkBuffer)
+						descriptor_binding(0, 1, mkBuffer),
+						descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general))
 					}));
-
-
 			constexpr auto WORKGROUP_SIZE = uint32_t{ 16u };
 			cmdBfr->handle().dispatch((resolution.x + 15u) / WORKGROUP_SIZE, (resolution.y + 15u) / WORKGROUP_SIZE, 1);
+
+
+			// Draw Skybox
+			if (true) {
+				cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+				cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
+				cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+					descriptor_binding(0, 0, mUniformBuffer)
+					}));
+				cmdBfr->handle().draw(6u, 2u, 0u, 0u);
+				cmdBfr->end_render_pass();
+			}
+			
 
 			// Draw tubes
 			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
@@ -421,9 +432,6 @@ public:
 			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 				descriptor_binding(0, 0, mUniformBuffer),
 				descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
-				descriptor_binding(1, 1, mViewKBufferCount->as_storage_image(layout::general)),
-				descriptor_binding(1, 2, mViewKBufferDepth->as_storage_image(layout::general)),
-				descriptor_binding(1, 3, mViewKBufferColor->as_storage_image(layout::general)),
 				descriptor_binding(2, 0, mkBuffer)
 			}));
 			// NOTE: I can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
@@ -453,16 +461,7 @@ public:
 
 			cmdBfr->end_render_pass();
 			/*
-			// Draw Skybox
-			if (uni.mClearColor.a > 0.0f) {
-				cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
-				cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
-				cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-					descriptor_binding(0, 0, mUniformBuffer)
-					}));
-				cmdBfr->handle().draw(6u, 2u, 0u, 0u);
-				cmdBfr->end_render_pass();
-			}
+
 
 			// Draw helper lines
 			if (mDraw2DHelperLines && mVertexBuffer.has_value()) {
@@ -511,7 +510,7 @@ private:
 	avk::image_view mViewKBufferDepth;
 	avk::image_view mViewKBufferColor;
 
-	float mClearColor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 1.0F };
 	ImGui::FileBrowser mOpenFileDialog;
 	bool mOpenToolbox = true;
 
