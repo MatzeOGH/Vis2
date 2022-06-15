@@ -38,7 +38,7 @@ void main() {
     vec3 color = vec3(float(hash & 255), float((hash >> 8) & 255), float((hash >> 16) & 255)) / 255.0;
     
     outColor.rgb = mix(vec3(1,169,51)/255, vec3(255,0,5)/255, inRadius);
-    outColor.a = 0.21;
+    outColor.a = mix( 0.0,0.3, inRadius);
 
 
     outRadius =  0.004; //inRadius/50;

@@ -10,10 +10,7 @@
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
 // kbuffer storage 
-layout (set = 1, binding = 0, r32ui) volatile coherent uniform uimage2D semaphore;
-layout (set = 1, binding = 1, r8ui) coherent uniform uimage2D count;
-layout (set = 1, binding = 2, r32f) coherent uniform image2DArray depths;
-layout (set = 1, binding = 3, rgba16f) coherent uniform image2DArray fragmentSamples;
+layout (set = 1, binding = 0, r32f) volatile coherent uniform image2D alphaImage;
 layout (set = 2, binding = 0) buffer coherent KBuffer{ uint64_t data[]; } kBuffer;
 
 layout(location = 0) in vec4 inViewRay;
@@ -27,7 +24,7 @@ layout(location = 7) in vec3 inPosWS;
 
 layout(location = 0) out vec4 outColor;
 
-const uint K_MAX = 8; 
+const uint K_MAX = 16; 
 
 
 // spin lock buffer
@@ -36,6 +33,7 @@ void release_semaphore(ivec2 coord);
 
 void insert(ivec2 coord, uint current_count, vec4 color);
 uint64_t pack(float depth, vec4 color);
+void unpack(uint64_t data, out float depth, out vec4 color);
 
 uint listPos(uint i)
 {
@@ -103,9 +101,6 @@ vec4 iRoundedCone( in vec3  ro, in vec3  rd,
 
 void main() {
     ivec2 coord = ivec2( gl_FragCoord.xy );
-    uint current_count = imageLoad( count, coord).r;
-
-
 
     vec3 camWS = uboMatricesAndUserInput.mCamPos.xyz;
     vec3 viewRayWS = normalize(inViewRay.xyz);
@@ -126,7 +121,7 @@ void main() {
     float t1 = dot(n1, inN1);
     if(max(t1, t0) > 0)
     {
-        discard;
+        //discard;
     }
 
     vec3 lig = normalize(vec3(0.7,0.6,0.3));
@@ -139,13 +134,16 @@ void main() {
    
     uint64_t value = pack(gl_FragCoord.z, color);
 
+    //beginInvocationInterlockARB(void);
+    //float current_alpha = imageLoad(alphaImage, coord).r;
+
     bool insert = true;
-    if( value > kBuffer.data[listPos(K_MAX-1)])
+    if( value > kBuffer.data[listPos(K_MAX-1)] )
     {
         insert = false;
     }
 
-    if(insert)
+    if(insert) {
     for( uint i = 0; i < K_MAX; ++i)
     {
         uint64_t old = atomicMin(kBuffer.data[listPos(i)], value);
@@ -154,9 +152,31 @@ void main() {
             break;
         }
         value = max(old, value);
+
+        if(i == (K_MAX - 1))
+        {
+            if(value != packUint2x32(uvec2(0xFFFFFFFFu, 0xFFFFFFFFu)))
+            {
+                float depth;
+                vec4 color;
+                unpack(value, depth, color);
+
+                float alpha = 1-color.a;
+                //outColor = vec4(color.xyz/alpha, alpha);
+
+                //current_alpha *= alpha; 
+                //imageStore(alphaImage, coord, vec4(current_alpha));
+            }
+            else
+            {
+                discard;
+            }
+        }
     }
-    memoryBarrierBuffer();
-    //discard;
+    }
+    //endInvocationInterlockARB(void);
+
+
 }
 
 uint64_t pack(float depth, vec4 color)
@@ -169,11 +189,4 @@ void unpack(uint64_t data, out float depth, out vec4 color)
     const uvec2 unpacked = unpackUint2x32(data);
     color = unpackUnorm4x8(unpacked.x);
     depth = uintBitsToFloat(unpacked.y);
-}
-
-void kbuffer_store(ivec2 coord, uint layer, float depth, vec4 fragment)
-{
-    ivec3 coordLayer = ivec3(coord, layer);
-    imageStore(depths, coordLayer, vec4(depth));
-    imageStore(fragmentSamples, coordLayer, fragment);
 }
