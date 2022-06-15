@@ -39,8 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\line_importer.h" />
-    <ClInclude Include="src\thirdparty\imfilebrowser.h" />
-    <ClInclude Include="src\thirdparty\rapidcsv.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -103,18 +101,21 @@
     <OutDir>$(ProjectDir)bin\$(Configuration)_$(Platform)\</OutDir>
     <IntDir>$(ProjectDir)temp\intermediate\$(Configuration)_$(Platform)\</IntDir>
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+    <IncludePath>$(ProjectDir)thirdparty;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish_Vulkan|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)bin\$(Configuration)_$(Platform)\executable\</OutDir>
     <IntDir>$(ProjectDir)temp\intermediate\$(Configuration)_$(Platform)\</IntDir>
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+    <IncludePath>$(ProjectDir)thirdparty;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Vulkan|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)bin\$(Configuration)_$(Platform)\</OutDir>
     <IntDir>$(ProjectDir)temp\intermediate\$(Configuration)_$(Platform)\</IntDir>
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+    <IncludePath>$(ProjectDir)thirdparty;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Vulkan|x64'">
     <ClCompile>
@@ -137,6 +138,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)thirdparty;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuildStep>
       <Command>powershell.exe -ExecutionPolicy Bypass -File "$(ToolsBin)invoke_post_build_helper.ps1" -msbuild "$(MsBuildToolsPath)"  -configuration "$(Configuration)" -framework "$(FrameworkRoot)\"  -platform "$(Platform)" -vcxproj "$(ProjectPath)" -filters "$(ProjectPath).filters" -output "$(OutputPath)\" -executable "$(TargetPath)" -external "$(ExternalRoot)\"</Command>
@@ -164,6 +166,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)thirdparty;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuildStep>
       <Command>powershell.exe -ExecutionPolicy Bypass -File "$(ToolsBin)invoke_post_build_helper.ps1" -msbuild "$(MsBuildToolsPath)"  -configuration "$(Configuration)" -framework "$(FrameworkRoot)\"  -platform "$(Platform)" -vcxproj "$(ProjectPath)" -filters "$(ProjectPath).filters" -output "$(OutputPath)\" -executable "$(TargetPath)" -external "$(ExternalRoot)\"</Command>
@@ -187,6 +190,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)thirdparty;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuildStep>
       <Command>powershell.exe -ExecutionPolicy Bypass -File "$(ToolsBin)invoke_post_build_helper.ps1" -msbuild "$(MsBuildToolsPath)"  -configuration "$(Configuration)" -framework "$(FrameworkRoot)\"  -platform "$(Platform)" -vcxproj "$(ProjectPath)" -filters "$(ProjectPath).filters" -output "$(OutputPath)\" -executable "$(TargetPath)" -external "$(ExternalRoot)\"</Command>

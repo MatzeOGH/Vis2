@@ -14,9 +14,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{1f108145-99cd-448d-a7b9-1e8c476fe812}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\thirdparty">
-      <UniqueIdentifier>{c82b0b9a-ea00-49a2-827e-4a66ef035be0}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -65,12 +62,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\thirdparty\imfilebrowser.h">
-      <Filter>src\thirdparty</Filter>
-    </ClInclude>
-    <ClInclude Include="src\thirdparty\rapidcsv.h">
-      <Filter>src\thirdparty</Filter>
-    </ClInclude>
     <ClInclude Include="src\line_importer.h">
       <Filter>src</Filter>
     </ClInclude>

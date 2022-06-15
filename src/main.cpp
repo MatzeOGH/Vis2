@@ -1,7 +1,6 @@
 #include <gvk.hpp>
 #include <imgui.h>
-#include "thirdparty/imfilebrowser.h"
-#include "thirdparty/rapidcsv.h"
+#include <imfilebrowser.h>
 
 #include <iostream>
 #include <sstream>
@@ -295,7 +294,7 @@ public:
 					std::vector<glm::vec3> position_buffer;
 					std::vector<float> radius_buffer;
 					std::vector<line_draw_info_t> line_draw_infos;
-					import_file(std::move(filename), position_buffer, radius_buffer, line_draw_infos);
+					import_file_fast(std::move(filename), position_buffer, radius_buffer, line_draw_infos);
 
 					const size_t offset = offsetof(Vertex, color);
 					std::vector<Vertex> newVertexData;
@@ -337,7 +336,7 @@ public:
 		mQuakeCam = std::make_shared<quake_camera>();
 		mQuakeCam->set_translation({ 0.0f, 0.0f, 1.0f });
 		mQuakeCam->look_along({ 0.0f, 0.0f, -1.0f });
-		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.1f, 10000.0f);
+		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.001f, 1000.0f);
 		//auto wSize = context().main_window()->swap_chain_extent();
 		//mQuakeCam->set_orthographic_projection(0.0, 2.0, 0.0, 2-0, 0.0f, 100.0f);
 		mQuakeCam->disable();
