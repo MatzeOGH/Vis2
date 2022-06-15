@@ -108,11 +108,13 @@ void main() {
     vec4 tnor = iRoundedCone(camWS, viewRayWS, inPosA, inPosB, inRARB.x, inRARB.y);
     
     // discard pixel if the rounded cone was not intersected
-    float t = tnor.x;
-    if(t <= 0.0)
-    {
-        discard;
+    if (!uboMatricesAndUserInput.mShowBillboards) {
+        if(tnor.x <= 0.0)
+        {
+            discard;
+        }
     }
+
 
     // clip spherical caps
     vec3 n0 = normalize(inPosWS - inPosA);

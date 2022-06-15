@@ -52,6 +52,7 @@ class line_renderer_app : public gvk::invokee
 		glm::vec4 mHelperLineColor;
 		glm::vec4 mkBufferInfo;
 		VkBool32 mUseVertexColorForHelperLines;
+		VkBool32 mShowBillboard;
 	};
 
 public:
@@ -140,7 +141,7 @@ public:
 			geometry_shader("shaders/billboard_creation.geom"),
 			fragment_shader("shaders/ray_casting.frag"),
 
-			cfg::primitive_topology::line_strip_with_adjacency,
+			cfg::primitive_topology::line_strip,
 			cfg::culling_mode::disabled(), // should be disabled for k buffer rendering
 			cfg::depth_test::disabled(),
 			cfg::depth_write::disabled(),
@@ -181,7 +182,7 @@ public:
 			vertex_shader("shaders/2d_lines.vert"),
 			fragment_shader("shaders/2d_lines.frag"),
 
-			cfg::primitive_topology::line_strip_with_adjacency,
+			cfg::primitive_topology::line_strip,
 			cfg::depth_test::disabled(),
 			cfg::depth_write::disabled(),
 			cfg::culling_mode::disabled(),
@@ -266,12 +267,18 @@ public:
 				ImGui::Separator();
 
 				ImGui::Checkbox("Main Render Pass Enabled", &mMainRenderPassEnabled);
-
+				if (mMainRenderPassEnabled) {
+					ImGui::Checkbox("Show Billboards", &mShowBillboards);
+				}
+				
 				ImGui::Separator();
 
 				ImGui::Checkbox("Show Helper Lines", &mDraw2DHelperLines);
-				ImGui::Checkbox("Use vertex color for Lines", &mUseVertexColorForHelperLines);
-				ImGui::ColorEdit4("Line-Color", mHelperLineColor);
+				if (mDraw2DHelperLines) {
+					ImGui::Checkbox("Use vertex color for Lines", &mUseVertexColorForHelperLines);
+					ImGui::ColorEdit4("Line-Color", mHelperLineColor);
+				}
+
 
 				ImGui::Separator();
 
@@ -313,8 +320,8 @@ public:
 							line_draw_info.vertexIds.size());
 
 						// set start and end flag 
-						newVertexData[line_draw_info.vertexIds[0]].pos.x *= -1;
-						newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
+						//newVertexData[line_draw_info.vertexIds[0]].pos.x *= -1;
+						//newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
 					}
 
 					
@@ -385,6 +392,7 @@ public:
 		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
 		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, kBufferLayer, 0);
 		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
+		uni.mShowBillboard = mShowBillboards;
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0);
@@ -433,18 +441,14 @@ public:
 				descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
 				descriptor_binding(2, 0, mkBuffer)
 			}));
-			// NOTE: I can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
+			// NOTE: We can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
 			if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
-				
 				int i = 0;
 				for (draw_call_t draw_call : mDrawCalls)
-				//if(mDrawCalls.size() != 0)
 				{
 					i++;
-					//auto draw_call = mDrawCalls[0];
 					cmdBfr->push_constants(mPipeline->layout(), i);
 					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
-					//continue;
 				}
 			}
 
@@ -459,9 +463,7 @@ public:
 			cmdBfr->handle().draw(6u, 1u, 0u, 1u);
 
 			cmdBfr->end_render_pass();
-			/*
-
-
+			
 			// Draw helper lines
 			if (mDraw2DHelperLines && mVertexBuffer.has_value()) {
 				cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
@@ -470,12 +472,16 @@ public:
 					descriptor_binding(0, 0, mUniformBuffer)
 					}));
 
-				draw_call_t draw_call = mDrawCalls[0];
-				//cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, 0u, draw_call.firstIndex, const_referenced(mVertexBuffer));
-				cmdBfr->draw_vertices(const_referenced(mVertexBuffer));
+				int i = 0;
+				for (draw_call_t draw_call : mDrawCalls)
+				{
+					i++;
+					cmdBfr->push_constants(mPipeline->layout(), i);
+					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
+				}
 				cmdBfr->end_render_pass();
 			}
-			*/
+			
 		cmdBfr->end_recording();
 
 		auto imageAvailableSemaphore = mainWnd->consume_current_image_available_semaphore();
@@ -509,12 +515,13 @@ private:
 	avk::image_view mViewKBufferDepth;
 	avk::image_view mViewKBufferColor;
 
-	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 1.0F };
+	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 0.9F };
 	ImGui::FileBrowser mOpenFileDialog;
 	bool mOpenToolbox = true;
 
 	bool mDraw2DHelperLines = true;
 	bool mUseVertexColorForHelperLines = false;
+	bool mShowBillboards = false;
 	float mHelperLineColor[4] = { 64.0f / 255.0f, 224.0f / 255.0f, 208.0f / 255.0f, 1.0f };
 
 	bool mMainRenderPassEnabled = true;

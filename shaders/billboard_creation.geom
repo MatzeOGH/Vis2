@@ -74,7 +74,6 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     vec3 d0 = e - x0;
     vec3 d1 = e - x1;
 
-
     vec3 u = normalize(cross(d,d0));
     vec3 v0 = normalize(cross(u,d0));
     vec3 v1 = normalize(cross(u,d1));
@@ -116,8 +115,8 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     vec3 c3 = pe + re*u;
 
     // clipping
-    vec3 cx0 = gl_in[0].gl_Position.xyz;
-    vec3 cx3 = gl_in[3].gl_Position.xyz;
+    vec3 cx0 = vec3(1.0); //gl_in[0].gl_Position.xyz;
+    vec3 cx3 = vec3(1.0); //gl_in[3].gl_Position.xyz;
 
     // find start and end cap flag
     float start = cx0.x < 0 ? 0 : 1;
@@ -132,6 +131,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
     //pvMatrix = uboMatricesAndUserInput.mProjMatrix;
 
+    vec2 outRadius = vec2(radA, radB);
     gl_Position = pvMatrix * vec4(c0, 1.0);
     outPosWS = c0;
     d = c0 - e;
@@ -139,7 +139,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outColor = inColor[0];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
-    outRARB = vec2(r0, r1);
+    outRARB = outRadius;
     outN0 = n0;
     outN1 = n1;
     EmitVertex();
@@ -151,7 +151,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outColor = inColor[0];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
-    outRARB = vec2(r0, r1);
+    outRARB = outRadius;
     outN0 = n0;
     outN1 = n1;
     EmitVertex();
@@ -160,10 +160,10 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c2;
     d = c2 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[0];
+    outColor = inColor[1];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
-    outRARB = vec2(r0, r1);
+    outRARB = outRadius;
     outN0 = n0;
     outN1 = n1;
     EmitVertex();
@@ -172,10 +172,10 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c3;
     d = c3 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[0];
+    outColor = inColor[1];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
-    outRARB = vec2(r0, r1);
+    outRARB = outRadius;
     outN0 = n0;
     outN1 = n1;
     EmitVertex();
@@ -185,10 +185,10 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
 
 void main() {
     construct_billboard_for_line(
+        gl_in[0].gl_Position,
         gl_in[1].gl_Position,
-        gl_in[2].gl_Position,
+        inRadius[0],
         inRadius[1],
-        inRadius[2],
         uboMatricesAndUserInput.mCamPos,
         uboMatricesAndUserInput.mCamDir
     );
