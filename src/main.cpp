@@ -51,8 +51,15 @@ class line_renderer_app : public gvk::invokee
 		glm::vec4 mClearColor;
 		glm::vec4 mHelperLineColor;
 		glm::vec4 mkBufferInfo;
+
+
+		glm::vec4 mDirLightDirection; // normalize(vec3(-0.7, -0.6, -0.3));
+		glm::vec4 mDirLightColor; // vec3(1.0, 1.0, 1.0);
+		glm::vec4 mAmbLightColor; // vec3(0.05, 0.05, 0.05);
+		glm::vec4 mMaterialLightReponse; // vec4(0.5, 1.0, 0.5, 32.0);  // amb, diff, spec, shininess
+
 		VkBool32 mUseVertexColorForHelperLines;
-		VkBool32 mShowBillboard;
+		VkBool32 mBillboardClippingEnabled;
 	};
 
 public:
@@ -239,7 +246,7 @@ public:
 			mOpenFileDialog.SetTypeFilters({ ".obj" });
 
 			imguiManager->add_callback([this]() {
-				ImGui::Begin("Line Renderer - Tool Box", &mOpenToolbox, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse);
+				ImGui::Begin("Line Renderer - Tool Box", &mOpenToolbox, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::TextColored(ImVec4(0.f, .6f, .8f, 1.f), "[F1]: Toggle input-mode");
 				if (ImGui::BeginMenuBar()) {
 					if (ImGui::BeginMenu("File")) {
@@ -254,7 +261,7 @@ public:
 					}
 					ImGui::EndMenuBar();
 				}
-				ImGui::SetWindowPos(ImVec2(1.0F, 1.0F), ImGuiCond_FirstUseEver);
+				ImGui::SetWindowPos(ImVec2(10.0F, 10.0F), ImGuiCond_Once);
 
 				std::string fps = std::format("{:.0f} FPS", ImGui::GetIO().Framerate);
 				static std::vector<float> values;
@@ -263,31 +270,47 @@ public:
 				ImGui::PlotLines(fps.c_str(), values.data(), static_cast<int>(values.size()), 0, nullptr, 0.0f, FLT_MAX, ImVec2(0.0f, 20.0f));
 
 				ImGui::ColorEdit4("Background", mClearColor);
-
 				ImGui::Separator();
-
 				ImGui::Checkbox("Main Render Pass Enabled", &mMainRenderPassEnabled);
 				if (mMainRenderPassEnabled) {
-					ImGui::Checkbox("Show Billboards", &mShowBillboards);
+					ImGui::Checkbox("Billboard-Clipping", &mBillboardClippingEnabled);
 				}
-				
 				ImGui::Separator();
-
 				ImGui::Checkbox("Show Helper Lines", &mDraw2DHelperLines);
 				if (mDraw2DHelperLines) {
 					ImGui::Checkbox("Use vertex color for Lines", &mUseVertexColorForHelperLines);
 					ImGui::ColorEdit4("Line-Color", mHelperLineColor);
 				}
-
-
 				ImGui::Separator();
-
 				std::string camPos = std::format("Camera Position:\n{}", glm::to_string(mQuakeCam->translation()));
 				ImGui::Text(camPos.c_str());
-
 				std::string camDir = std::format("Camera Direction:\n{}", glm::to_string(mQuakeCam->rotation() * glm::vec3(0, 0, -1)));
 				ImGui::Text(camDir.c_str());
+				ImGui::End();
 
+				// LIGHTING & MATERIALS WINDOW
+				ImGui::Begin("Lighting & Material", &mOpenToolbox, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGui::SetWindowPos(ImVec2(970.0F, 10.0F), ImGuiCond_Once);
+				if (ImGui::CollapsingHeader("Ambient Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::PushID("AL");
+					ImGui::ColorEdit4("Color", mAmbLightColor);
+					ImGui::PopID();
+				}
+				if (ImGui::CollapsingHeader("Directional Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::PushID("DL");
+					ImGui::SliderFloat("Intensity", &mDirLightIntensity, 0.0F, 10.0F);
+					ImGui::ColorEdit4("Color", mDirLightColor);
+					ImGui::SliderFloat3("Direction", mDirLightDirection, -1.0F, 1.0F);
+					ImGui::PopID();
+				}
+				if (ImGui::CollapsingHeader("Material Constants", ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::PushID("MC");
+					ImGui::SliderFloat("Ambient", &mMaterialAmbient, 0.0F, 3.0F);
+					ImGui::SliderFloat("Diffuse", &mMaterialDiffuse, 0.0F, 3.0F);
+					ImGui::SliderFloat("Specular", &mMaterialSpecular, 0.0F, 3.0F);
+					ImGui::SliderFloat("Shininess", &mMaterialShininess, 0.0F, 128.0F);
+					ImGui::PopID();
+				}
 				ImGui::End();
 
 				mOpenFileDialog.Display();
@@ -392,7 +415,12 @@ public:
 		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
 		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, kBufferLayer, 0);
 		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
-		uni.mShowBillboard = mShowBillboards;
+		uni.mBillboardClippingEnabled = mBillboardClippingEnabled;
+
+		uni.mDirLightDirection = glm::normalize(glm::vec4(mDirLightDirection[0], mDirLightDirection[1], mDirLightDirection[2], mDirLightDirection[3]));
+		uni.mDirLightColor = mDirLightIntensity * glm::vec4(mDirLightColor[0], mDirLightColor[1], mDirLightColor[2], mDirLightColor[3]);
+		uni.mAmbLightColor = glm::vec4(mAmbLightColor[0], mAmbLightColor[1], mAmbLightColor[2], 1.0F);
+		uni.mMaterialLightReponse = glm::vec4(mMaterialAmbient, mMaterialDiffuse, mMaterialSpecular, mMaterialShininess);
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0);
@@ -521,10 +549,19 @@ private:
 
 	bool mDraw2DHelperLines = false;
 	bool mUseVertexColorForHelperLines = false;
-	bool mShowBillboards = false;
+	bool mBillboardClippingEnabled = true;
 	float mHelperLineColor[4] = { 64.0f / 255.0f, 224.0f / 255.0f, 208.0f / 255.0f, 1.0f };
 
 	bool mMainRenderPassEnabled = true;
+
+	float mDirLightDirection[3] = { -0.7F, -0.6F, -0.3F };
+	float mDirLightColor[4] = { 1.0F, 1.0F, 1.0F, 1.0F };
+	float mDirLightIntensity = 1.0F;
+	float mAmbLightColor[4] = { 0.05F, 0.05F, 0.05F };
+	float mMaterialAmbient = 0.5;
+	float mMaterialDiffuse = 1.0;
+	float mMaterialSpecular = 0.5;
+	float mMaterialShininess = 32.0;
 
 };
 

@@ -17,10 +17,16 @@ struct matrices_and_user_input {
 	// The color of the 2d debug lines if activated
 	vec4 mHelperLineColor;
 	vec4 kBufferInfo; // contains resx, resy and kbuffer levels
+
+	vec4 mDirLightDirection; // normalize(vec3(-0.7, -0.6, -0.3));
+    vec4 mDirLightColor; // vec3(1.0, 1.0, 1.0);
+    vec4 mAmbLightColor; // vec3(0.05, 0.05, 0.05);
+    vec4 mMaterialLightReponse; // vec4(0.5, 1.0, 0.5, 32.0);  // amb, diff, spec, shininess
+
 	// If actived the lines will be colored according to the vertex colors
 	bool mUseVertexColorForHelperLines;
-	bool mShowBillboards;
-	vec2 buf2; // dunno if necessary
+	bool mBillboardClippingEnabled;
+	vec2 buf2;
 };
 
 #define SHADER_STRUCTURES_GLSL 1

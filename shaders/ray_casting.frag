@@ -97,16 +97,43 @@ vec4 iRoundedCone( in vec3  ro, in vec3  rd,
     return r;
 }
 
-
+// Returns the distance from the given point to the plane
+// Plane must be in Hessian Normal form
 float get_distance_from_plane(vec3 point, vec4 plane)
 {
     return dot(plane.xyz, point.xyz) - plane.w;
 }
 
-vec3 ws_to_hcs(vec4 pWs) {
-    vec4 tmp = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix * pWs;
-    tmp /= tmp.w;
-    return tmp.xyz;
+// Calculates the diffuse and specular illumination contribution for the given
+// parameters according to the Blinn-Phong lighting model.
+// All parameters must be normalized.
+vec3 calc_blinn_phong_contribution(vec3 toLight, vec3 toEye, vec3 normal, vec3 diffFactor, vec3 specFactor, float specShininess)
+{
+	float nDotL = max(0.0, dot(normal, toLight)); // lambertian coefficient
+	vec3 h = normalize(toLight + toEye);
+	float nDotH = max(0.0, dot(normal, h));
+	float specPower = pow(nDotH, specShininess);
+	vec3 diffuse = diffFactor * nDotL; // component-wise product
+	vec3 specular = specFactor * specPower;
+	return diffuse + specular;
+}
+
+// Calculates the blinn phong illumination for the given fragment
+vec3 calculate_illumination(vec3 albedo, vec3 eyePos, vec3 fragPos, vec3 fragNorm) {
+    vec4 mMaterialLightReponse = uboMatricesAndUserInput.mMaterialLightReponse;
+    vec3 dirColor = uboMatricesAndUserInput.mDirLightColor.rgb;
+    vec3 ambient = mMaterialLightReponse.x * inFragColor.rgb;
+    vec3 diff = mMaterialLightReponse.y * inFragColor.rgb;
+    vec3 spec = mMaterialLightReponse.zzz;
+    float shini = mMaterialLightReponse.w;
+
+    vec3 ambientIllumination = ambient * uboMatricesAndUserInput.mAmbLightColor.rgb;
+    
+    vec3 toLightDirWS = -uboMatricesAndUserInput.mDirLightDirection.xyz;
+    vec3 toEyeNrmWS = normalize(eyePos - fragPos);
+    vec3 diffAndSpecIllumination = dirColor * calc_blinn_phong_contribution(toLightDirWS, toEyeNrmWS, fragNorm, diff, spec, shini);
+
+    return ambientIllumination + diffAndSpecIllumination;
 }
 
 void main() {
@@ -116,39 +143,31 @@ void main() {
     vec3 viewRayWS = normalize(inViewRay.xyz);
 
     vec4 tnor = iRoundedCone(camWS, viewRayWS, inPosA, inPosB, inRARB.x, inRARB.y);
-    
-    // discard pixel if the rounded cone was not intersected
-    if (!uboMatricesAndUserInput.mShowBillboards) {
-        if(tnor.x <= 0.0)
-        {
-            discard;
-        }
-    }
-
     vec3 posWsOnCone = camWS + viewRayWS * tnor.x;
 
-
-    // clip spherical caps
-    vec3 cx1 = inPosA;
-    vec3 cx2 =  inPosB;
-    vec3 cx = posWsOnCone;
-    vec3 n0 = inN0;
-    vec3 n1 = inN1;
-    // get hesse normal forms of planes:
-    vec4 plane1 = vec4(n0, dot(cx1, inN0));
-    vec4 plane2 = vec4(n1, dot(cx2, inN1));
-    float dp1 = get_distance_from_plane(cx, plane1);
-    float dp2 = get_distance_from_plane(cx, plane2);
-    if (dp1 > 0 || dp2 > 0) {
-        discard;
+    // discard pixel if the rounded cone was not intersected
+    if (uboMatricesAndUserInput.mBillboardClippingEnabled) {
+        if(tnor.x <= 0.0) discard;
+        
+        // clip spherical caps
+        // get hesse normal forms of planes and calculate distance
+        vec4 plane1 = vec4(inN0, dot(inPosA, inN0));
+        vec4 plane2 = vec4(inN1, dot(inPosB, inN1));
+        float dp1 = get_distance_from_plane(posWsOnCone, plane1);
+        float dp2 = get_distance_from_plane(posWsOnCone, plane2);
+        if (dp1 > 0 || dp2 > 0) discard;
     }
 
+    vec3 illumination = calculate_illumination(inFragColor.rgb, camWS, posWsOnCone, tnor.yzw);
+    vec4 color = vec4(illumination, 1 - inFragColor.a);
+    
+    /*
     vec3 lig = normalize(vec3(0.7,0.6,0.3));
     vec3 hal = normalize(-viewRayWS+lig);
     vec3 nor = tnor.yzw;
     float ndotl = clamp( dot(nor,lig), 0.0, 1.0 );
 
-    vec4 color = vec4(inFragColor.rgb * ndotl * inFragColor.a, 1-inFragColor.a );
+    vec4 color = vec4(inFragColor.rgb * ndotl * inFragColor.a, 1-inFragColor.a );()*/
 
     uint64_t value = pack(gl_FragCoord.z, color);
 
