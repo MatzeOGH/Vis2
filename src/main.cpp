@@ -141,7 +141,7 @@ public:
 			geometry_shader("shaders/billboard_creation.geom"),
 			fragment_shader("shaders/ray_casting.frag"),
 
-			cfg::primitive_topology::line_strip,
+			cfg::primitive_topology::line_strip_with_adjacency,
 			cfg::culling_mode::disabled(), // should be disabled for k buffer rendering
 			cfg::depth_test::disabled(),
 			cfg::depth_write::disabled(),
@@ -182,7 +182,7 @@ public:
 			vertex_shader("shaders/2d_lines.vert"),
 			fragment_shader("shaders/2d_lines.frag"),
 
-			cfg::primitive_topology::line_strip,
+			cfg::primitive_topology::line_strip_with_adjacency,
 			cfg::depth_test::disabled(),
 			cfg::depth_write::disabled(),
 			cfg::culling_mode::disabled(),
@@ -320,8 +320,8 @@ public:
 							line_draw_info.vertexIds.size());
 
 						// set start and end flag 
-						//newVertexData[line_draw_info.vertexIds[0]].pos.x *= -1;
-						//newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
+						newVertexData[line_draw_info.vertexIds[0]].pos.x *= -1;
+						newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
 					}
 
 					
@@ -515,11 +515,11 @@ private:
 	avk::image_view mViewKBufferDepth;
 	avk::image_view mViewKBufferColor;
 
-	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 0.9F };
+	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 0.8F };
 	ImGui::FileBrowser mOpenFileDialog;
 	bool mOpenToolbox = true;
 
-	bool mDraw2DHelperLines = true;
+	bool mDraw2DHelperLines = false;
 	bool mUseVertexColorForHelperLines = false;
 	bool mShowBillboards = false;
 	float mHelperLineColor[4] = { 64.0f / 255.0f, 224.0f / 255.0f, 208.0f / 255.0f, 1.0f };

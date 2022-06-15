@@ -115,19 +115,26 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     vec3 c3 = pe + re*u;
 
     // clipping
-    vec3 cx0 = vec3(1.0); //gl_in[0].gl_Position.xyz;
-    vec3 cx3 = vec3(1.0); //gl_in[3].gl_Position.xyz;
+    vec3 cx0 = gl_in[0].gl_Position.xyz;
+    vec3 cx1 = x0;
+    vec3 cx2 = x1;
+    vec3 cx3 = gl_in[3].gl_Position.xyz;
 
     // find start and end cap flag
-    float start = cx0.x < 0 ? 0 : 1;
-    float end = cx3.x < 0 ? 0 : 1;
-
-    cx0 = abs(cx0);
-    cx3 = abs(cx3);
-
-    vec3 n0 = -normalize(x1 - cx0) * start;
-    vec3 n1 = normalize(cx3 - x0) * end;
+    float start = 1.0;
+    if (cx0.x < 0.0) {
+        start = 0.0;
+        cx0 = abs(cx0);
+    }
+    float end = 1.0;
+    if (cx3.x < 0.0) {
+        end = 0.0;
+        cx3 = abs(cx3);
+    }
     
+    vec3 n0 = -normalize(cx2 - cx0) * start;
+    vec3 n1 = normalize(cx3 - cx1) * end;
+
     mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
     //pvMatrix = uboMatricesAndUserInput.mProjMatrix;
 
@@ -136,7 +143,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c0;
     d = c0 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[0];
+    outColor = inColor[1];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -148,7 +155,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c1;
     d = c1 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[0];
+    outColor = inColor[1];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -160,7 +167,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c2;
     d = c2 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[1];
+    outColor = inColor[2];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -172,7 +179,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c3;
     d = c3 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[1];
+    outColor = inColor[2];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -185,10 +192,10 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
 
 void main() {
     construct_billboard_for_line(
-        gl_in[0].gl_Position,
         gl_in[1].gl_Position,
-        inRadius[0],
+        gl_in[2].gl_Position,
         inRadius[1],
+        inRadius[2],
         uboMatricesAndUserInput.mCamPos,
         uboMatricesAndUserInput.mCamDir
     );

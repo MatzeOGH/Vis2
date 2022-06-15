@@ -41,6 +41,6 @@ void main() {
     outColor.a = 0.5; //mix( 0.0,0.3, inRadius);
 
 
-    outRadius =  inRadius;// / 100; //inRadius/50;
+    outRadius =  0.001; //inRadius / 100; //inRadius/50;
 
 }

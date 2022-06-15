@@ -98,6 +98,16 @@ vec4 iRoundedCone( in vec3  ro, in vec3  rd,
 }
 
 
+float get_distance_from_plane(vec3 point, vec4 plane)
+{
+    return dot(plane.xyz, point.xyz) - plane.w;
+}
+
+vec3 ws_to_hcs(vec4 pWs) {
+    vec4 tmp = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix * pWs;
+    tmp /= tmp.w;
+    return tmp.xyz;
+}
 
 void main() {
     ivec2 coord = ivec2( gl_FragCoord.xy );
@@ -115,15 +125,22 @@ void main() {
         }
     }
 
+    vec3 posWsOnCone = camWS + viewRayWS * tnor.x;
+
 
     // clip spherical caps
-    vec3 n0 = normalize(inPosWS - inPosA);
-    vec3 n1 = normalize(inPosWS - inPosB);
-    float t0 = dot(n0, inN0);
-    float t1 = dot(n1, inN1);
-    if(max(t1, t0) > 0)
-    {
-        //discard;
+    vec3 cx1 = inPosA;
+    vec3 cx2 =  inPosB;
+    vec3 cx = posWsOnCone;
+    vec3 n0 = inN0;
+    vec3 n1 = inN1;
+    // get hesse normal forms of planes:
+    vec4 plane1 = vec4(n0, dot(cx1, inN0));
+    vec4 plane2 = vec4(n1, dot(cx2, inN1));
+    float dp1 = get_distance_from_plane(cx, plane1);
+    float dp2 = get_distance_from_plane(cx, plane2);
+    if (dp1 > 0 || dp2 > 0) {
+        discard;
     }
 
     vec3 lig = normalize(vec3(0.7,0.6,0.3));
@@ -133,7 +150,6 @@ void main() {
 
     vec4 color = vec4(inFragColor.rgb * ndotl * inFragColor.a, 1-inFragColor.a );
 
-   
     uint64_t value = pack(gl_FragCoord.z, color);
 
     //beginInvocationInterlockARB(void);
