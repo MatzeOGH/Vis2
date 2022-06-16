@@ -8,59 +8,22 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "line_importer.h"
+#include "host_structures.h"
 
 
-glm::vec4 uIntTo4Col(unsigned int val) {
-	// ToDo
-	// Jeweils 8 bit für eine Komponente
-	glm::vec4 tmp(0.0f);
-	tmp.r = (float)((val & 0xFF000000) >> (8 * 3)) / 255.0f;
-	tmp.g = (float)((val & 0x00FF0000) >> (8 * 2)) / 255.0f;
-	tmp.b = (float)((val & 0x0000FF00) >> (8 * 1)) / 255.0f;
-	tmp.a = (float)((val & 0x000000FF) >> (8 * 0)) / 255.0f;
-	return tmp;
-}
-
-		const size_t kBufferLayer = 16;
+const size_t kBufferLayerCount = 16;
 
 class line_renderer_app : public gvk::invokee 
 {
 
-	struct Vertex {
-		glm::vec3 pos;
-		glm::vec4 color;
-		float radius;
-	};
 
-	struct draw_call_t
-	{
-		uint32_t firstIndex;
-		uint32_t numberOfPrimitives;
-	};
 
 	const std::vector<Vertex> mVertexData = {
 		{{0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 0.5f},
 		{{10.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 2.0f}
 	};
 
-	struct matrices_and_user_input {
-		glm::mat4 mViewMatrix;
-		glm::mat4 mProjMatrix;
-		glm::vec4 mCamPos;
-		glm::vec4 mCamDir;
-		glm::vec4 mClearColor;
-		glm::vec4 mHelperLineColor;
-		glm::vec4 mkBufferInfo;
 
-
-		glm::vec4 mDirLightDirection; // normalize(vec3(-0.7, -0.6, -0.3));
-		glm::vec4 mDirLightColor; // vec3(1.0, 1.0, 1.0);
-		glm::vec4 mAmbLightColor; // vec3(0.05, 0.05, 0.05);
-		glm::vec4 mMaterialLightReponse; // vec4(0.5, 1.0, 0.5, 32.0);  // amb, diff, spec, shininess
-
-		VkBool32 mUseVertexColorForHelperLines;
-		VkBool32 mBillboardClippingEnabled;
-	};
 
 public:
 
@@ -87,7 +50,7 @@ public:
 
 
 
-		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayer * sizeof(uint64_t);
+		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayerCount * sizeof(uint64_t);
 		mkBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer, storage_buffer_meta::create_from_size(kBufferSize));
 
 		auto spinlockBuffer = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 1, memory_usage::device, image_usage::shader_storage);
@@ -282,10 +245,14 @@ public:
 					ImGui::ColorEdit4("Line-Color", mHelperLineColor);
 				}
 				ImGui::Separator();
-				std::string camPos = std::format("Camera Position:\n{}", glm::to_string(mQuakeCam->translation()));
-				ImGui::Text(camPos.c_str());
-				std::string camDir = std::format("Camera Direction:\n{}", glm::to_string(mQuakeCam->rotation() * glm::vec3(0, 0, -1)));
-				ImGui::Text(camDir.c_str());
+				if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::PushID("Cam");
+					std::string camPos = std::format("Position:\n{}", glm::to_string(mQuakeCam->translation()));
+					ImGui::Text(camPos.c_str());
+					std::string camDir = std::format("Direction:\n{}", glm::to_string(mQuakeCam->rotation() * glm::vec3(0, 0, -1)));
+					ImGui::Text(camDir.c_str());
+					ImGui::PopID();
+				}
 				ImGui::End();
 
 				// LIGHTING & MATERIALS WINDOW
@@ -333,7 +300,7 @@ public:
 							position_buffer[idx],
 							{0.5f, 0.5f, 0.5f, 1.0f},
 							radius_buffer[idx]
-							});
+						});
 					}
 
 					mDrawCalls.clear();
@@ -346,8 +313,6 @@ public:
 						newVertexData[line_draw_info.vertexIds[0]].pos.x *= -1;
 						newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
 					}
-
-					
 
 					mNewVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(newVertexData));
 					mNewVertexBuffer.enable_shared_ownership();
@@ -413,7 +378,7 @@ public:
 		uni.mCamDir = glm::vec4(mQuakeCam->rotation() * glm::vec3(0, 0, -1), 0.0f);
 		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
 		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
-		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, kBufferLayer, 0);
+		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, kBufferLayerCount, 0);
 		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
 		uni.mBillboardClippingEnabled = mBillboardClippingEnabled;
 

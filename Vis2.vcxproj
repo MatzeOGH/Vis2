@@ -15,6 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\helper_functions.cpp" />
     <ClCompile Include="src\line_importer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
@@ -38,6 +39,8 @@
     <None Include="shaders\sky_gradient.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\helper_functions.h" />
+    <ClInclude Include="src\host_structures.h" />
     <ClInclude Include="src\line_importer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

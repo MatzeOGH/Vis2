@@ -14,13 +14,19 @@
     <Filter Include="src">
       <UniqueIdentifier>{1f108145-99cd-448d-a7b9-1e8c476fe812}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\util">
+      <UniqueIdentifier>{2d0c4843-3f96-4e9c-bb0b-3ca7a315afaa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\helper_functions.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
     <ClCompile Include="src\line_importer.cpp">
-      <Filter>src</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,7 +68,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\helper_functions.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
     <ClInclude Include="src\line_importer.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\host_structures.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
