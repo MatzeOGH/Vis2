@@ -29,4 +29,11 @@ struct matrices_and_user_input {
 
 	VkBool32 mUseVertexColorForHelperLines;
 	VkBool32 mBillboardClippingEnabled;
+	int mNumberOfLines;
+};
+
+struct downsample
+{
+	glm::vec2 mOutputSize;
+	glm::vec2 mInvInputSize;
 };

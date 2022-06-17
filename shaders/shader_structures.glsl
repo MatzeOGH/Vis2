@@ -26,6 +26,7 @@ struct matrices_and_user_input {
 	// If actived the lines will be colored according to the vertex colors
 	bool mUseVertexColorForHelperLines;
 	bool mBillboardClippingEnabled;
+	int mNumberOfLines;
 	vec2 buf2;
 };
 

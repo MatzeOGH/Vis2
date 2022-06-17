@@ -66,6 +66,9 @@
     <None Include="shaders\kbuffer_resolve.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\sort_lines.comp">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\helper_functions.h">

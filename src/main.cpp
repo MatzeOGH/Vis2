@@ -49,29 +49,58 @@ public:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
 
 
-
+		// Create the buffer for the k buffer
 		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayerCount * sizeof(uint64_t);
 		mkBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer, storage_buffer_meta::create_from_size(kBufferSize));
 
-		auto spinlockBuffer = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 1, memory_usage::device, image_usage::shader_storage);
-		auto kBufferCount = context().create_image(resolution.x, resolution.y, vk::Format::eR8Uint, 1, memory_usage::device, image_usage::shader_storage);
-		auto kBufferDepth = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 16, memory_usage::device, image_usage::shader_storage);
-		auto kBufferColor = context().create_image(resolution.x, resolution.y, vk::Format::eR16G16B16A16Sfloat, 16, memory_usage::device, image_usage::shader_storage);
+		auto kBufferAttachment = context().create_image(resolution.x, resolution.y, context().main_window()->swap_chain_image_format(), 1, memory_usage::device, image_usage::color_attachment | image_usage::input_attachment | image_usage::sampled);
+		auto minOpacityMipmap = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 1, memory_usage::device, image_usage::shader_storage | image_usage::mip_mapped);
+		mAlphaCopyImage = context().create_image(resolution.x, resolution.y, context().main_window()->swap_chain_image_format(), 1, memory_usage::device, image_usage::input_attachment | image_usage::sampled);
 
 		auto fen = context().record_and_submit_with_fence(context().gather_commands(
-			sync::image_memory_barrier(spinlockBuffer, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
-			sync::image_memory_barrier(kBufferCount, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
-			sync::image_memory_barrier(kBufferDepth, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
-			sync::image_memory_barrier(kBufferColor, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
+			sync::image_memory_barrier(minOpacityMipmap, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
+			sync::image_memory_barrier(kBufferAttachment, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::shader_read_only_optimal),
 
 			context().main_window()->layout_transitions_for_all_backbuffer_images()
 		), mQueue);
 		fen->wait_until_signalled();
 		
-		mViewSpinlockBuffer = context().create_image_view(owned(spinlockBuffer));
-		mViewKBufferCount = context().create_image_view(owned(kBufferCount));
-		mViewKBufferDepth = context().create_image_view(owned(kBufferDepth));
-		mViewKBufferColor = context().create_image_view(owned(kBufferColor));
+		kBufferAttachment.enable_shared_ownership();
+
+		// sampler for reducing the alpha in the mip map generation
+		mAlphaReduceSampler = context().create_sampler(
+			filter_mode::nearest_neighbor,
+			border_handling_mode::clamp_to_edge,
+			16.f
+		);
+
+		auto kBufferRenderpass = context().create_renderpass(
+			{
+				attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load,  usage::color(0), on_store::store),
+			},
+			{
+				subpass_dependency(subpass::external >> subpass::index(0),
+									stage::compute_shader >> stage::early_fragment_tests | stage::late_fragment_tests | stage::color_attachment_output,
+									access::shader_storage_write >> access::depth_stencil_attachment_read | access::depth_stencil_attachment_write | access::color_attachment_write
+								  ),
+				subpass_dependency(subpass::index(0) >> subpass::external,
+									stage::early_fragment_tests | stage::late_fragment_tests | stage::color_attachment_output >> stage::early_fragment_tests | stage::late_fragment_tests | stage::color_attachment_output,
+									access::depth_stencil_attachment_write | access::color_attachment_write >> access::depth_stencil_attachment_read | access::color_attachment_read
+								  )
+
+			}
+
+			);
+		kBufferRenderpass.enable_shared_ownership();
+
+		auto view0 = context().create_image_view(owned(kBufferAttachment));
+
+		mKBufferFramebuffer = context().create_framebuffer(
+			avk::shared(kBufferRenderpass),
+			avk::make_vector(
+				avk::shared(view0)
+			)
+		);
 
 		auto renderpass = context().create_renderpass(
 			{
@@ -96,8 +125,7 @@ public:
 		mClearStoragePass = context().create_compute_pipeline_for(
 			compute_shader("shaders/clear_storage_pass.comp"),
 			descriptor_binding(0, 0, mUniformBuffer),
-			descriptor_binding(0, 1, mkBuffer),
-			descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general))
+			descriptor_binding(0, 1, mkBuffer)
 		);
 		mClearStoragePass.enable_shared_ownership();
 
@@ -111,7 +139,7 @@ public:
 			geometry_shader("shaders/billboard_creation.geom"),
 			fragment_shader("shaders/ray_casting.frag"),
 
-			cfg::primitive_topology::line_strip_with_adjacency,
+			cfg::primitive_topology::lines,
 			cfg::culling_mode::disabled(), // should be disabled for k buffer rendering
 			cfg::depth_test::disabled(),
 			cfg::depth_write::disabled(),
@@ -119,11 +147,10 @@ public:
 			cfg::color_blending_config::enable_alpha_blending_for_all_attachments(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
 			
-			renderpass,
+			kBufferRenderpass,
 
 			push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(int) },
 			descriptor_binding(0, 0, mUniformBuffer),
-			descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
 			descriptor_binding(2, 0, mkBuffer)
 		);
 
@@ -139,12 +166,20 @@ public:
 			cfg::depth_test::disabled(),
 			cfg::color_blending_config::enable_alpha_blending_for_attachment(0),
 
-			renderpass,
+			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, usage::color(0), on_store::store),
+			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, usage::depth_stencil, on_store::store),
+
 			descriptor_binding(0, 0, mUniformBuffer),
 			descriptor_binding(1, 0, mkBuffer)
 		);
 		mResolvePass.enable_shared_ownership();
+		/*
+		auto mDownsamplePipeline = context().create_compute_pipeline_for(
+			compute_shader("shader/downsample_alpha"),
 
+		);
+		mDownsamplePipeline.enable_shared_ownership();
+		*/
 		m2DLinePipeline = context().create_graphics_pipeline_for(
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
@@ -152,7 +187,7 @@ public:
 			vertex_shader("shaders/2d_lines.vert"),
 			fragment_shader("shaders/2d_lines.frag"),
 
-			cfg::primitive_topology::line_strip_with_adjacency,
+			cfg::primitive_topology::lines,
 			cfg::depth_test::disabled(),
 			cfg::depth_write::disabled(),
 			cfg::culling_mode::disabled(),
@@ -170,8 +205,9 @@ public:
 		mSkyboxPipeline = context().create_graphics_pipeline_for(
 			vertex_shader("shaders/sky_gradient.vert"),
 			fragment_shader("shaders/sky_gradient.frag"),
-			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::clear, usage::color(0), on_store::store),
-			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, usage::depth_stencil, on_store::store),
+			
+			attachment::declare(context().main_window()->swap_chain_image_format(), on_load::clear, usage::color(0), on_store::store),
+
 			cfg::front_face::define_front_faces_to_be_counter_clockwise(),
 			cfg::culling_mode::disabled(),
 			//cfg::depth_test::enabled().set_compare_operation(cfg::compare_operation::less_or_equal),
@@ -181,8 +217,6 @@ public:
 		);
 
 
-		//mIndexBuffer = context().create_buffer(memory_usage::device, {}, index_buffer_meta::create_from_data(mIndices));
-		//mIndexBuffer->fill(mIndices.data(), 0, sync::wait_idle());
 
 		// Set up an updater for shader hot reload and viewport resize
 		mUpdater.emplace();
@@ -195,6 +229,7 @@ public:
 			.update(mSkyboxPipeline)
 			.update(m2DLinePipeline)
 			.update(mClearStoragePass)
+			//.update(mSortLinesPipeline)
 			.invoke([this]() { mQuakeCam->set_aspect_ratio(gvk::context().main_window()->aspect_ratio()); });
 		
 		mUpdater->on(shader_files_changed_event(mPipeline)).update(mPipeline);
@@ -202,6 +237,7 @@ public:
 		mUpdater->on(shader_files_changed_event(m2DLinePipeline)).update(m2DLinePipeline);
 		mUpdater->on(shader_files_changed_event(mClearStoragePass)).update(mClearStoragePass);
 		mUpdater->on(shader_files_changed_event(mResolvePass)).update(mResolvePass);
+		//mUpdater->on(shader_files_changed_event(mSortLinesPipeline)).update(mSortLinesPipeline);
 
 		auto imguiManager = current_composition()->element_by_type<imgui_manager>();
 		if (nullptr != imguiManager) {
@@ -314,13 +350,54 @@ public:
 						newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
 					}
 
-					mNewVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(newVertexData));
+					// create an index buffer;
+					std::vector<uint32_t> indexBufferSource;
+					for (auto line_draw_info : line_draw_infos) {
+						for (uint32_t index = line_draw_info.vertexIds[0]; index < line_draw_info.vertexIds[line_draw_info.vertexIds.size() - 1]; ++index)
+						{
+							indexBufferSource.push_back(index);
+							indexBufferSource.push_back(index + 1);
+						}
+					}
+
+
+					mNewVertexBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eVertexBuffer, storage_buffer_meta::create_from_data(newVertexData), vertex_buffer_meta::create_from_data(newVertexData));
 					mNewVertexBuffer.enable_shared_ownership();
+
+					// two index buffer
+					mSourceIndexBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eIndexBuffer, storage_buffer_meta::create_from_data(indexBufferSource), index_buffer_meta::create_from_data(indexBufferSource));
+					mSourceIndexBuffer.enable_shared_ownership();
+					mIndexBuffer = context().create_buffer(memory_usage::device, {}, index_buffer_meta::create_from_data(indexBufferSource));
+					mIndexBuffer.enable_shared_ownership();
+
+					// create a buffer for storing the distance to the line
+					mNumberOfLines = (indexBufferSource.size() / 2);
+					mLineDst = context().create_buffer(memory_usage::device, {}, storage_buffer_meta::create_from_size(mNumberOfLines * sizeof(float)));
+					mLineBuffer1 = context().create_buffer(memory_usage::device, {}, storage_buffer_meta::create_from_size(mNumberOfLines * sizeof(uint32_t)));
+					mLineBuffer2 = context().create_buffer(memory_usage::device, {}, storage_buffer_meta::create_from_size(mNumberOfLines * sizeof(uint32_t)));
+					mLineDst.enable_shared_ownership();
+					mLineBuffer1.enable_shared_ownership();
+					mLineBuffer2.enable_shared_ownership();
+
+					// fill buffer on gpu
 					auto fenc = context().record_and_submit_with_fence(
-						{ mNewVertexBuffer->fill(newVertexData.data(), 0) },
+						{ mNewVertexBuffer->fill(newVertexData.data(), 0), mSourceIndexBuffer->fill(indexBufferSource.data(), 0), mIndexBuffer->fill(indexBufferSource.data(), 0) },
 						mQueue
 					);
 					fenc->wait_until_signalled();
+
+					// create compute pipeline
+					mSortLinesPipeline = context().create_compute_pipeline_for(
+						compute_shader("shaders/sort_lines.comp"),
+						descriptor_binding(0, 0, mUniformBuffer),
+						descriptor_binding(0, 1, mLineDst),
+						descriptor_binding(0, 2, mSourceIndexBuffer),
+						descriptor_binding(0, 3, mNewVertexBuffer),
+						descriptor_binding(0, 4, mLineBuffer1),
+						descriptor_binding(0, 5, mLineBuffer2)
+					);
+					mSortLinesPipeline.enable_shared_ownership();
+
 
 					mReplaceOldVertexBuffer = true;
 				}
@@ -386,6 +463,7 @@ public:
 		uni.mDirLightColor = mDirLightIntensity * glm::vec4(mDirLightColor[0], mDirLightColor[1], mDirLightColor[2], mDirLightColor[3]);
 		uni.mAmbLightColor = glm::vec4(mAmbLightColor[0], mAmbLightColor[1], mAmbLightColor[2], 1.0F);
 		uni.mMaterialLightReponse = glm::vec4(mMaterialAmbient, mMaterialDiffuse, mMaterialSpecular, mMaterialShininess);
+		uni.mNumberOfLines = mNumberOfLines;
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0);
@@ -402,51 +480,80 @@ public:
 		
 		cmdBfr->begin_recording();
 
+			// clear k buffer
 			cmdBfr->bind_pipeline(const_referenced(mClearStoragePass));
 			cmdBfr->bind_descriptors(mClearStoragePass->layout(),
 				mDescriptorCache.get_or_create_descriptor_sets(
 					{
 						descriptor_binding(0, 0, mUniformBuffer),
-						descriptor_binding(0, 1, mkBuffer),
-						descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general))
+						descriptor_binding(0, 1, mkBuffer)
 					}));
 			constexpr auto WORKGROUP_SIZE = uint32_t{ 16u };
 			cmdBfr->handle().dispatch((resolution.x + 15u) / WORKGROUP_SIZE, (resolution.y + 15u) / WORKGROUP_SIZE, 1);
 
-
+			//sort line segments
+			/*
+			if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
+				cmdBfr->bind_pipeline(const_referenced(mSortLinesPipeline));
+				cmdBfr->bind_descriptors(mSortLinesPipeline->layout(),
+					mDescriptorCache.get_or_create_descriptor_sets(
+						{
+							descriptor_binding(0, 0, mUniformBuffer),
+							descriptor_binding(0, 1, mLineDst),
+							descriptor_binding(0, 2, mSourceIndexBuffer),
+							descriptor_binding(0, 3, mVertexBuffer),
+							descriptor_binding(0, 4, mLineBuffer1),
+							descriptor_binding(0, 5, mLineBuffer2)
+						}));
+				cmdBfr->handle().dispatch((mNumberOfLines + 15u) / WORKGROUP_SIZE, 1, 1);
+			}/**/
+			
 			// Draw Skybox
-			if (true) {
-				cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
-				cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
-				cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-					descriptor_binding(0, 0, mUniformBuffer)
-					}));
-				cmdBfr->handle().draw(6u, 2u, 0u, 0u);
-				cmdBfr->end_render_pass();
-			}
+			cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), mKBufferFramebuffer);
+			cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
+			cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+				descriptor_binding(0, 0, mUniformBuffer)
+				}));
+			cmdBfr->handle().draw(6u, 2u, 0u, 0u);
+			cmdBfr->end_render_pass();
 			
 
 			// Draw tubes
-			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), mKBufferFramebuffer);
 			cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
 			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 				descriptor_binding(0, 0, mUniformBuffer),
-				descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
 				descriptor_binding(2, 0, mkBuffer)
 			}));
 			// NOTE: We can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
 			if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
-				int i = 0;
-				for (draw_call_t draw_call : mDrawCalls)
-				{
-					i++;
-					cmdBfr->push_constants(mPipeline->layout(), i);
-					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
-				}
+
+				cmdBfr->draw_indexed(const_referenced(mIndexBuffer), const_referenced(mVertexBuffer));
+				
+				// TODO: generate mips
+				/*
+				sync::image_memory_barrier(context().main_window()->current_backbuffer()->image_at(0),
+					stage::color_attachment_output >> stage::blit,
+					access::color_attachment_write >> access::transfer_read
+				).with_layout_transition(layout::general >> layout::transfer_src),
+
+				sync::image_memory_barrier(context().main_window()->current_backbuffer()->image_at(0), // Color attachment
+					stage::none >> stage::blit,
+					access::none >> access::transfer_write
+				).with_layout_transition(layout::present_src >> layout::transfer_dst),
+
+				blit_image(
+					context().main_window()->current_backbuffer()->image_at(0), layout::transfer_src,
+					context().main_window()->current_backbuffer()->image_at(0), layout::transfer_dst,
+					vk::ImageAspectFlagBits::e
+				),
+					/**/
 			}
 
 			cmdBfr->end_render_pass();
 
+			cmdBfr->copy_image(mKBufferFramebuffer->image_at(0).get(), context().main_window()->current_backbuffer()->image_at(0)->handle());
+			
 			cmdBfr->begin_render_pass_for_framebuffer(mResolvePass->get_renderpass(), context().main_window()->current_backbuffer());
 			cmdBfr->bind_pipeline(const_referenced(mResolvePass));
 			cmdBfr->bind_descriptors(mResolvePass->layout(), mDescriptorCache.get_or_create_descriptor_sets({
@@ -456,7 +563,7 @@ public:
 			cmdBfr->handle().draw(6u, 1u, 0u, 1u);
 
 			cmdBfr->end_render_pass();
-			
+			/**/
 			// Draw helper lines
 			if (mDraw2DHelperLines && mVertexBuffer.has_value()) {
 				cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
@@ -489,12 +596,21 @@ private:
 	avk::graphics_pipeline mResolvePass;
 	avk::graphics_pipeline m2DLinePipeline;
 	avk::graphics_pipeline mSkyboxPipeline;
+	avk::compute_pipeline mSortLinesPipeline;
 	avk::compute_pipeline mClearStoragePass;
+
+	avk::image mAlphaCopyImage;
+	avk::sampler mAlphaReduceSampler;
 
 	avk::buffer mVertexBuffer;
 	avk::buffer mNewVertexBuffer;
 	avk::buffer mkBuffer;
+	avk::buffer mLineDst, mLineBuffer1, mLineBuffer2;
+	avk::buffer mIndexBuffer;
+	avk::buffer mSourceIndexBuffer;
 	bool mReplaceOldVertexBuffer = false;
+
+	avk::framebuffer mKBufferFramebuffer;
 
 	std::shared_ptr<gvk::quake_camera> mQuakeCam;
 	avk::buffer mUniformBuffer;
@@ -502,11 +618,6 @@ private:
 
 	/** One descriptor cache to use for allocating all the descriptor sets from: */
 	avk::descriptor_cache mDescriptorCache;
-
-	avk::image_view mViewSpinlockBuffer;
-	avk::image_view mViewKBufferCount;
-	avk::image_view mViewKBufferDepth;
-	avk::image_view mViewKBufferColor;
 
 	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 0.8F };
 	ImGui::FileBrowser mOpenFileDialog;
@@ -527,6 +638,7 @@ private:
 	float mMaterialDiffuse = 1.0;
 	float mMaterialSpecular = 0.5;
 	float mMaterialShininess = 32.0;
+	int mNumberOfLines = 0;
 
 };
 

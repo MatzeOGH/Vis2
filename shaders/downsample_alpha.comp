@@ -1,0 +1,28 @@
+#version 460
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
+#extension GL_ARB_compute_shader : enable
+#extension GL_GOOGLE_include_directive : enable
+#include "shader_structures.glsl"
+
+layout (push_constant) uniform pushConstants
+{
+    vec2 u_outputTextureSize;
+    vec2 u_inputInvTextureSize;
+};
+
+layout( set = 0, binding = 0 ) uniform texture2D inputTexture;
+layout( set = 0, binding = 1 , r32f) uniform writeonly image2D outputTexture;
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+void main()
+{
+    if (gl_GlobalInvocationID.x >= myPerMip.u_outputTextureSize.x || gl_GlobalInvocationID.y >= myPerMip.u_outputTextureSize.y)
+        return;
+
+    vec2 coord = vec2(gl_GlobalInvocationID.xy);
+
+    float depth = textuer(inputTexture, (coord + vec2(0.5)) / u_outputTextureSize).x
+
+    imageStore(outputTexture, ivec2(coord), vec4(depth));
+}

@@ -6,7 +6,7 @@
 
 // needes to be an adjecency sprite to get access to x0 and x3
 // https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#drawing-line-lists-with-adjacency
-layout (lines_adjacency) in;
+layout (lines) in;
 layout (triangle_strip, max_vertices = 4) out;
 
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
@@ -115,10 +115,10 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     vec3 c3 = pe + re*u;
 
     // clipping
-    vec3 cx0 = gl_in[0].gl_Position.xyz;
+    vec3 cx0 = x0;// gl_in[0].gl_Position.xyz;
     vec3 cx1 = x0;
     vec3 cx2 = x1;
-    vec3 cx3 = gl_in[3].gl_Position.xyz;
+    vec3 cx3 = x1; //gl_in[3].gl_Position.xyz;
 
     // find start and end cap flag
     float start = 1.0;
@@ -143,7 +143,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c0;
     d = c0 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[1];
+    outColor = inColor[0];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -155,7 +155,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c1;
     d = c1 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[1];
+    outColor = inColor[0];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -167,7 +167,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c2;
     d = c2 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[2];
+    outColor = inColor[1];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -179,7 +179,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c3;
     d = c3 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[2];
+    outColor = inColor[1];
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -192,10 +192,10 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
 
 void main() {
     construct_billboard_for_line(
+        gl_in[0].gl_Position,
         gl_in[1].gl_Position,
-        gl_in[2].gl_Position,
+        inRadius[0],
         inRadius[1],
-        inRadius[2],
         uboMatricesAndUserInput.mCamPos,
         uboMatricesAndUserInput.mCamDir
     );

@@ -37,6 +37,7 @@
     <None Include="shaders\shader_structures.glsl" />
     <None Include="shaders\sky_gradient.frag" />
     <None Include="shaders\sky_gradient.vert" />
+    <None Include="shaders\sort_lines.comp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\helper_functions.h" />

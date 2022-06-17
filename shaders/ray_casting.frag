@@ -10,7 +10,6 @@
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
 // kbuffer storage 
-layout (set = 1, binding = 0, r32f) volatile coherent uniform image2D alphaImage;
 layout (set = 2, binding = 0) buffer coherent KBuffer{ uint64_t data[]; } kBuffer;
 
 layout(location = 0) in vec4 inViewRay;
@@ -172,7 +171,6 @@ void main() {
     uint64_t value = pack(gl_FragCoord.z, color);
 
     //beginInvocationInterlockARB(void);
-    //float current_alpha = imageLoad(alphaImage, coord).r;
 
     bool insert = true;
     if( value > kBuffer.data[listPos(K_MAX-1)] )
@@ -199,10 +197,7 @@ void main() {
                 unpack(value, depth, color);
 
                 float alpha = 1-color.a;
-                //outColor = vec4(color.xyz/alpha, alpha);
-
-                //current_alpha *= alpha; 
-                //imageStore(alphaImage, coord, vec4(current_alpha));
+                outColor = vec4(color.xyz/alpha, alpha);
             }
             else
             {

@@ -17,7 +17,7 @@ void main()
 	vec3 colorB = mix(uboMatricesAndUserInput.mClearColor.rgb, vec3(1.0), gradientIntensity);
 
 	vec2 pdc = gl_FragCoord.xy / uboMatricesAndUserInput.kBufferInfo.xy;
-	oFragColor = vec4(mix(colorA, colorB, pdc.y), 1.0);
+	oFragColor = vec4(mix(colorA, colorB, pdc.y), 0.0);
 	/*
 	const float pi = 3.1415926535897932384626433832795;
 	const float half_pi = pi * 0.5;
