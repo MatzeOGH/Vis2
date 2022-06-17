@@ -23,38 +23,6 @@ layout(location = 5) out vec3 outN0;
 layout(location = 6) out vec3 outN1;
 layout(location = 7) out vec3 outPosWS;
 
-// Helper function that i used to first test the geometry shader
-// May be removed in the future
-void construct_simple_billboard(vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos) {
-    vec3 up = vec3(0.0, 1.0, 0.0);
-    vec3 va = normalize(posA - posB).xyz;
-    vec3 pa = posA.xyz + va * radA;
-    vec3 vb = normalize(posB - posA).xyz;
-    vec3 pb = posB.xyz + vb * radB;
-    
-    vec3 c0 = pa + up * radA;
-    vec3 c1 = pb + up * radB;
-    vec3 c2 = pb - up * radB;
-    vec3 c3 = pa - up * radA;
-
-    mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
-
-    vec4 color = inColor[0];
-    gl_Position = pvMatrix * vec4(c1, 1.0);
-    outColor = color;
-    EmitVertex();
-    gl_Position = pvMatrix * vec4(c0, 1.0);
-    outColor = color;
-    EmitVertex();   
-    gl_Position = pvMatrix * vec4(c2, 1.0);
-    outColor = color;
-    EmitVertex();
-    gl_Position = pvMatrix * vec4(c3, 1.0);
-    outColor = color;
-    EmitVertex();
-    EndPrimitive();
-}
-
 void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos, vec4 camDir) {
 
     vec3 x0 = posA.xyz;
