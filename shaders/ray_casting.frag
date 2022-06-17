@@ -10,7 +10,6 @@
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
 // kbuffer storage 
-layout (set = 1, binding = 0, r32f) volatile coherent uniform image2D alphaImage;
 layout (set = 2, binding = 0) buffer coherent KBuffer{ uint64_t data[]; } kBuffer;
 
 layout(location = 0) in vec4 inViewRay;
@@ -24,7 +23,6 @@ layout(location = 7) in vec3 inPosWS;
 
 layout(location = 0) out vec4 outColor;
 
-const uint K_MAX = 16; 
 
 
 // spin lock buffer
@@ -172,16 +170,15 @@ void main() {
     uint64_t value = pack(gl_FragCoord.z, color);
 
     //beginInvocationInterlockARB(void);
-    //float current_alpha = imageLoad(alphaImage, coord).r;
 
     bool insert = true;
-    if( value > kBuffer.data[listPos(K_MAX-1)] )
+    if( value > kBuffer.data[listPos(int(uboMatricesAndUserInput.kBufferInfo.z)-1)] )
     {
         insert = false;
     }
 
     if(insert) {
-    for( uint i = 0; i < K_MAX; ++i)
+    for( uint i = 0; i < uint(uboMatricesAndUserInput.kBufferInfo.z); ++i)
     {
         uint64_t old = atomicMin(kBuffer.data[listPos(i)], value);
         if(old == packUint2x32(uvec2(0xFFFFFFFFu, 0xFFFFFFFFu)))
@@ -190,7 +187,7 @@ void main() {
         }
         value = max(old, value);
 
-        if(i == (K_MAX - 1))
+        if(i == ((uboMatricesAndUserInput.kBufferInfo.z) - 1))
         {
             if(value != packUint2x32(uvec2(0xFFFFFFFFu, 0xFFFFFFFFu)))
             {

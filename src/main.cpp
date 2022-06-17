@@ -44,8 +44,8 @@ public:
 
 		auto renderpass = context().create_renderpass(
 			{
-				attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load,  usage::color(0), on_store::store),
-				attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, usage::depth_stencil, on_store::store),
+				attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load,  usage::color(0), on_store::store.in_layout(layout::attachment_optimal)),
+				attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, usage::depth_stencil, on_store::store.in_layout(layout::attachment_optimal)),
 			},
 			{ 
 				subpass_dependency(subpass::external >> subpass::index(0),
@@ -213,6 +213,9 @@ public:
 					ImGui::ColorEdit4("Line-Color", mHelperLineColor);
 				}
 				ImGui::Separator();
+				ImGui::Checkbox("Resolve K-Buffer", &mResolveKBuffer);
+				ImGui::SliderInt("K-Buffer Layer", &mKBufferLayer, 0, kBufferLayerCount);
+				ImGui::Separator();
 				if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::PushID("Cam");
 					std::string camPos = std::format("Position:\n{}", glm::to_string(mQuakeCam->translation()));
@@ -298,11 +301,10 @@ public:
 		}
 
 		mQuakeCam = std::make_shared<quake_camera>();
-		mQuakeCam->set_translation({ 0.0f, 0.0f, 1.0f });
-		mQuakeCam->look_along({ 0.0f, 0.0f, -1.0f });
-		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.001f, 1000.0f);
-		//auto wSize = context().main_window()->swap_chain_extent();
-		//mQuakeCam->set_orthographic_projection(0.0, 2.0, 0.0, 2-0, 0.0f, 100.0f);
+		mQuakeCam->set_translation({ 1.1f, 1.1f, 1.1f });
+		mQuakeCam->look_along({ -1.0f, -1.0f, -1.0f });
+		mQuakeCam->set_move_speed(0.5);
+		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.001f, 100.0f);
 		mQuakeCam->disable();
 		current_composition()->add_element(*mQuakeCam);
 	}
@@ -351,13 +353,13 @@ public:
 		uni.mCamDir = glm::vec4(mQuakeCam->rotation() * glm::vec3(0, 0, -1), 0.0f);
 		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
 		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
-		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, kBufferLayerCount, 0);
+		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, mKBufferLayer, 0);
 		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
 		uni.mBillboardClippingEnabled = mBillboardClippingEnabled;
 
-		uni.mDirLightDirection = glm::normalize(glm::vec4(mDirLightDirection[0], mDirLightDirection[1], mDirLightDirection[2], mDirLightDirection[3]));
+		uni.mDirLightDirection = glm::normalize(glm::vec4(mDirLightDirection[0], mDirLightDirection[1], mDirLightDirection[2], 0.0f));
 		uni.mDirLightColor = mDirLightIntensity * glm::vec4(mDirLightColor[0], mDirLightColor[1], mDirLightColor[2], mDirLightColor[3]);
-		uni.mAmbLightColor = glm::vec4(mAmbLightColor[0], mAmbLightColor[1], mAmbLightColor[2], 1.0F);
+		uni.mAmbLightColor = glm::vec4(mAmbLightColor[0], mAmbLightColor[1], mAmbLightColor[2], mAmbLightColor[3]);
 		uni.mMaterialLightReponse = glm::vec4(mMaterialAmbient, mMaterialDiffuse, mMaterialSpecular, mMaterialShininess);
 
 		buffer& cUBO = mUniformBuffer;
@@ -417,15 +419,17 @@ public:
 		cmdBfr->end_render_pass();
 
 		// Resolve the k buffer and blend it with the rest of the framebuffer
-		cmdBfr->begin_render_pass_for_framebuffer(mResolvePass->get_renderpass(), context().main_window()->current_backbuffer());
-		cmdBfr->bind_pipeline(const_referenced(mResolvePass));
-		cmdBfr->bind_descriptors(mResolvePass->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-				descriptor_binding(0, 0, mUniformBuffer),
-				descriptor_binding(1, 0, mkBuffer)
-		}));
-		cmdBfr->handle().draw(6u, 1u, 0u, 1u);
-		cmdBfr->end_render_pass();
-			
+		if (mResolveKBuffer)
+		{
+			cmdBfr->begin_render_pass_for_framebuffer(mResolvePass->get_renderpass(), context().main_window()->current_backbuffer());
+			cmdBfr->bind_pipeline(const_referenced(mResolvePass));
+			cmdBfr->bind_descriptors(mResolvePass->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+					descriptor_binding(0, 0, mUniformBuffer),
+					descriptor_binding(1, 0, mkBuffer)
+				}));
+			cmdBfr->handle().draw(6u, 1u, 0u, 1u);
+			cmdBfr->end_render_pass();
+		}
 			
 		// Draw helper lines
 		if (mDraw2DHelperLines && mVertexBuffer.has_value()) {
@@ -495,6 +499,8 @@ private:
 
 	long mRenderCallCount = 0;
 
+	bool mResolveKBuffer = true;
+	int mKBufferLayer = kBufferLayerCount;
 };
 
 int main()

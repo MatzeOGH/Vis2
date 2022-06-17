@@ -37,7 +37,7 @@ void main()
 	// load k samples from the data buffers
 	Samples samples[K_MAX];
 	uint sample_count = 0;
-	for(int i = 0; i < K_MAX; ++i)
+	for(int i = 0; i < int(uboMatricesAndUserInput.kBufferInfo.z); ++i)
 	{
 		uint64_t value = kBuffer.data[listPos(i)];
 		if(value == packUint2x32(uvec2(0xFFFFFFFFu, 0xFFFFFFFFu)))
