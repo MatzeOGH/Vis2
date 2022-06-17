@@ -11,7 +11,7 @@ If you have a different operating system you have to compile the application by 
 
 
 ## Setup Dev-Environment {#setup-dev-environment}
-As our application utilizes [Gears-Vk](https://github.com/cg-tuwien/Gears-Vk), therefore all of the requirements for this framework have to be fullfilled:
+As our application utilizes [Gears-Vk](https://github.com/cg-tuwien/Gears-Vk) all of the requirements for this framework have to be fullfilled:
 
 * [Visual Studio 2019](https://visualstudio.microsoft.com/de/downloads/) with [Windows 10 SDK (10.0.18362.0)](https://stackoverflow.com/questions/50590700/how-do-i-install-windows-10-sdk-for-use-with-visual-studio-2017)
 * [Vulkan SDK](https://vulkan.lunarg.com/sdk/home) (1.2.189.2)
@@ -36,4 +36,4 @@ start Vis2.sln
 ```
 
 Now make the **Vis2**-Project the startup project and you should be good to go.
-> **INFO**: The first (ever) build-process usually gets stuck during the resolve of some NuGet-package. If this happens to you just cancel the build and restart the process.
+> **INFO**: The first (ever) build-process usually gets stuck during the resolve of some NuGet-package. If this happens just cancel the build and restart the process.

@@ -35,7 +35,7 @@ var NAVTREE =
         [ "About Gears-Vk", "md__c__tmp__vis2__t_e_c_h_n_i_c_a_l_d_o_c.html#aboutgearsvk", null ]
       ] ]
     ] ],
-    [ "References", "md__c__tmp__vis2__r_e_f_e_r_e_n_c_e_s.html", null ],
+    [ "References & Acknowledgments", "md__c__tmp__vis2__r_e_f_e_r_e_n_c_e_s.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ]
     ] ],
