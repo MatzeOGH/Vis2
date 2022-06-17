@@ -39,10 +39,10 @@
     <None Include="shaders\passthrough.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\sky_gradient.frag">
+    <None Include="shaders\background.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\sky_gradient.vert">
+    <None Include="shaders\background.vert">
       <Filter>shaders</Filter>
     </None>
     <None Include="shaders\2d_lines.frag">

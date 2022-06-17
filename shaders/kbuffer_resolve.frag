@@ -1,9 +1,6 @@
 #version 460
 #extension GL_EXT_nonuniform_qualifier : require
-#extension GL_ARB_separate_shader_objects : enable
-#extension GL_ARB_gpu_shader_int64 : require
-#extension GL_EXT_shader_atomic_int64 : require
-#extension GL_EXT_shader_image_int64 : require
+#extension GL_ARB_gpu_shader_int64 : enable
 #extension GL_GOOGLE_include_directive : enable
 #include "shader_structures.glsl"
 

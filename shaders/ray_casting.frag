@@ -199,10 +199,7 @@ void main() {
                 unpack(value, depth, color);
 
                 float alpha = 1-color.a;
-                //outColor = vec4(color.xyz/alpha, alpha);
-
-                //current_alpha *= alpha; 
-                //imageStore(alphaImage, coord, vec4(current_alpha));
+                outColor = vec4(color.xyz/alpha, alpha);
             }
             else
             {

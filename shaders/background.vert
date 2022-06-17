@@ -14,19 +14,13 @@ vec2 positions[6] = vec2[](
 );
 
 
-// ###### DATA PASSED ON ALONG THE PIPELINE ##############
-// Data from vert -> tesc or frag:
 layout (location = 0) out VertexData {
 	vec2 texCoords;
 } v_out;
-// -------------------------------------------------------
 
-// ###### VERTEX SHADER MAIN #############################
 void main()
 {
-
 	v_out.texCoords = positions[gl_VertexIndex];
     gl_Position = vec4(positions[gl_VertexIndex] * 2.0 - 1.0, 0.0, 1.0);
 }
-// -------------------------------------------------------
 

@@ -35,8 +35,8 @@
     <None Include="shaders\ray_casting.frag" />
     <None Include="shaders\passthrough.vert" />
     <None Include="shaders\shader_structures.glsl" />
-    <None Include="shaders\sky_gradient.frag" />
-    <None Include="shaders\sky_gradient.vert" />
+    <None Include="shaders\background.frag" />
+    <None Include="shaders\background.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />

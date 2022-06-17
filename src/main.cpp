@@ -15,7 +15,7 @@
 /// <summary>
 /// The maximum number of Layers inside the k buffer
 /// </summary>
-const size_t kBufferLayerCount = 16;
+constexpr size_t kBufferLayerCount = 16;
 
 class line_renderer_app : public gvk::invokee 
 {
@@ -32,35 +32,15 @@ public:
 
 		const auto resolution = context().main_window()->resolution();
 
+		// Create an uniform buffer for per frame user input 
 		mUniformBuffer = context().create_buffer(memory_usage::host_visible, {}, uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
-
-		mDrawCalls.push_back({0, 2});
 
 		// Create a descriptor cache that helps us to conveniently create descriptor sets:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
 
+		// Create a storage buffer for the k buffer
 		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayerCount * sizeof(uint64_t);
 		mkBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer, storage_buffer_meta::create_from_size(kBufferSize));
-
-		auto spinlockBuffer = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 1, memory_usage::device, image_usage::shader_storage);
-		auto kBufferCount = context().create_image(resolution.x, resolution.y, vk::Format::eR8Uint, 1, memory_usage::device, image_usage::shader_storage);
-		auto kBufferDepth = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, kBufferLayerCount, memory_usage::device, image_usage::shader_storage);
-		auto kBufferColor = context().create_image(resolution.x, resolution.y, vk::Format::eR16G16B16A16Sfloat, kBufferLayerCount, memory_usage::device, image_usage::shader_storage);
-
-		auto fen = context().record_and_submit_with_fence(context().gather_commands(
-			sync::image_memory_barrier(spinlockBuffer, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
-			sync::image_memory_barrier(kBufferCount, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
-			sync::image_memory_barrier(kBufferDepth, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
-			sync::image_memory_barrier(kBufferColor, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
-
-			context().main_window()->layout_transitions_for_all_backbuffer_images()
-		), mQueue);
-		fen->wait_until_signalled();
-		
-		mViewSpinlockBuffer = context().create_image_view(owned(spinlockBuffer));
-		mViewKBufferCount = context().create_image_view(owned(kBufferCount));
-		mViewKBufferDepth = context().create_image_view(owned(kBufferDepth));
-		mViewKBufferColor = context().create_image_view(owned(kBufferColor));
 
 		auto renderpass = context().create_renderpass(
 			{
@@ -85,8 +65,7 @@ public:
 		mClearStoragePass = context().create_compute_pipeline_for(
 			compute_shader("shaders/clear_storage_pass.comp"),
 			descriptor_binding(0, 0, mUniformBuffer),
-			descriptor_binding(0, 1, mkBuffer),
-			descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general))
+			descriptor_binding(0, 1, mkBuffer)
 		);
 		mClearStoragePass.enable_shared_ownership();
 
@@ -112,9 +91,9 @@ public:
 
 			push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(int) },
 			descriptor_binding(0, 0, mUniformBuffer),
-			descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
 			descriptor_binding(2, 0, mkBuffer)
 		);
+		mPipeline.enable_shared_ownership();
 
 		mResolvePass = context().create_graphics_pipeline_for(
 			vertex_shader("shaders/kbuffer_resolve.vert"),
@@ -148,7 +127,6 @@ public:
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
 			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::load, usage::color(0), on_store::store),
 			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, usage::depth_stencil, on_store::store),
-			//push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(push_constants) },
 			descriptor_binding(0, 0, mUniformBuffer),
 
 			[](graphics_pipeline_t& p) {
@@ -156,45 +134,42 @@ public:
 			}
 		);
 
-		mSkyboxPipeline = context().create_graphics_pipeline_for(
-			vertex_shader("shaders/sky_gradient.vert"),
-			fragment_shader("shaders/sky_gradient.frag"),
+		// Create the pipeline for the background render pass
+		mBackgroundPipeline = context().create_graphics_pipeline_for(
+			vertex_shader("shaders/background.vert"),
+			fragment_shader("shaders/background.frag"),
+
+			// define attachments
 			attachment::declare(format_from_window_color_buffer(context().main_window()), on_load::clear, usage::color(0), on_store::store),
 			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::clear, usage::depth_stencil, on_store::store),
+
 			cfg::front_face::define_front_faces_to_be_counter_clockwise(),
 			cfg::culling_mode::disabled(),
-			//cfg::depth_test::enabled().set_compare_operation(cfg::compare_operation::less_or_equal),
 			cfg::depth_write::disabled(),
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
+
 			descriptor_binding(0, 0, mUniformBuffer) // Doesn't have to be the exact buffer, but one that describes the correct layout for the pipeline.
 		);
-
-
-		//mIndexBuffer = context().create_buffer(memory_usage::device, {}, index_buffer_meta::create_from_data(mIndices));
-		//mIndexBuffer->fill(mIndices.data(), 0, sync::wait_idle());
+		mBackgroundPipeline.enable_shared_ownership();
 
 		// Set up an updater for shader hot reload and viewport resize
 		mUpdater.emplace();
-		mSkyboxPipeline.enable_shared_ownership();
 		m2DLinePipeline.enable_shared_ownership();
-		mPipeline.enable_shared_ownership();
 		mUpdater->on(swapchain_resized_event(context().main_window()))
 			.update(mPipeline)
 			.update(mResolvePass)
-			.update(mSkyboxPipeline)
+			.update(mBackgroundPipeline)
 			.update(m2DLinePipeline)
 			.update(mClearStoragePass)
 			.invoke([this]() { mQuakeCam->set_aspect_ratio(gvk::context().main_window()->aspect_ratio()); });
 		
 		mUpdater->on(shader_files_changed_event(mPipeline)).update(mPipeline);
-		mUpdater->on(shader_files_changed_event(mSkyboxPipeline)).update(mSkyboxPipeline);
+		mUpdater->on(shader_files_changed_event(mBackgroundPipeline)).update(mBackgroundPipeline);
 		mUpdater->on(shader_files_changed_event(m2DLinePipeline)).update(m2DLinePipeline);
 		mUpdater->on(shader_files_changed_event(mClearStoragePass)).update(mClearStoragePass);
 		mUpdater->on(shader_files_changed_event(mResolvePass)).update(mResolvePass);
 
 		auto imguiManager = current_composition()->element_by_type<imgui_manager>();
-
-		//ImGui::SetCurrentContext(imguiManager->)
 
 		if (nullptr != imguiManager) {
 			mOpenFileDialog.SetTitle("Open Line-Data File");
@@ -400,79 +375,75 @@ public:
 		
 		cmdBfr->begin_recording();
 
-			cmdBfr->bind_pipeline(const_referenced(mClearStoragePass));
-			cmdBfr->bind_descriptors(mClearStoragePass->layout(),
-				mDescriptorCache.get_or_create_descriptor_sets(
-					{
-						descriptor_binding(0, 0, mUniformBuffer),
-						descriptor_binding(0, 1, mkBuffer),
-						descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general))
-					}));
-			constexpr auto WORKGROUP_SIZE = uint32_t{ 16u };
-			cmdBfr->handle().dispatch((resolution.x + 15u) / WORKGROUP_SIZE, (resolution.y + 15u) / WORKGROUP_SIZE, 1);
-
-
-			// Draw Skybox
-			if (true) {
-				cmdBfr->begin_render_pass_for_framebuffer(mSkyboxPipeline->get_renderpass(), context().main_window()->current_backbuffer());
-				cmdBfr->bind_pipeline(const_referenced(mSkyboxPipeline));
-				cmdBfr->bind_descriptors(mSkyboxPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-					descriptor_binding(0, 0, mUniformBuffer)
-					}));
-				cmdBfr->handle().draw(6u, 2u, 0u, 0u);
-				cmdBfr->end_render_pass();
-			}
-			
-
-			// Draw tubes
-			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
-			cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
-			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-				descriptor_binding(0, 0, mUniformBuffer),
-				descriptor_binding(1, 0, mViewSpinlockBuffer->as_storage_image(layout::general)),
-				descriptor_binding(2, 0, mkBuffer)
-			}));
-			// NOTE: We can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
-			if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
-				int i = 0;
-				for (draw_call_t draw_call : mDrawCalls)
+		// clear the k buffer 
+		cmdBfr->bind_pipeline(const_referenced(mClearStoragePass));
+		cmdBfr->bind_descriptors(mClearStoragePass->layout(),
+			mDescriptorCache.get_or_create_descriptor_sets(
 				{
-					i++;
-					cmdBfr->push_constants(mPipeline->layout(), i);
-					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
-				}
-			}
-
-			cmdBfr->end_render_pass();
-
-			cmdBfr->begin_render_pass_for_framebuffer(mResolvePass->get_renderpass(), context().main_window()->current_backbuffer());
-			cmdBfr->bind_pipeline(const_referenced(mResolvePass));
-			cmdBfr->bind_descriptors(mResolvePass->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 					descriptor_binding(0, 0, mUniformBuffer),
-					descriptor_binding(1, 0, mkBuffer)
+					descriptor_binding(0, 1, mkBuffer)
+				}));
+		constexpr auto WORKGROUP_SIZE = uint32_t{ 16u };
+		cmdBfr->handle().dispatch((resolution.x + 15u) / WORKGROUP_SIZE, (resolution.y + 15u) / WORKGROUP_SIZE, 1);
+
+		// Draw Skybox
+		cmdBfr->begin_render_pass_for_framebuffer(mBackgroundPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+		cmdBfr->bind_pipeline(const_referenced(mBackgroundPipeline));
+		cmdBfr->bind_descriptors(mBackgroundPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+			descriptor_binding(0, 0, mUniformBuffer)
 			}));
-			cmdBfr->handle().draw(6u, 1u, 0u, 1u);
-
-			cmdBfr->end_render_pass();
+		cmdBfr->handle().draw(6u, 2u, 0u, 0u);
+		cmdBfr->end_render_pass();
 			
-			// Draw helper lines
-			if (mDraw2DHelperLines && mVertexBuffer.has_value()) {
-				cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
-				cmdBfr->bind_pipeline(avk::const_referenced(m2DLinePipeline));
-				cmdBfr->bind_descriptors(m2DLinePipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-					descriptor_binding(0, 0, mUniformBuffer)
-					}));
 
-				int i = 0;
-				for (draw_call_t draw_call : mDrawCalls)
-				{
-					i++;
-					cmdBfr->push_constants(mPipeline->layout(), i);
-					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
-				}
-				cmdBfr->end_render_pass();
+		// Draw lines
+		cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
+		cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
+		cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+			descriptor_binding(0, 0, mUniformBuffer),
+			descriptor_binding(2, 0, mkBuffer)
+		}));
+
+		// Draw the line primitives
+		if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
+			int i = 0;
+			for (draw_call_t draw_call : mDrawCalls)
+			{
+				i++;
+				cmdBfr->push_constants(mPipeline->layout(), i);
+				cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
 			}
+		}
+		cmdBfr->end_render_pass();
+
+		// Resolve the k buffer and blend it with the rest of the framebuffer
+		cmdBfr->begin_render_pass_for_framebuffer(mResolvePass->get_renderpass(), context().main_window()->current_backbuffer());
+		cmdBfr->bind_pipeline(const_referenced(mResolvePass));
+		cmdBfr->bind_descriptors(mResolvePass->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+				descriptor_binding(0, 0, mUniformBuffer),
+				descriptor_binding(1, 0, mkBuffer)
+		}));
+		cmdBfr->handle().draw(6u, 1u, 0u, 1u);
+		cmdBfr->end_render_pass();
 			
+			
+		// Draw helper lines
+		if (mDraw2DHelperLines && mVertexBuffer.has_value()) {
+			cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
+			cmdBfr->bind_pipeline(avk::const_referenced(m2DLinePipeline));
+			cmdBfr->bind_descriptors(m2DLinePipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
+				descriptor_binding(0, 0, mUniformBuffer)
+				}));
+
+			int i = 0;
+			for (draw_call_t draw_call : mDrawCalls)
+			{
+				i++;
+				cmdBfr->push_constants(mPipeline->layout(), i);
+				cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
+			}
+			cmdBfr->end_render_pass();
+		}
 		cmdBfr->end_recording();
 
 		auto imageAvailableSemaphore = mainWnd->consume_current_image_available_semaphore();
@@ -488,7 +459,7 @@ private:
 	avk::graphics_pipeline mPipeline;
 	avk::graphics_pipeline mResolvePass;
 	avk::graphics_pipeline m2DLinePipeline;
-	avk::graphics_pipeline mSkyboxPipeline;
+	avk::graphics_pipeline mBackgroundPipeline;
 	avk::compute_pipeline mClearStoragePass;
 
 	avk::buffer mVertexBuffer;
@@ -502,11 +473,6 @@ private:
 
 	/** One descriptor cache to use for allocating all the descriptor sets from: */
 	avk::descriptor_cache mDescriptorCache;
-
-	avk::image_view mViewSpinlockBuffer;
-	avk::image_view mViewKBufferCount;
-	avk::image_view mViewKBufferDepth;
-	avk::image_view mViewKBufferColor;
 
 	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 0.8F };
 	ImGui::FileBrowser mOpenFileDialog;
