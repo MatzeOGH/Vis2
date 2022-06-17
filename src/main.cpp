@@ -1,3 +1,4 @@
+
 #include <gvk.hpp>
 #include <imgui.h>
 #include <imfilebrowser.h>
@@ -9,14 +10,13 @@
 
 #include "line_importer.h"
 #include "host_structures.h"
+#include "helper_functions.h"
 
 
 const size_t kBufferLayerCount = 16;
 
 class line_renderer_app : public gvk::invokee 
 {
-
-
 
 	const std::vector<Vertex> mVertexData = {
 		{{0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 0.5f},
@@ -204,12 +204,15 @@ public:
 		mUpdater->on(shader_files_changed_event(mResolvePass)).update(mResolvePass);
 
 		auto imguiManager = current_composition()->element_by_type<imgui_manager>();
+
+		//ImGui::SetCurrentContext(imguiManager->)
+
 		if (nullptr != imguiManager) {
 			mOpenFileDialog.SetTitle("Open Line-Data File");
 			mOpenFileDialog.SetTypeFilters({ ".obj" });
 
 			imguiManager->add_callback([this]() {
-				ImGui::Begin("Line Renderer - Tool Box", &mOpenToolbox, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+				ImGui::Begin("Line Renderer - Tool Box", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::TextColored(ImVec4(0.f, .6f, .8f, 1.f), "[F1]: Toggle input-mode");
 				if (ImGui::BeginMenuBar()) {
 					if (ImGui::BeginMenu("File")) {
@@ -232,6 +235,7 @@ public:
 				if (values.size() > 90) values.erase(values.begin());
 				ImGui::PlotLines(fps.c_str(), values.data(), static_cast<int>(values.size()), 0, nullptr, 0.0f, FLT_MAX, ImVec2(0.0f, 20.0f));
 
+				
 				ImGui::ColorEdit4("Background", mClearColor);
 				ImGui::Separator();
 				ImGui::Checkbox("Main Render Pass Enabled", &mMainRenderPassEnabled);
@@ -256,7 +260,7 @@ public:
 				ImGui::End();
 
 				// LIGHTING & MATERIALS WINDOW
-				ImGui::Begin("Lighting & Material", &mOpenToolbox, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGui::Begin("Lighting & Material", NULL, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::SetWindowPos(ImVec2(970.0F, 10.0F), ImGuiCond_Once);
 				if (ImGui::CollapsingHeader("Ambient Light", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::PushID("AL");
@@ -325,6 +329,8 @@ public:
 					mReplaceOldVertexBuffer = true;
 				}
 			});
+
+			
 		}
 
 		mQuakeCam = std::make_shared<quake_camera>();
@@ -369,6 +375,9 @@ public:
 		using namespace gvk;
 
 		const auto resolution = context().main_window()->resolution();
+
+		// The ImGui-Context had to be created, thats why its here
+		if (mRenderCallCount == 0) activateImGuiStyle(false, 0.7);
 
 		// Update UBO:
 		matrices_and_user_input uni;
@@ -480,6 +489,8 @@ public:
 		auto imageAvailableSemaphore = mainWnd->consume_current_image_available_semaphore();
 		mQueue->submit(cmdBfr, imageAvailableSemaphore);
 		mainWnd->handle_lifetime(owned(cmdBfr));
+
+		mRenderCallCount++;
 	}
 
 private:
@@ -510,7 +521,6 @@ private:
 
 	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 0.8F };
 	ImGui::FileBrowser mOpenFileDialog;
-	bool mOpenToolbox = true;
 
 	bool mDraw2DHelperLines = false;
 	bool mUseVertexColorForHelperLines = false;
@@ -528,6 +538,8 @@ private:
 	float mMaterialSpecular = 0.5;
 	float mMaterialShininess = 32.0;
 
+	long mRenderCallCount = 0;
+
 };
 
 int main()
@@ -540,7 +552,9 @@ int main()
 	try {
 		// Create a window, set some configuration parameters (also relevant for its swap chain), and open it:
 		auto mainWnd = gvk::context().create_window(titel);
-		mainWnd->set_resolution({ 1280, 800 });
+		mainWnd->set_resolution({ 1280, 768 });
+		//mainWnd->set_resolution({ 1920, 1080 });
+		
 		mainWnd->set_additional_back_buffer_attachments({
 			avk::attachment::declare(vk::Format::eD32Sfloat, avk::on_load::clear, avk::usage::depth_stencil, avk::on_store::dont_care)
 		});
@@ -549,6 +563,7 @@ int main()
 		mainWnd->set_presentaton_mode(gvk::presentation_mode::fifo);
 		mainWnd->set_number_of_concurrent_frames(1u); // lets not make it more complex than it has to be xD
 		mainWnd->open();
+		//mainWnd->switch_to_fullscreen_mode();
 
 		// Create one single queue which we will submit all command buffers to:
 		// (We pass the mainWnd because also presentation shall be submitted to this queue)

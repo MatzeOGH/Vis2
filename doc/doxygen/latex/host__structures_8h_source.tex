@@ -1,0 +1,38 @@
+\hypertarget{host__structures_8h_source}{}\doxysubsection{host\+\_\+structures.\+h}
+\label{host__structures_8h_source}\index{C:/tmp/Vis2/src/host\_structures.h@{C:/tmp/Vis2/src/host\_structures.h}}
+\mbox{\hyperlink{host__structures_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{2 }
+\DoxyCodeLine{3 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_vertex}{Vertex}} \{}
+\DoxyCodeLine{4     glm::vec3 \mbox{\hyperlink{struct_vertex_a858242dc7b40c034c5e13c589b30cfb4}{pos}};}
+\DoxyCodeLine{5     glm::vec4 \mbox{\hyperlink{struct_vertex_aa7ecd21578677765699b8831e0011696}{color}};}
+\DoxyCodeLine{6     \textcolor{keywordtype}{float} \mbox{\hyperlink{struct_vertex_ab1557d6cedc92aa455814ca5096223ce}{radius}};}
+\DoxyCodeLine{7 \};}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{keyword}{struct }\mbox{\hyperlink{structdraw__call__t}{draw\_call\_t}}}
+\DoxyCodeLine{10 \{}
+\DoxyCodeLine{11     uint32\_t \mbox{\hyperlink{structdraw__call__t_a2624950e64ab98cba28322cc862201e1}{firstIndex}};}
+\DoxyCodeLine{12     uint32\_t \mbox{\hyperlink{structdraw__call__t_a0b9a643768221a37355a83ffd97efcc2}{numberOfPrimitives}};}
+\DoxyCodeLine{13 \};}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{keyword}{struct }\mbox{\hyperlink{structmatrices__and__user__input}{matrices\_and\_user\_input}} \{}
+\DoxyCodeLine{16     glm::mat4 \mbox{\hyperlink{structmatrices__and__user__input_acc4375938d5e2841f6233056ca3ce972}{mViewMatrix}};}
+\DoxyCodeLine{17     glm::mat4 \mbox{\hyperlink{structmatrices__and__user__input_a1917ba601251ce6a84fb09077730e3b3}{mProjMatrix}};}
+\DoxyCodeLine{18     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_adc256b365e9ce985fe445fabe6956a30}{mCamPos}};}
+\DoxyCodeLine{19     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a3bc6283413687136ddb8b3c876db280d}{mCamDir}};}
+\DoxyCodeLine{20     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_aca3806e7f0905aec00d900af3e9b4f78}{mClearColor}};}
+\DoxyCodeLine{21     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_ab91b0c2af4a11518d39e3303fbcbe6f2}{mHelperLineColor}};}
+\DoxyCodeLine{22     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a005e7ce3530323d46505eee33251233c}{mkBufferInfo}};}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a7758d22d9f8116fe353f75c548cba58f}{mDirLightDirection}}; \textcolor{comment}{// normalize(vec3(-\/0.7, -\/0.6, -\/0.3));}}
+\DoxyCodeLine{26     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a5a9a35bfc240a796e85cda4de7fd6491}{mDirLightColor}}; \textcolor{comment}{// vec3(1.0, 1.0, 1.0);}}
+\DoxyCodeLine{27     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a2ecb58d9d264e6423989dc865e974c6e}{mAmbLightColor}}; \textcolor{comment}{// vec3(0.05, 0.05, 0.05);}}
+\DoxyCodeLine{28     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a8a4116d4c25d467d2d35acba71f87ba6}{mMaterialLightReponse}}; \textcolor{comment}{// vec4(0.5, 1.0, 0.5, 32.0);  // amb, diff, spec, shininess}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30     VkBool32 \mbox{\hyperlink{structmatrices__and__user__input_ae46c720408e441a4d8efcbf68b641325}{mUseVertexColorForHelperLines}};}
+\DoxyCodeLine{31     VkBool32 \mbox{\hyperlink{structmatrices__and__user__input_adb10df9650f1a331d700108047daa8bf}{mBillboardClippingEnabled}};}
+\DoxyCodeLine{32 \};}
+
+\end{DoxyCode}

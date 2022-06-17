@@ -1,0 +1,77 @@
+\hypertarget{clear__storage__pass_8comp}{}\doxysubsection{C\+:/tmp/\+Vis2/shaders/clear\+\_\+storage\+\_\+pass.comp File Reference}
+\label{clear__storage__pass_8comp}\index{C:/tmp/Vis2/shaders/clear\_storage\_pass.comp@{C:/tmp/Vis2/shaders/clear\_storage\_pass.comp}}
+{\ttfamily \#include \char`\"{}shader\+\_\+structures.\+glsl\char`\"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{clear__storage__pass_8comp_a4d908f0178f252b8f0cc9b6ade876495}{WORKGROUP\+\_\+\+SIZE}}~16
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{clear__storage__pass_8comp_a75b98e1cc735e8b3932b15d3a3c90136}{layout}} (std140, set=0, binding=0) uniform Uniform\+Block
+\item 
+\mbox{\hyperlink{clear__storage__pass_8comp_a6b2eb9ddefa66d5706046e5d3ff34b62}{layout}} (set=0, binding=1) buffer writeonly KBuffer
+\item 
+\mbox{\hyperlink{clear__storage__pass_8comp_a21bd2dbac17e3070d27afc69d4312152}{layout}} (set=1, binding=0, r32f) volatile coherent uniform image2D alpha\+Image
+\item 
+\mbox{\hyperlink{clear__storage__pass_8comp_a932ad7c4666430fc5d583f6b2fc23f99}{layout}} (local\+\_\+size\+\_\+x=\mbox{\hyperlink{clear__storage__pass_8comp_a4d908f0178f252b8f0cc9b6ade876495}{WORKGROUP\+\_\+\+SIZE}}, local\+\_\+size\+\_\+y=\mbox{\hyperlink{clear__storage__pass_8comp_a4d908f0178f252b8f0cc9b6ade876495}{WORKGROUP\+\_\+\+SIZE}}, local\+\_\+size\+\_\+z=1) in
+\item 
+void \mbox{\hyperlink{clear__storage__pass_8comp_acdef7a1fd863a6d3770c1268cb06add3}{main}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{clear__storage__pass_8comp_ac24a65e2a1a5f3ce65fb9ad01776e3bc}{k\+Buffer}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{clear__storage__pass_8comp_a4d908f0178f252b8f0cc9b6ade876495}\label{clear__storage__pass_8comp_a4d908f0178f252b8f0cc9b6ade876495}} 
+\index{clear\_storage\_pass.comp@{clear\_storage\_pass.comp}!WORKGROUP\_SIZE@{WORKGROUP\_SIZE}}
+\index{WORKGROUP\_SIZE@{WORKGROUP\_SIZE}!clear\_storage\_pass.comp@{clear\_storage\_pass.comp}}
+\doxyparagraph{\texorpdfstring{WORKGROUP\_SIZE}{WORKGROUP\_SIZE}}
+{\footnotesize\ttfamily \#define WORKGROUP\+\_\+\+SIZE~16}
+
+
+
+\doxysubsubsection{Function Documentation}
+\mbox{\Hypertarget{clear__storage__pass_8comp_a932ad7c4666430fc5d583f6b2fc23f99}\label{clear__storage__pass_8comp_a932ad7c4666430fc5d583f6b2fc23f99}} 
+\index{clear\_storage\_pass.comp@{clear\_storage\_pass.comp}!layout@{layout}}
+\index{layout@{layout}!clear\_storage\_pass.comp@{clear\_storage\_pass.comp}}
+\doxyparagraph{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{local\+\_\+size\+\_\+x}]{ = {\ttfamily \mbox{\hyperlink{clear__storage__pass_8comp_a4d908f0178f252b8f0cc9b6ade876495}{WORKGROUP\+\_\+\+SIZE}}},  }\item[{local\+\_\+size\+\_\+y}]{ = {\ttfamily \mbox{\hyperlink{clear__storage__pass_8comp_a4d908f0178f252b8f0cc9b6ade876495}{WORKGROUP\+\_\+\+SIZE}}},  }\item[{local\+\_\+size\+\_\+z}]{ = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{clear__storage__pass_8comp_a6b2eb9ddefa66d5706046e5d3ff34b62}\label{clear__storage__pass_8comp_a6b2eb9ddefa66d5706046e5d3ff34b62}} 
+\index{clear\_storage\_pass.comp@{clear\_storage\_pass.comp}!layout@{layout}}
+\index{layout@{layout}!clear\_storage\_pass.comp@{clear\_storage\_pass.comp}}
+\doxyparagraph{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{set}]{ = {\ttfamily 0},  }\item[{binding}]{ = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{clear__storage__pass_8comp_a21bd2dbac17e3070d27afc69d4312152}\label{clear__storage__pass_8comp_a21bd2dbac17e3070d27afc69d4312152}} 
+\index{clear\_storage\_pass.comp@{clear\_storage\_pass.comp}!layout@{layout}}
+\index{layout@{layout}!clear\_storage\_pass.comp@{clear\_storage\_pass.comp}}
+\doxyparagraph{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{set}]{ = {\ttfamily 1},  }\item[{binding}]{ = {\ttfamily 0},  }\item[{r32f}]{ }\end{DoxyParamCaption}) volatile}
+
+\mbox{\Hypertarget{clear__storage__pass_8comp_a75b98e1cc735e8b3932b15d3a3c90136}\label{clear__storage__pass_8comp_a75b98e1cc735e8b3932b15d3a3c90136}} 
+\index{clear\_storage\_pass.comp@{clear\_storage\_pass.comp}!layout@{layout}}
+\index{layout@{layout}!clear\_storage\_pass.comp@{clear\_storage\_pass.comp}}
+\doxyparagraph{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{std140}]{,  }\item[{set}]{ = {\ttfamily 0},  }\item[{binding}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{clear__storage__pass_8comp_acdef7a1fd863a6d3770c1268cb06add3}\label{clear__storage__pass_8comp_acdef7a1fd863a6d3770c1268cb06add3}} 
+\index{clear\_storage\_pass.comp@{clear\_storage\_pass.comp}!main@{main}}
+\index{main@{main}!clear\_storage\_pass.comp@{clear\_storage\_pass.comp}}
+\doxyparagraph{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily void main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsubsection{Variable Documentation}
+\mbox{\Hypertarget{clear__storage__pass_8comp_ac24a65e2a1a5f3ce65fb9ad01776e3bc}\label{clear__storage__pass_8comp_ac24a65e2a1a5f3ce65fb9ad01776e3bc}} 
+\index{clear\_storage\_pass.comp@{clear\_storage\_pass.comp}!kBuffer@{kBuffer}}
+\index{kBuffer@{kBuffer}!clear\_storage\_pass.comp@{clear\_storage\_pass.comp}}
+\doxyparagraph{\texorpdfstring{kBuffer}{kBuffer}}
+{\footnotesize\ttfamily k\+Buffer}
+

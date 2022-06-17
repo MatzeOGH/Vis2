@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>VIS2 Advanced Line Renderer</title>
+  <meta name="description" content="An advanced Vulkan Line Renderer with Transparency and AO">
+  <link href='https://fonts.googleapis.com/css?family=Raleway:100,200,400,600' rel='stylesheet' type='text/css'>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/jquery.fullPage.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css'><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+  <!-- navbar header -->
+  <div class="nav-header">
+    <div class="nav-brand">
+      <img src="img/icon.png">
+    </div>
+    <i class="fa fa-bars fa-3x"></i>
+    <div class="header-links">
+      <ul>
+        <li data-menuanchor="fourthPage"><a href="#contact">HOME</a></li>
+        <li data-menuanchor="thirdPage"><a href="#portfolio">GALLERY</a></li>
+        <li data-menuanchor="secondPage"><a href="#about">DOWNLOADS</a></li>
+        <li data-menuanchor="secondPage"><a href="#about">ABOUT</a></li>
+      </ul>
+    </div>
+  </div>
+  <!-- end navbar header -->
+
+  <!-- sidebar slider -->
+  <div class="nav-screen">
+    <i class="fa fa-times fa-3x"></i>
+    <div class="nav-container">
+      <div class="nav-links">
+        <ul id='myMenu'>
+          <li data-menuanchor="secondPage"><a href="#about">HOME</a></li>
+          <li data-menuanchor="thirdPage"><a href="#portfolio">GALLERY</a></li>
+          <li data-menuanchor="fourthPage"><a href="#contact">DOWNLOADS</a></li>
+          <li data-menuanchor="fiftPage"><a href="#contact">ABOUT</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- end navbar slider -->
+
+  <!-- begin fullpage -->
+
+  <div id="fullpage">
+
+    <!-- begin section -->
+
+    <div class="section aboutme" data-anchor="aboutme">
+      <div id="particles-js"></div>
+      <div class="opaque-bg animated fadeInDown">
+        <h1 style="color:white">VIS2 LINE RENDERER</h1>
+        <p>INTERACTIVE RENDERER FOR HUGE LINE-DATASETS WITH TRANSPARANCY AND AMBIENT OCCLUSION</p>
+        <p><span id="holder"></span><span class="blinking-cursor">|</span></p>
+      </div>
+      <i id="moveDown" class="fa fa-chevron-down fa-3x bounce"></i>
+    </div>
+    <!-- end section -->
+
+    <!-- begin section -->
+
+    <div class="section" data-anchor="skills">
+      <div class="container">
+        <h1 class="wow fadeInDown" data-wow-delay="0.2s">Advanced Line Renderer</h1>
+
+
+        <div class="row">
+            <div class="wow fadeInDown col-sm-7 infoBox" data-wow-delay="0.2s">
+              <p>
+                The Advanced Line Renderer is a Windows-Application based on the paper <a target="_blank" href="https://ieeexplore.ieee.org/document/9216549">"Advanced Rendering of Line Data with Ambient Occlusion and Transparency"</a> by David Groß and Stefan Gumhold.
+              </p>
+              <p>
+                The Project was implemented by Mathias Hürbe and Gerald Kimmersdorfer for the Visualization 2 course of the Technical University Vienna in the summer semester 2022.
+              </p>
+              <p>
+                Detailed information about the implementation, aswell as Instructions on how to use it can be found in our Documentation.
+              </p>
+            </div>
+            <div class="col-sm-5">
+              <img id="screenshot1" data-src="img/screenshot1.png" class="wow flipInY" data-wow-delay="0.4s">
+            </div>
+          </div>
+        <div class="row">
+          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="0.6s" href="#" role="button">
+            <i class="fa fa fa-windows fa-3x"></i>
+            Download Executable<br>Windows x64
+          </a>
+          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="0.8s" href="#" role="button">
+            <i class="fa fa fa-book fa-3x"></i>
+            Questions? Read the<br>Documentation
+          </a>
+          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="1.0s" href="#" role="button">
+            <i class="fa fa fa-github fa-3x"></i>
+            Visit the Project on<br>Github
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- end section -->
+
+    <!-- begin section -->
+
+    <div class="section" data-anchor="projects">
+      <div class="content-slide">
+        <div class="slide">
+          <h1 class="wow fadeInDown" data-wow-delay="0.2s">XFAIRE</h1>
+          <p class="wow fadeInDown" data-wow-delay="0.2s">Digital streaming service</p>
+          <img class="wow fadeInUp" data-wow-delay="0.2s" data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/xfaire.jpg">
+        </div>
+        <div class="slide">
+          <h1>MACHETE ENERGY</h1>
+          <p>Energy drink website</p>
+          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/machete.jpg">
+        </div>
+        <div class="slide">
+          <h1>PORTFOLIO</h1>
+          <p>Mockup of a personal portfolio I was working on for a friend.</p>
+          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/cascioportfolio.jpg">
+        </div>
+        <div class="slide">
+          <h1>THATONEBLOG</h1>
+          <p>Minimalist blogging platform.</p>
+          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/blog.jpg">
+        </div>
+        <div class="slide">
+          <h1>PIXBORED</h1>
+          <p>Website for sharing images and gifs.</p>
+          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/pixbored.jpg">
+        </div>
+        <div class="slide">
+          <h1>PERSONAL WEBSITE</h1>
+          <p>Responsive vertical/horizontal header website theme.</p>
+          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/personalsite.jpg">
+        </div>
+      </div>
+    </div>
+    <!-- end section -->
+
+    <!-- begin section -->
+
+    <div class="section" data-anchor="contact">
+      <div class="content wow fadeInDown" data-wow-delay="0.2s">
+        <h1>CONTACT ME</h1>
+        <p>Whether you're interested in working with me or just want to say hello, I'd love to hear from you!</p>
+        <br>
+        <div class="contact-form">
+
+          <div id="form-messages"></div>
+          <form id="ajax-contact" method="post" role="form" action="contact.php" data-toggle="validator">
+            <div class="form-group has-feedback wow fadeInLeft" data-wow-delay="0.6s">
+              <input type="text" class="form-control" id="name" name="name" placeholder="NAME" data-error="Field can't be blank!" required>
+              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+              <div class="help-block with-errors"></div>
+            </div>
+
+            <div class="form-group has-feedback wow fadeInRight" data-wow-delay="0.8s">
+              <input type="email" class="form-control" id="email" name="email" placeholder="EMAIL" data-error="Field can't be blank!" required>
+              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+              <div class="help-block with-errors"></div>
+            </div>
+
+            <div class="form-group has-feedback wow fadeInLeft" data-wow-delay="1s">
+              <textarea data-minlength="10" class="form-control" id="message" name="message" placeholder="MESSAGE" data-error="Minimum of 10 characters" required></textarea>
+              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+              <div class="help-block with-errors"></div>
+            </div>
+
+            <div class="hidden">
+              <input type="text" class="form-control" id="human" name="human" placeholder="">
+            </div>
+            <div class="wow fadeInUp" data-wow-delay="1s">
+              <button type="submit" id="submit" name="submit" class="btn btn-lg">SEND MESSAGE</button>
+            </div>
+          </form>
+          <br>
+        </div>
+      </div>
+    </div>
+    <!-- end section -->
+
+    <!-- begin section
+
+    <div class="section fp-auto-height">
+      <div class="footer">
+        <p>CONNECT WITH ME</p>
+        <div class="social-links">
+          <span><a href="https://www.linkedin.com/in/bradleyengelhardt" target="_blank"><i class="fa fa-linkedin fa-2x"></i></a></span>
+          <span><a target="_blank" href="https://twitter.com/bradengelhardt" target="_blank"><i class="fa fa-twitter fa-2x"></i></a></span>
+          <span><a href="https://github.com/SquishyAndroid" target="_blank"><i class="fa fa-github fa-2x"></i></a></span>
+          <span><a href="https://codepen.io/SquishyAndroid/pens/public/"><i class="fa fa-codepen fa-2x"></i></a></span>
+        </div>
+      </div>
+    </div>
+     -->
+
+  </div>
+  <!-- end fullpage -->
+</body>
+<!-- partial -->
+  <script src='https://code.jquery.com/jquery-2.1.1.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/jquery.fullPage.min.js'></script><script  src="./script.js"></script>
+<script src='https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js'></script>
+
+</body>
+</html>
