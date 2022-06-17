@@ -170,7 +170,7 @@ void main() {
 
     uint64_t value = pack(gl_FragCoord.z, color);
 
-    //beginInvocationInterlockARB(void);
+    beginInvocationInterlockARB(void);
 
     bool insert = true;
     if( value > kBuffer.data[listPos(K_MAX-1)] )
@@ -206,7 +206,7 @@ void main() {
         }
     }
     }
-    //endInvocationInterlockARB(void);
+    endInvocationInterlockARB(void);
 
 
 }
