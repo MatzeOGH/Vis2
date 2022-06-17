@@ -15,7 +15,6 @@ struct matrices_and_user_input {
 	glm::vec4 mHelperLineColor;
 	glm::vec4 mkBufferInfo;
 
-
 	glm::vec4 mDirLightDirection; // normalize(vec3(-0.7, -0.6, -0.3));
 	glm::vec4 mDirLightColor; // vec3(1.0, 1.0, 1.0);
 	glm::vec4 mAmbLightColor; // vec3(0.05, 0.05, 0.05);

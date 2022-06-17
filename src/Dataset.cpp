@@ -152,6 +152,8 @@ void Dataset::importFromFile(std::string filename)
 
 	mLineBuffer = std::move(mNewLineBuffer);
 
+	this->preprocessLineData();
+
 }
 
 
@@ -202,6 +204,7 @@ void Dataset::preprocessLineData()
 		}
 		lastObjectId = l.objectId;
 	}
+	mLineBuffer[mLineBuffer.size() - 1].vTo.pos.x *= -1.0; // the last one is also an endcap
 
 	this->mLastPreprocessTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - start).count() * 0.000000001;
 }

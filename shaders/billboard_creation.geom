@@ -165,18 +165,19 @@ void construct_billboard_for_line(vec3 posA, vec3 posB, float radA, float radB, 
 void main() {
     vec3 posA = vertex[inVertexId[0]].inPosition;
     vec3 posB = vertex[inVertexId[1]].inPosition;
-    vec3 posPreA = vec3(-1.0);
-    if (posA.x > 0) posPreA = vertex[inVertexId[0]-2].inPosition;
-    vec3 posSucB = vec3(-1.0);
-    if (posB.x > 0) posSucB = vertex[inVertexId[1]+2].inPosition;
-    construct_billboard_for_line(
-        posA,
-        posB,
-        inRadius[0],
-        inRadius[1],
-        uboMatricesAndUserInput.mCamPos,
-        uboMatricesAndUserInput.mCamDir,
-        posPreA,
-        posSucB
-    );
+    if (posA.x > 0 && posB.x > 0) {
+        vec3 posPreA = vertex[inVertexId[0]-2].inPosition;
+        vec3 posSucB = vertex[inVertexId[1]+2].inPosition;
+        construct_billboard_for_line(
+            posA,
+            posB,
+            inRadius[0],
+            inRadius[1],
+            uboMatricesAndUserInput.mCamPos,
+            uboMatricesAndUserInput.mCamDir,
+            posPreA,
+            posSucB
+        );
+    }
+
 }
