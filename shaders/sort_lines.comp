@@ -5,11 +5,6 @@
 #extension GL_GOOGLE_include_directive : enable
 #include "shader_structures.glsl"
 
-struct Vertex{
-	float inPosition[3];
-	float inColor[4];
-	float inRadius;
-};
 
 
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };

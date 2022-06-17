@@ -30,6 +30,11 @@ struct matrices_and_user_input {
 	vec2 buf2;
 };
 
+struct Vertex{
+	vec3 inPosition;
+	float inRadius;
+};
+
 #define SHADER_STRUCTURES_GLSL 1
 #endif
 

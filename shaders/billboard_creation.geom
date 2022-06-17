@@ -10,9 +10,11 @@ layout (lines) in;
 layout (triangle_strip, max_vertices = 4) out;
 
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
+layout (set = 0, binding = 3) buffer readonly VertexBuffer{ Vertex vertex[]; } ;
 
 layout(location = 1) in vec4 inColor[];
 layout(location = 2) in float inRadius[];
+layout(location = 3) in uint inVertexId[];
 
 layout(location = 0) out vec4 outViewRay;
 layout(location = 1) out vec4 outColor;
@@ -23,48 +25,16 @@ layout(location = 5) out vec3 outN0;
 layout(location = 6) out vec3 outN1;
 layout(location = 7) out vec3 outPosWS;
 
-// Helper function that i used to first test the geometry shader
-// May be removed in the future
-void construct_simple_billboard(vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos) {
-    vec3 up = vec3(0.0, 1.0, 0.0);
-    vec3 va = normalize(posA - posB).xyz;
-    vec3 pa = posA.xyz + va * radA;
-    vec3 vb = normalize(posB - posA).xyz;
-    vec3 pb = posB.xyz + vb * radB;
-    
-    vec3 c0 = pa + up * radA;
-    vec3 c1 = pb + up * radB;
-    vec3 c2 = pb - up * radB;
-    vec3 c3 = pa - up * radA;
+void construct_billboard_for_line(vec3 posA, vec3 posB, float radA, float radB, vec4 eyePos, vec4 camDir, vec3 posPreA, vec3 posSucB) {
 
-    mat4 pvMatrix = uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix;
-
-    vec4 color = inColor[0];
-    gl_Position = pvMatrix * vec4(c1, 1.0);
-    outColor = color;
-    EmitVertex();
-    gl_Position = pvMatrix * vec4(c0, 1.0);
-    outColor = color;
-    EmitVertex();   
-    gl_Position = pvMatrix * vec4(c2, 1.0);
-    outColor = color;
-    EmitVertex();
-    gl_Position = pvMatrix * vec4(c3, 1.0);
-    outColor = color;
-    EmitVertex();
-    EndPrimitive();
-}
-
-void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos, vec4 camDir) {
-
-    vec3 x0 = posA.xyz;
-    vec3 x1 = posB.xyz;
+    vec3 x0 = posA;
+    vec3 x1 = posB;
     float r0 = radA;
     float r1 = radB;
 
     if (r0 > r1) {
-        x0 = posB.xyz;
-        x1 = posA.xyz;
+        x0 = posB;
+        x1 = posA;
         r0 = radB;
         r1 = radA;
     }
@@ -115,10 +85,12 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     vec3 c3 = pe + re*u;
 
     // clipping
-    vec3 cx0 = x0;// gl_in[0].gl_Position.xyz;
+    //vec3 cx0 = x0;
+    vec3 cx0 = posPreA;
     vec3 cx1 = x0;
     vec3 cx2 = x1;
-    vec3 cx3 = x1; //gl_in[3].gl_Position.xyz;
+    vec3 cx3 = posSucB;
+    //vec3 cx3 = x1; //gl_in[3].gl_Position.xyz;
 
     // find start and end cap flag
     float start = 1.0;
@@ -191,12 +163,20 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
 }
 
 void main() {
+    vec3 posA = vertex[inVertexId[0]].inPosition;
+    vec3 posB = vertex[inVertexId[1]].inPosition;
+    vec3 posPreA = vec3(-1.0);
+    if (posA.x > 0) posPreA = vertex[inVertexId[0]-2].inPosition;
+    vec3 posSucB = vec3(-1.0);
+    if (posB.x > 0) posSucB = vertex[inVertexId[1]+2].inPosition;
     construct_billboard_for_line(
-        gl_in[0].gl_Position,
-        gl_in[1].gl_Position,
+        posA,
+        posB,
         inRadius[0],
         inRadius[1],
         uboMatricesAndUserInput.mCamPos,
-        uboMatricesAndUserInput.mCamDir
+        uboMatricesAndUserInput.mCamDir,
+        posPreA,
+        posSucB
     );
 }

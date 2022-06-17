@@ -17,6 +17,9 @@
     <Filter Include="src\util">
       <UniqueIdentifier>{2d0c4843-3f96-4e9c-bb0b-3ca7a315afaa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\data">
+      <UniqueIdentifier>{3ec41459-c946-4a1b-b5e7-86bfb3cec024}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -27,6 +30,9 @@
     </ClCompile>
     <ClCompile Include="src\line_importer.cpp">
       <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Dataset.cpp">
+      <Filter>src\data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="src\host_structures.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Dataset.h">
+      <Filter>src\data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,3 +10,13 @@ glm::vec4 uIntTo4Col(unsigned int val) {
 	tmp.a = (float)((val & 0x000000FF) >> (8 * 0)) / 255.0f;
 	return tmp;
 }
+
+unsigned int getDigitCountForUInt(unsigned int src)
+{
+	unsigned int cnt = 1;
+	while (src > 9) {
+		src /= 10;
+		cnt++;
+	}
+	return cnt;
+}

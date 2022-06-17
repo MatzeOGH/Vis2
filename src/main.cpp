@@ -9,6 +9,7 @@
 
 #include "line_importer.h"
 #include "host_structures.h"
+#include "Dataset.h"
 
 
 const size_t kBufferLayerCount = 16;
@@ -16,38 +17,63 @@ const size_t kBufferLayerCount = 16;
 class line_renderer_app : public gvk::invokee 
 {
 
-
-
-	const std::vector<Vertex> mVertexData = {
-		{{0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 0.5f},
-		{{10.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 2.0f}
-	};
-
-
-
 public:
 
 	line_renderer_app(avk::queue& aQueue)
 		: mQueue{ &aQueue } {}
 		
+	void loadDatasetFromFile(std::string& filename) {
+		using namespace avk;
+		using namespace gvk;
+
+		mDataset->importFromFile(filename);
+
+		std::vector<Vertex> gpuVertexData;
+		std::vector<uint32_t> gpuIndexData;
+		mDataset->fillGPUReadyBuffer(gpuVertexData, gpuIndexData);
+
+		// Create new GPU Buffer
+		mNewVertexBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eVertexBuffer, storage_buffer_meta::create_from_data(gpuVertexData), vertex_buffer_meta::create_from_data(gpuVertexData));
+		mNewVertexBuffer.enable_shared_ownership();
+		mNewIndexBuffer = context().create_buffer(memory_usage::device, {}, index_buffer_meta::create_from_data(gpuIndexData));
+		mNewIndexBuffer.enable_shared_ownership();
+
+		// Fill them and wait for completion
+		auto fenc = context().record_and_submit_with_fence(
+			{
+				mNewVertexBuffer->fill(gpuVertexData.data(), 0),
+				mNewIndexBuffer->fill(gpuIndexData.data(), 0)
+			},
+			mQueue
+		);
+		fenc->wait_until_signalled();
+
+		mReplaceOldBufferWithNextFrame = true;
+	}
+
 	void initialize() override
 	{
 		using namespace avk;
 		using namespace gvk;
 
-		//mVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(mVertexData));
-		//mVertexBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
+		mDataset = std::make_unique<Dataset>();
 
 		const auto resolution = context().main_window()->resolution();
 
 		mUniformBuffer = context().create_buffer(memory_usage::host_visible, {}, uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
-		mUniformBuffer->fill(mVertexData.data(), 0);
+
+		// Initialize vertex and index buffer with empty datasets
+		std::vector<Vertex> gpuVertexData = { {} };
+		std::vector<uint32_t> gpuIndexData = { 0 };
+		mVertexBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eVertexBuffer, storage_buffer_meta::create_from_data(gpuVertexData), vertex_buffer_meta::create_from_data(gpuVertexData));
+		mVertexBuffer.enable_shared_ownership();
+		mIndexBuffer = context().create_buffer(memory_usage::device, {}, index_buffer_meta::create_from_data(gpuIndexData));
+		mIndexBuffer.enable_shared_ownership();
 
 		mDrawCalls.push_back({0, 2});
 
 		// Create a descriptor cache that helps us to conveniently create descriptor sets:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
-
 
 		// Create the buffer for the k buffer
 		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayerCount * sizeof(uint64_t);
@@ -130,10 +156,7 @@ public:
 		mClearStoragePass.enable_shared_ownership();
 
 		mPipeline = context().create_graphics_pipeline_for(
-			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
-			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
-			from_buffer_binding(0)->stream_per_vertex(&Vertex::radius)->to_location(2),
-
+			//from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
 
 			vertex_shader("shaders/passthrough.vert"),
 			geometry_shader("shaders/billboard_creation.geom"),
@@ -151,6 +174,7 @@ public:
 
 			push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(int) },
 			descriptor_binding(0, 0, mUniformBuffer),
+			descriptor_binding(0, 3, mVertexBuffer),
 			descriptor_binding(2, 0, mkBuffer)
 		);
 
@@ -181,9 +205,6 @@ public:
 		mDownsamplePipeline.enable_shared_ownership();
 		*/
 		m2DLinePipeline = context().create_graphics_pipeline_for(
-			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
-			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
-
 			vertex_shader("shaders/2d_lines.vert"),
 			fragment_shader("shaders/2d_lines.frag"),
 
@@ -196,6 +217,7 @@ public:
 			attachment::declare(format_from_window_depth_buffer(context().main_window()), on_load::load, usage::depth_stencil, on_store::store),
 			//push_constant_binding_data{ shader_type::vertex | shader_type::fragment | shader_type::geometry, 0, sizeof(push_constants) },
 			descriptor_binding(0, 0, mUniformBuffer),
+			descriptor_binding(0, 3, mVertexBuffer),
 
 			[](graphics_pipeline_t& p) {
 				p.rasterization_state_create_info().setPolygonMode(vk::PolygonMode::eLine);
@@ -215,8 +237,6 @@ public:
 			cfg::viewport_depth_scissors_config::from_framebuffer(context().main_window()->backbuffer_at_index(0)),
 			descriptor_binding(0, 0, mUniformBuffer) // Doesn't have to be the exact buffer, but one that describes the correct layout for the pipeline.
 		);
-
-
 
 		// Set up an updater for shader hot reload and viewport resize
 		mUpdater.emplace();
@@ -321,95 +341,16 @@ public:
 					// ToDo Load Data-File into buffer
 					std::string filename = mOpenFileDialog.GetSelected().string();
 					mOpenFileDialog.ClearSelected();
-
-					// load position buffer
-					std::vector<glm::vec3> position_buffer;
-					std::vector<float> radius_buffer;
-					std::vector<line_draw_info_t> line_draw_infos;
-					import_file_fast(std::move(filename), position_buffer, radius_buffer, line_draw_infos);
-
-					const size_t offset = offsetof(Vertex, color);
-					std::vector<Vertex> newVertexData;
-					for (size_t idx = 0; idx < position_buffer.size(); ++idx)
-					{
-						newVertexData.push_back({
-							position_buffer[idx],
-							{0.5f, 0.5f, 0.5f, 1.0f},
-							radius_buffer[idx]
-						});
-					}
-
-					mDrawCalls.clear();
-					for (auto line_draw_info : line_draw_infos) {
-						mDrawCalls.emplace_back(
-							line_draw_info.vertexIds[0],
-							line_draw_info.vertexIds.size());
-
-						// set start and end flag 
-						newVertexData[line_draw_info.vertexIds[0]].pos.x *= -1;
-						newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
-					}
-
-					// create an index buffer;
-					std::vector<uint32_t> indexBufferSource;
-					for (auto line_draw_info : line_draw_infos) {
-						for (uint32_t index = line_draw_info.vertexIds[0]; index < line_draw_info.vertexIds[line_draw_info.vertexIds.size() - 1]; ++index)
-						{
-							indexBufferSource.push_back(index);
-							indexBufferSource.push_back(index + 1);
-						}
-					}
-
-
-					mNewVertexBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eVertexBuffer, storage_buffer_meta::create_from_data(newVertexData), vertex_buffer_meta::create_from_data(newVertexData));
-					mNewVertexBuffer.enable_shared_ownership();
-
-					// two index buffer
-					mSourceIndexBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eIndexBuffer, storage_buffer_meta::create_from_data(indexBufferSource), index_buffer_meta::create_from_data(indexBufferSource));
-					mSourceIndexBuffer.enable_shared_ownership();
-					mIndexBuffer = context().create_buffer(memory_usage::device, {}, index_buffer_meta::create_from_data(indexBufferSource));
-					mIndexBuffer.enable_shared_ownership();
-
-					// create a buffer for storing the distance to the line
-					mNumberOfLines = (indexBufferSource.size() / 2);
-					mLineDst = context().create_buffer(memory_usage::device, {}, storage_buffer_meta::create_from_size(mNumberOfLines * sizeof(float)));
-					mLineBuffer1 = context().create_buffer(memory_usage::device, {}, storage_buffer_meta::create_from_size(mNumberOfLines * sizeof(uint32_t)));
-					mLineBuffer2 = context().create_buffer(memory_usage::device, {}, storage_buffer_meta::create_from_size(mNumberOfLines * sizeof(uint32_t)));
-					mLineDst.enable_shared_ownership();
-					mLineBuffer1.enable_shared_ownership();
-					mLineBuffer2.enable_shared_ownership();
-
-					// fill buffer on gpu
-					auto fenc = context().record_and_submit_with_fence(
-						{ mNewVertexBuffer->fill(newVertexData.data(), 0), mSourceIndexBuffer->fill(indexBufferSource.data(), 0), mIndexBuffer->fill(indexBufferSource.data(), 0) },
-						mQueue
-					);
-					fenc->wait_until_signalled();
-
-					// create compute pipeline
-					mSortLinesPipeline = context().create_compute_pipeline_for(
-						compute_shader("shaders/sort_lines.comp"),
-						descriptor_binding(0, 0, mUniformBuffer),
-						descriptor_binding(0, 1, mLineDst),
-						descriptor_binding(0, 2, mSourceIndexBuffer),
-						descriptor_binding(0, 3, mNewVertexBuffer),
-						descriptor_binding(0, 4, mLineBuffer1),
-						descriptor_binding(0, 5, mLineBuffer2)
-					);
-					mSortLinesPipeline.enable_shared_ownership();
-
-
-					mReplaceOldVertexBuffer = true;
+					loadDatasetFromFile(filename);
 				}
 			});
 		}
 
 		mQuakeCam = std::make_shared<quake_camera>();
-		mQuakeCam->set_translation({ 0.0f, 0.0f, 1.0f });
-		mQuakeCam->look_along({ 0.0f, 0.0f, -1.0f });
-		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.001f, 1000.0f);
-		//auto wSize = context().main_window()->swap_chain_extent();
-		//mQuakeCam->set_orthographic_projection(0.0, 2.0, 0.0, 2-0, 0.0f, 100.0f);
+		mQuakeCam->set_translation({ 1.1f, 1.1f, 1.1f });
+		mQuakeCam->look_along({ -1.0f, -1.0f, -1.0f });
+		mQuakeCam->set_move_speed(0.5);
+		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.001f, 100.0f);
 		mQuakeCam->disable();
 		current_composition()->add_element(*mQuakeCam);
 	}
@@ -459,9 +400,9 @@ public:
 		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
 		uni.mBillboardClippingEnabled = mBillboardClippingEnabled;
 
-		uni.mDirLightDirection = glm::normalize(glm::vec4(mDirLightDirection[0], mDirLightDirection[1], mDirLightDirection[2], mDirLightDirection[3]));
+		uni.mDirLightDirection = glm::normalize(glm::vec4(mDirLightDirection[0], mDirLightDirection[1], mDirLightDirection[2], 0.0F));
 		uni.mDirLightColor = mDirLightIntensity * glm::vec4(mDirLightColor[0], mDirLightColor[1], mDirLightColor[2], mDirLightColor[3]);
-		uni.mAmbLightColor = glm::vec4(mAmbLightColor[0], mAmbLightColor[1], mAmbLightColor[2], 1.0F);
+		uni.mAmbLightColor = glm::vec4(mAmbLightColor[0], mAmbLightColor[1], mAmbLightColor[2], mAmbLightColor[3]);
 		uni.mMaterialLightReponse = glm::vec4(mMaterialAmbient, mMaterialDiffuse, mMaterialSpecular, mMaterialShininess);
 		uni.mNumberOfLines = mNumberOfLines;
 
@@ -470,9 +411,10 @@ public:
 
 		auto mainWnd = context().main_window();
 		
-		if (mReplaceOldVertexBuffer) {
+		if (mReplaceOldBufferWithNextFrame) {
 			mVertexBuffer = std::move(mNewVertexBuffer);
-			mReplaceOldVertexBuffer = false;
+			mIndexBuffer = std::move(mNewIndexBuffer);
+			mReplaceOldBufferWithNextFrame = false;
 		}
 		
 		auto& commandPool = context().get_command_pool_for_single_use_command_buffers(*mQueue);
@@ -523,6 +465,7 @@ public:
 			cmdBfr->bind_pipeline(avk::const_referenced(mPipeline));
 			cmdBfr->bind_descriptors(mPipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
 				descriptor_binding(0, 0, mUniformBuffer),
+				descriptor_binding(0, 3, mVertexBuffer),
 				descriptor_binding(2, 0, mkBuffer)
 			}));
 			// NOTE: We can't completely skip the renderpass as it initialices the back and depth buffer! So I'll just skip drawing the vertices.
@@ -547,7 +490,7 @@ public:
 					context().main_window()->current_backbuffer()->image_at(0), layout::transfer_dst,
 					vk::ImageAspectFlagBits::e
 				),
-					/**/
+				*/
 			}
 
 			cmdBfr->end_render_pass();
@@ -569,16 +512,18 @@ public:
 				cmdBfr->begin_render_pass_for_framebuffer(m2DLinePipeline->get_renderpass(), context().main_window()->current_backbuffer());
 				cmdBfr->bind_pipeline(avk::const_referenced(m2DLinePipeline));
 				cmdBfr->bind_descriptors(m2DLinePipeline->layout(), mDescriptorCache.get_or_create_descriptor_sets({
-					descriptor_binding(0, 0, mUniformBuffer)
-					}));
-
+					descriptor_binding(0, 0, mUniformBuffer),
+					descriptor_binding(0, 3, mVertexBuffer)
+				}));
+				cmdBfr->draw_indexed(const_referenced(mIndexBuffer), const_referenced(mVertexBuffer));
+				/*
 				int i = 0;
 				for (draw_call_t draw_call : mDrawCalls)
 				{
 					i++;
 					cmdBfr->push_constants(mPipeline->layout(), i);
 					cmdBfr->draw_vertices(draw_call.numberOfPrimitives, 1u, draw_call.firstIndex, 1u, const_referenced(mVertexBuffer));
-				}
+				}*/
 				cmdBfr->end_render_pass();
 			}
 			
@@ -590,6 +535,8 @@ public:
 	}
 
 private:
+
+	std::unique_ptr<Dataset> mDataset;
 
 	avk::queue* mQueue;
 	avk::graphics_pipeline mPipeline;
@@ -605,10 +552,9 @@ private:
 	avk::buffer mVertexBuffer;
 	avk::buffer mNewVertexBuffer;
 	avk::buffer mkBuffer;
-	avk::buffer mLineDst, mLineBuffer1, mLineBuffer2;
 	avk::buffer mIndexBuffer;
-	avk::buffer mSourceIndexBuffer;
-	bool mReplaceOldVertexBuffer = false;
+	avk::buffer mNewIndexBuffer;
+	bool mReplaceOldBufferWithNextFrame = false;
 
 	avk::framebuffer mKBufferFramebuffer;
 

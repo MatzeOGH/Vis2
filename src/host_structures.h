@@ -1,11 +1,5 @@
 #pragma once
 
-struct Vertex {
-	glm::vec3 pos;
-	glm::vec4 color;
-	float radius;
-};
-
 struct draw_call_t
 {
 	uint32_t firstIndex;
