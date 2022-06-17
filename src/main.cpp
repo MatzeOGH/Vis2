@@ -12,18 +12,13 @@
 #include "host_structures.h"
 #include "helper_functions.h"
 
-
+/// <summary>
+/// The maximum number of Layers inside the k buffer
+/// </summary>
 const size_t kBufferLayerCount = 16;
 
 class line_renderer_app : public gvk::invokee 
 {
-
-	const std::vector<Vertex> mVertexData = {
-		{{0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 0.5f},
-		{{10.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f, 1.0f}, 2.0f}
-	};
-
-
 
 public:
 
@@ -35,28 +30,22 @@ public:
 		using namespace avk;
 		using namespace gvk;
 
-		//mVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(mVertexData));
-		//mVertexBuffer->fill(mVertexData.data(), 0, sync::wait_idle());
-
 		const auto resolution = context().main_window()->resolution();
 
 		mUniformBuffer = context().create_buffer(memory_usage::host_visible, {}, uniform_buffer_meta::create_from_size(sizeof(matrices_and_user_input)));
-		mUniformBuffer->fill(mVertexData.data(), 0);
 
 		mDrawCalls.push_back({0, 2});
 
 		// Create a descriptor cache that helps us to conveniently create descriptor sets:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
 
-
-
 		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayerCount * sizeof(uint64_t);
 		mkBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer, storage_buffer_meta::create_from_size(kBufferSize));
 
 		auto spinlockBuffer = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 1, memory_usage::device, image_usage::shader_storage);
 		auto kBufferCount = context().create_image(resolution.x, resolution.y, vk::Format::eR8Uint, 1, memory_usage::device, image_usage::shader_storage);
-		auto kBufferDepth = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, 16, memory_usage::device, image_usage::shader_storage);
-		auto kBufferColor = context().create_image(resolution.x, resolution.y, vk::Format::eR16G16B16A16Sfloat, 16, memory_usage::device, image_usage::shader_storage);
+		auto kBufferDepth = context().create_image(resolution.x, resolution.y, vk::Format::eR32Sfloat, kBufferLayerCount, memory_usage::device, image_usage::shader_storage);
+		auto kBufferColor = context().create_image(resolution.x, resolution.y, vk::Format::eR16G16B16A16Sfloat, kBufferLayerCount, memory_usage::device, image_usage::shader_storage);
 
 		auto fen = context().record_and_submit_with_fence(context().gather_commands(
 			sync::image_memory_barrier(spinlockBuffer, stage::none >> stage::none).with_layout_transition(layout::undefined >> layout::general),
@@ -554,7 +543,7 @@ int main()
 		auto mainWnd = gvk::context().create_window(titel);
 		mainWnd->set_resolution({ 1280, 768 });
 		//mainWnd->set_resolution({ 1920, 1080 });
-		
+
 		mainWnd->set_additional_back_buffer_attachments({
 			avk::attachment::declare(vk::Format::eD32Sfloat, avk::on_load::clear, avk::usage::depth_stencil, avk::on_store::dont_care)
 		});
@@ -563,6 +552,15 @@ int main()
 		mainWnd->set_presentaton_mode(gvk::presentation_mode::fifo);
 		mainWnd->set_number_of_concurrent_frames(1u); // lets not make it more complex than it has to be xD
 		mainWnd->open();
+
+		// Change Icon of the Window
+		if (std::filesystem::exists({ "icon_small.png" })) {
+			GLFWimage images[1];
+			images[0].pixels = stbi_load("icon_small.png", &images[0].width, &images[0].height, 0, 4);
+			glfwSetWindowIcon(mainWnd->handle()->mHandle, 1, images);
+			stbi_image_free(images[0].pixels);
+		}
+
 		//mainWnd->switch_to_fullscreen_mode();
 
 		// Create one single queue which we will submit all command buffers to:

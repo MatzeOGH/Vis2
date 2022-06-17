@@ -30,7 +30,11 @@ var NAVTREE =
       [ "Setup Dev-Environment", "index.html#setup-dev-environment", null ]
     ] ],
     [ "Usage Manual", "md__c__tmp__vis2__u_s_a_g_e.html", null ],
-    [ "Technical Documentation", "md__c__tmp__vis2__t_e_c_h_n_i_c_a_l_d_o_c.html", null ],
+    [ "Technical Documentation", "md__c__tmp__vis2__t_e_c_h_n_i_c_a_l_d_o_c.html", [
+      [ "External Libraries", "md__c__tmp__vis2__t_e_c_h_n_i_c_a_l_d_o_c.html#autotoc_md4", [
+        [ "About Gears-Vk", "md__c__tmp__vis2__t_e_c_h_n_i_c_a_l_d_o_c.html#aboutgearsvk", null ]
+      ] ]
+    ] ],
     [ "References", "md__c__tmp__vis2__r_e_f_e_r_e_n_c_e_s.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ]
@@ -61,7 +65,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "2d__lines_8frag.html",
-"structmatrices__and__user__input.html#a5a9a35bfc240a796e85cda4de7fd6491"
+"structmatrices__and__user__input.html#a48b49c9c30bdfc4183df43807df2e8fb"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
