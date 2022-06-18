@@ -51,6 +51,19 @@ struct matrices_and_user_input {
 	glm::vec4 mAmbLightColor; // vec3(0.05, 0.05, 0.05);
 	glm::vec4 mMaterialLightReponse; // vec4(0.5, 1.0, 0.5, 32.0);  // amb, diff, spec, shininess
 
-	VkBool32 mUseVertexColorForHelperLines;
+	glm::vec4 mVertexColorMin;
+	glm::vec4 mVertexColorMax;
+	glm::vec4 mVertexAlphaBounds;
+	glm::vec4 mVertexRadiusBounds;
+
 	VkBool32 mBillboardClippingEnabled;
+	uint32_t mVertexColorMode;
+	uint32_t mVertexAlphaMode;
+	uint32_t mVertexRadiusMode;
+
+	VkBool32 mVertexAlphaInvert;
+	VkBool32 mVertexRadiusInvert;
+	float mDataMaxLineLength;
+	float mDataMaxVertexAdjacentLineLength;
+
 };

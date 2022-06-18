@@ -5,7 +5,7 @@
 
 
 
-layout (std140, set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
+layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 layout (set = 0, binding = 1) buffer writeonly KBuffer{ uint64_t data[]; } kBuffer;
 
 #define WORKGROUP_SIZE          16

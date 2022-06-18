@@ -14,6 +14,8 @@ class Dataset
 {
 
 public:
+	Dataset();
+
 	void importFromFile(std::string filename);
 
 	/// <summary>
@@ -53,6 +55,10 @@ public:
 	/// </summary>
 	int getVertexCount() { return this->mVertexCount; }
 
+	float getMaxLineLength() { return this->mMaxLineLength; }
+
+	float getMaxVertexAdjacentLineLength() { return this->mMaxVertexAdjacentLineLength; }
+
 private:
 	std::vector<Poly> mPolyLineBuffer; // contains the loaded polylines
 	float mLastLoadingTime = 0.0F; // stores the time it took to load the data into cpu memory
@@ -65,13 +71,21 @@ private:
 
 	int mLineCount = 0;
 	int mVertexCount = 0;
+	
+	float mMaxLineLength = 0.0F;
+	float mMaxVertexAdjacentLineLength = 0.0F;
 
 	/// <summary>
 	/// This function gathers information about the dataset which is later used for the dynamic
 	/// transformations. It furthermore edits the x coordinate of the end- and start points for correct
-	/// cap clipping.
+	/// cap clipping. It furthermore transforms scales the velocity in between 0 and 1
 	/// </summary>
 	void preprocessLineData();
+
+	/// <summary>
+	/// Initializes the member variables with their initial values.
+	/// </summary>
+	void initializeValues();
 
 };
 

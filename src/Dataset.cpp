@@ -21,8 +21,14 @@ enum class eStatus {
 	IGNOREUNTILNEWLINE
 };
 
+Dataset::Dataset()
+{
+	initializeValues();
+}
+
 void Dataset::importFromFile(std::string filename)
 {
+	initializeValues();
 	auto start = std::chrono::steady_clock::now();
 
 	// check if file ends with .obj and if it exists
@@ -191,6 +197,7 @@ void Dataset::preprocessLineData()
 	mLineCount = 0;
 	mVertexCount = 0;
 	for (Poly& pLine : mPolyLineBuffer) {
+		float lastLineLength = 0.0F;
 		for (unsigned int i = 0; i < pLine.vertices.size(); i++) {
 			Vertex& v = pLine.vertices[i];
 			v.pos = glm::clamp(v.pos, 0.0F, 1.0F);
@@ -200,6 +207,13 @@ void Dataset::preprocessLineData()
 			mMinimumCoordinateBounds = glm::min(v.pos, mMinimumCoordinateBounds);
 			mMinVelocity = glm::min(v.radius, mMinVelocity);
 			mMaxVelocity = glm::max(v.radius, mMaxVelocity);
+			
+			float preLength = 0.0F;
+			float postLength = 0.0F;
+			if (i > 0) preLength = glm::distance(pLine.vertices[i - 1].pos, pLine.vertices[i].pos);
+			if (i < pLine.vertices.size() - 1) postLength = glm::distance(pLine.vertices[i].pos, pLine.vertices[i + 1].pos);
+			mMaxLineLength = glm::max(mMaxLineLength, preLength);
+			mMaxVertexAdjacentLineLength = glm::max(mMaxVertexAdjacentLineLength, preLength + postLength);
 		}
 		// Mark beginnings and ends
 		pLine.vertices[0].pos.x *= -1;
@@ -209,5 +223,26 @@ void Dataset::preprocessLineData()
 		mVertexCount += pLine.vertices.size();
 	}
 
+	// Now lets run again and scale tje velocity in between 0 and 1
+	for (Poly& pLine : mPolyLineBuffer) {
+		for (Vertex& v : pLine.vertices) {
+			v.radius = (v.radius - mMinVelocity) / (mMaxVelocity - mMinVelocity);
+		}
+	}
+
 	this->mLastPreprocessTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - start).count() * 0.000000001;
+}
+
+void Dataset::initializeValues()
+{
+	mLastLoadingTime = 0.0F;
+	mLastPreprocessTime = 0.0F; 
+	mMinimumCoordinateBounds = glm::vec3(1.0F, 1.0F, 1.0F);
+	mMaximumCoordinateBounds = glm::vec3(0.0F, 0.0F, 0.0F);
+	mMinVelocity = 1.0F;
+	mMaxVelocity = 0.0F;
+	mLineCount = 0;
+	mVertexCount = 0;
+	mMaxLineLength = 0.0F;
+	mMaxVertexAdjacentLineLength = 0.0F;
 }

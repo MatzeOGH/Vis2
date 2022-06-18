@@ -12,6 +12,8 @@
 #include "host_structures.h"
 #include "Dataset.h"
 
+#include <algorithm>
+
 /// <summary>
 /// The maximum number of Layers inside the k buffer
 /// </summary>
@@ -48,6 +50,11 @@ public:
 		fenc->wait_until_signalled();
 
 		mReplaceOldBufferWithNextFrame = true;
+	}
+
+	void resetCamera() {
+		mQuakeCam->set_translation({ 1.1f, 1.1f, 1.1f });
+		mQuakeCam->look_along({ -1.0f, -1.0f, -1.0f });
 	}
 		
 	void initialize() override
@@ -228,7 +235,7 @@ public:
 				if (values.size() > 90) values.erase(values.begin());
 				ImGui::PlotLines(fps.c_str(), values.data(), static_cast<int>(values.size()), 0, nullptr, 0.0f, FLT_MAX, ImVec2(0.0f, 20.0f));
 
-				
+
 				ImGui::ColorEdit4("Background", mClearColor);
 				ImGui::Separator();
 				ImGui::Checkbox("Main Render Pass Enabled", &mMainRenderPassEnabled);
@@ -238,19 +245,20 @@ public:
 				ImGui::Separator();
 				ImGui::Checkbox("Show Helper Lines", &mDraw2DHelperLines);
 				if (mDraw2DHelperLines) {
-					ImGui::Checkbox("Use vertex color for Lines", &mUseVertexColorForHelperLines);
 					ImGui::ColorEdit4("Line-Color", mHelperLineColor);
 				}
 				ImGui::Separator();
 				ImGui::Checkbox("Resolve K-Buffer", &mResolveKBuffer);
 				ImGui::SliderInt("K-Buffer Layer", &mKBufferLayer, 0, kBufferLayerCount);
 				ImGui::Separator();
-				if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+				if (ImGui::CollapsingHeader("Camera")) {
 					ImGui::PushID("Cam");
-					std::string camPos = std::format("Position:\n{}", glm::to_string(mQuakeCam->translation()));
+					std::string camPos = std::format("Position: {}", vec3ToString(mQuakeCam->translation()));
 					ImGui::Text(camPos.c_str());
-					std::string camDir = std::format("Direction:\n{}", glm::to_string(mQuakeCam->rotation() * glm::vec3(0, 0, -1)));
+					std::string camDir = std::format("Direction: {}", vec3ToString(mQuakeCam->rotation() * glm::vec3(0, 0, -1)));
 					ImGui::Text(camDir.c_str());
+					if (ImGui::Button("Reset Camera"))
+						resetCamera();
 					ImGui::PopID();
 				}
 				ImGui::End();
@@ -259,23 +267,53 @@ public:
 				ImGui::Begin("Lighting & Material", NULL, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::SetWindowPos(ImVec2(970.0F, 10.0F), ImGuiCond_Once);
 				if (ImGui::CollapsingHeader("Ambient Light", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::PushID("AL");
 					ImGui::ColorEdit4("Color", mAmbLightColor);
-					ImGui::PopID();
 				}
 				if (ImGui::CollapsingHeader("Directional Light", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::PushID("DL");
 					ImGui::SliderFloat("Intensity", &mDirLightIntensity, 0.0F, 10.0F);
 					ImGui::ColorEdit4("Color", mDirLightColor);
 					ImGui::SliderFloat3("Direction", mDirLightDirection, -1.0F, 1.0F);
-					ImGui::PopID();
 				}
 				if (ImGui::CollapsingHeader("Material Constants", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::PushID("MC");
-					ImGui::SliderFloat("Ambient", &mMaterialAmbient, 0.0F, 3.0F);
-					ImGui::SliderFloat("Diffuse", &mMaterialDiffuse, 0.0F, 3.0F);
-					ImGui::SliderFloat("Specular", &mMaterialSpecular, 0.0F, 3.0F);
-					ImGui::SliderFloat("Shininess", &mMaterialShininess, 0.0F, 128.0F);
+					ImGui::SliderFloat3("Amb/Dif/Spec", mMaterialReflectivity, 0.0F, 3.0F);
+					ImGui::SliderFloat("Shininess", &mMaterialReflectivity[3], 0.0F, 128.0F);
+				}
+				
+				if (ImGui::CollapsingHeader("Vertex Color", ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::PushID("VC");
+					const char* vertexColorModes[] = { "Static", "Velocity dependent", "Length dependent", "per Polyline", "per Line"};
+					ImGui::Combo("Mode", &mVertexColorMode, vertexColorModes, IM_ARRAYSIZE(vertexColorModes));
+					if (mVertexColorMode == 0) {
+						ImGui::ColorEdit3("Color", mVertexColorStatic);
+					}
+					else if (mVertexColorMode < 3) {
+						ImGui::ColorEdit3("Min-Color", mVertexColorMin);
+						ImGui::ColorEdit3("Max-Color", mVertexColorMax);
+					}
+					if (ImGui::Button("Invert colors")) {
+						float colorBuffer[3];
+						std::copy(mVertexColorMin, mVertexColorMin + 3, colorBuffer);
+						std::copy(mVertexColorMax, mVertexColorMax + 3, mVertexColorMin);
+						std::copy(colorBuffer, colorBuffer + 3, mVertexColorMax);
+					}
+					ImGui::PopID();
+				}
+				if (ImGui::CollapsingHeader("Vertex Transparency", ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::PushID("VT");
+					const char* vertexAlphaModes[] = { "Static", "Velocity dependent", "Length dependent" };
+					ImGui::Combo("Mode", &mVertexAlphaMode, vertexAlphaModes, IM_ARRAYSIZE(vertexAlphaModes));
+					if (mVertexAlphaMode == 0) ImGui::SliderFloat("Alpha", &mVertexAlphaStatic, 0.0F, 1.0F);
+					else ImGui::SliderFloat2("Bounds", mVertexAlphaBounds, 0.0F, 1.0F);
+					ImGui::Checkbox("Invert", &mVertexAlphaInvert);
+					ImGui::PopID();
+				}
+				if (ImGui::CollapsingHeader("Vertex Radius", ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::PushID("VR");
+					const char* vertexRadiusModes[] = { "Static", "Velocity dependent", "Length dependent" };
+					ImGui::Combo("Mode", &mVertexRadiusMode, vertexRadiusModes, IM_ARRAYSIZE(vertexRadiusModes));
+					if (mVertexRadiusMode == 0) ImGui::SliderFloat("Alpha", &mVertexRadiusStatic, 0.0F, 1.0F);
+					else ImGui::SliderFloat2("Bounds", mVertexRadiusBounds, 0.0F, 0.02F, "%.4f");
+					ImGui::Checkbox("Invert", &mVertexRadiusInvert);
 					ImGui::PopID();
 				}
 				ImGui::End();
@@ -293,8 +331,7 @@ public:
 		}
 
 		mQuakeCam = std::make_shared<quake_camera>();
-		mQuakeCam->set_translation({ 1.1f, 1.1f, 1.1f });
-		mQuakeCam->look_along({ -1.0f, -1.0f, -1.0f });
+		resetCamera();
 		mQuakeCam->set_move_speed(0.5);
 		mQuakeCam->set_perspective_projection(glm::radians(60.0f), context().main_window()->aspect_ratio(), 0.001f, 100.0f);
 		mQuakeCam->disable();
@@ -343,16 +380,37 @@ public:
 		uni.mProjMatrix = mQuakeCam->projection_matrix();
 		uni.mCamPos = glm::vec4(mQuakeCam->translation(), 1.0f);
 		uni.mCamDir = glm::vec4(mQuakeCam->rotation() * glm::vec3(0, 0, -1), 0.0f);
-		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
-		uni.mHelperLineColor = glm::vec4(mHelperLineColor[0], mHelperLineColor[1], mHelperLineColor[2], mHelperLineColor[3]);
+		uni.mClearColor = glm::make_vec4(mClearColor);
+		uni.mHelperLineColor = glm::make_vec4(mHelperLineColor);
 		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, mKBufferLayer, 0);
-		uni.mUseVertexColorForHelperLines = mUseVertexColorForHelperLines;
+		uni.mDirLightDirection = glm::normalize(glm::vec4(glm::make_vec3(mDirLightDirection), 0.0f));
+		uni.mDirLightColor = mDirLightIntensity * glm::make_vec4(mDirLightColor);
+		uni.mAmbLightColor = glm::make_vec4(mAmbLightColor);
+		uni.mMaterialLightReponse = glm::make_vec4(mMaterialReflectivity);
 		uni.mBillboardClippingEnabled = mBillboardClippingEnabled;
+		uni.mVertexColorMode = mVertexColorMode;
+		if (mVertexColorMode == 0)
+			uni.mVertexColorMin = glm::vec4(glm::make_vec3(mVertexColorStatic), 0.0F);
+		else {
+			uni.mVertexColorMin = glm::vec4(glm::make_vec3(mVertexColorMin), 0.0F);
+			uni.mVertexColorMax = glm::vec4(glm::make_vec3(mVertexColorMax), 0.0F);
+		}
 
-		uni.mDirLightDirection = glm::normalize(glm::vec4(mDirLightDirection[0], mDirLightDirection[1], mDirLightDirection[2], 0.0f));
-		uni.mDirLightColor = mDirLightIntensity * glm::vec4(mDirLightColor[0], mDirLightColor[1], mDirLightColor[2], mDirLightColor[3]);
-		uni.mAmbLightColor = glm::vec4(mAmbLightColor[0], mAmbLightColor[1], mAmbLightColor[2], mAmbLightColor[3]);
-		uni.mMaterialLightReponse = glm::vec4(mMaterialAmbient, mMaterialDiffuse, mMaterialSpecular, mMaterialShininess);
+		uni.mVertexAlphaMode = mVertexAlphaMode;
+		if (mVertexAlphaMode == 0)
+			uni.mVertexAlphaBounds[0] = mVertexAlphaStatic;
+		else
+			uni.mVertexAlphaBounds = glm::vec4(glm::make_vec2(mVertexAlphaBounds), 0.0F, 0.0F);
+
+		uni.mVertexRadiusMode = mVertexRadiusMode;
+		if (mVertexRadiusMode == 0)
+			uni.mVertexRadiusBounds[0] = mVertexRadiusStatic;
+		else
+			uni.mVertexRadiusBounds = glm::vec4(glm::make_vec2(mVertexRadiusBounds), 0.0F, 0.0F);
+		uni.mDataMaxLineLength = mDataset->getMaxLineLength();
+		uni.mDataMaxVertexAdjacentLineLength = mDataset->getMaxVertexAdjacentLineLength();
+		uni.mVertexAlphaInvert = mVertexAlphaInvert;
+		uni.mVertexRadiusInvert = mVertexRadiusInvert;
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0);
@@ -476,7 +534,6 @@ private:
 	ImGui::FileBrowser mOpenFileDialog;
 
 	bool mDraw2DHelperLines = false;
-	bool mUseVertexColorForHelperLines = false;
 	bool mBillboardClippingEnabled = true;
 	float mHelperLineColor[4] = { 64.0f / 255.0f, 224.0f / 255.0f, 208.0f / 255.0f, 1.0f };
 
@@ -486,15 +543,27 @@ private:
 	float mDirLightColor[4] = { 1.0F, 1.0F, 1.0F, 1.0F };
 	float mDirLightIntensity = 1.0F;
 	float mAmbLightColor[4] = { 0.05F, 0.05F, 0.05F };
-	float mMaterialAmbient = 0.5;
-	float mMaterialDiffuse = 1.0;
-	float mMaterialSpecular = 0.5;
-	float mMaterialShininess = 32.0;
+	float mMaterialReflectivity[4] = { 0.5, 1.0, 0.5, 32.0 };
+
+	int mVertexColorMode = 0;
+	float mVertexColorStatic[3] = { 65.0F / 255.0F, 105.0F / 255.0F, 225.0F / 255.0F };
+	float mVertexColorMin[3] = { 1.0F / 255.0F, 169.0F / 255.0F, 51.0F / 255.0F };
+	float mVertexColorMax[3] = { 1.0F, 0.0F, 0.0F };
+
+	int mVertexAlphaMode = 0;
+	bool mVertexAlphaInvert = false;
+	float mVertexAlphaStatic = 0.5;
+	float mVertexAlphaBounds[2] = { 0.2, 0.8 };
+
+	int mVertexRadiusMode = 0;
+	bool mVertexRadiusInvert = false;
+	float mVertexRadiusStatic = 0.001;
+	float mVertexRadiusBounds[2] = { 0.0005, 0.002 };
 
 	long mRenderCallCount = 0;
 
 	bool mResolveKBuffer = true;
-	int mKBufferLayer = kBufferLayerCount;
+	int mKBufferLayer = 8;
 };
 
 int main()

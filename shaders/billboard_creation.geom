@@ -9,9 +9,14 @@
 layout (lines_adjacency) in;
 layout (triangle_strip, max_vertices = 4) out;
 
+struct PushConstants {
+	int drawCallIndex;
+};
+
+layout(push_constant) uniform PushConstantsBlock { PushConstants pushConstants; };
+
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
-layout(location = 1) in vec4 inColor[];
 layout(location = 2) in float inRadius[];
 
 layout(location = 0) out vec4 outViewRay;
@@ -23,7 +28,7 @@ layout(location = 5) out vec3 outN0;
 layout(location = 6) out vec3 outN1;
 layout(location = 7) out vec3 outPosWS;
 
-void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos, vec4 camDir) {
+void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos, vec4 camDir, vec4 posAPre, vec4 posBSuc, vec4 colA, vec4 colB) {
 
     vec3 x0 = posA.xyz;
     vec3 x1 = posB.xyz;
@@ -83,10 +88,10 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     vec3 c3 = pe + re*u;
 
     // clipping
-    vec3 cx0 = gl_in[0].gl_Position.xyz;
+    vec3 cx0 = posAPre.xyz;
     vec3 cx1 = x0;
     vec3 cx2 = x1;
-    vec3 cx3 = gl_in[3].gl_Position.xyz;
+    vec3 cx3 = posBSuc.xyz;
 
     // find start and end cap flag
     float start = 1.0;
@@ -111,7 +116,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c0;
     d = c0 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[1];
+    outColor = colA;
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -123,7 +128,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c1;
     d = c1 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[1];
+    outColor = colA;
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -135,7 +140,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c2;
     d = c2 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[2];
+    outColor = colB;
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -147,7 +152,7 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
     outPosWS = c3;
     d = c3 - e;
     outViewRay = vec4(d.xyz,0);
-    outColor = inColor[2];
+    outColor = colB;
     outPosA = posA.xyz;
     outPosB = posB.xyz;
     outRARB = outRadius;
@@ -158,13 +163,80 @@ void construct_billboard_for_line(vec4 posA, vec4 posB, float radA, float radB, 
 
 }
 
+uint compute_hash(uint a)
+{
+   a = (a+0x7ed55d16) + (a<<12);
+   a = (a^0xc761c23c) ^ (a>>19);
+   a = (a+0x165667b1) + (a<<5);
+   a = (a+0xd3a2646c) ^ (a<<9);
+   a = (a+0xfd7046c5) + (a<<3);
+   a = (a^0xb55a4f09) ^ (a>>16);
+   return a;
+}
+
+vec3 color_from_id_hash(uint a) {
+    uint hash = compute_hash(a);
+    return vec3(float(hash & 255), float((hash >> 8) & 255), float((hash >> 16) & 255)) / 255.0;
+}
+
 void main() {
+
+    vec4 colA = vec4(1.0);
+    vec4 colB = vec4(1.0);
+    float radA = 0.0;
+    float radB = 0.0;
+
+    if (uboMatricesAndUserInput.mVertexColorMode == 0) { // static
+        colA.rgb = uboMatricesAndUserInput.mVertexColorMin.rgb;
+        colB.rgb = uboMatricesAndUserInput.mVertexColorMin.rgb;
+    } else if (uboMatricesAndUserInput.mVertexColorMode == 1) {  // based on velocity
+        colA.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, inRadius[1]);
+        colB.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, inRadius[2]);
+    } else if (uboMatricesAndUserInput.mVertexColorMode == 2) { // based on length
+        float factor = distance(gl_in[1].gl_Position, gl_in[2].gl_Position) / uboMatricesAndUserInput.mDataMaxLineLength;
+        colA.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, factor);
+        colB.rgb = colA.rgb;
+    } else if (uboMatricesAndUserInput.mVertexColorMode == 3) { // per Polyline
+        colA.rgb = color_from_id_hash(pushConstants.drawCallIndex);
+        colB.rgb = colA.rgb;
+    } else if (uboMatricesAndUserInput.mVertexColorMode == 4) { // per Line
+        colA.rgb = color_from_id_hash(gl_PrimitiveIDIn);
+        colB.rgb = colA.rgb;
+    }
+
+    if (uboMatricesAndUserInput.mVertexAlphaMode == 0) {
+        colA.a = uboMatricesAndUserInput.mVertexAlphaBounds.x;
+        colB.a = uboMatricesAndUserInput.mVertexAlphaBounds.x;
+    } else if (uboMatricesAndUserInput.mVertexAlphaMode == 1) {  // based on velocity
+        colA.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - inRadius[1] : inRadius[1]);
+        colB.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - inRadius[2] : inRadius[2]);
+    } else if (uboMatricesAndUserInput.mVertexAlphaMode == 2) { // based on length
+        float factor = distance(gl_in[1].gl_Position, gl_in[2].gl_Position) / uboMatricesAndUserInput.mDataMaxLineLength;
+        factor = uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - factor : factor;
+        colA.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, inRadius[1]);
+        colB.a = colA.a;
+    }
+    
+    if (uboMatricesAndUserInput.mVertexRadiusMode == 0) {
+        radA = uboMatricesAndUserInput.mVertexRadiusBounds.x;
+        radB = uboMatricesAndUserInput.mVertexRadiusBounds.x;
+    } else if (uboMatricesAndUserInput.mVertexRadiusMode == 1) {  // based on velocity
+        radA = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - inRadius[1] : inRadius[1]);
+        radB = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - inRadius[2] : inRadius[2]);
+    } else if (uboMatricesAndUserInput.mVertexRadiusMode == 2) { // based on length
+        float factor = distance(gl_in[1].gl_Position, gl_in[2].gl_Position) / uboMatricesAndUserInput.mDataMaxLineLength;
+        factor = uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - factor : factor;
+        radA = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, factor);
+        radA = radB;
+    }
+
+
+
     construct_billboard_for_line(
-        gl_in[1].gl_Position,
-        gl_in[2].gl_Position,
-        inRadius[1],
-        inRadius[2],
-        uboMatricesAndUserInput.mCamPos,
-        uboMatricesAndUserInput.mCamDir
+        gl_in[1].gl_Position, gl_in[2].gl_Position,
+        radA, radB,
+        uboMatricesAndUserInput.mCamPos, uboMatricesAndUserInput.mCamDir,
+        gl_in[0].gl_Position, gl_in[3].gl_Position,
+        colA, colB
     );
 }

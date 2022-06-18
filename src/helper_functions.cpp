@@ -1,5 +1,7 @@
 #include "helper_functions.h"
 #include <imgui.h>
+#include <sstream>
+#include <iomanip>
 
 glm::vec4 uIntTo4Col(unsigned int val) {
 	// Jeweils 8 bit für eine Komponente
@@ -87,6 +89,13 @@ void activateImGuiStyle(bool darkMode, float alpha)
         }
     }
 
+}
+
+std::string vec3ToString(glm::vec3 src)
+{
+    std::stringstream ss;
+    ss << std::setprecision(3) << src.x << " | " << src.y << " | " << src.z;
+    return ss.str();
 }
 
 unsigned int getDigitCountForUInt(unsigned int src)
