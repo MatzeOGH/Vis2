@@ -28,9 +28,6 @@
     <ClCompile Include="src\helper_functions.cpp">
       <Filter>src\util</Filter>
     </ClCompile>
-    <ClCompile Include="src\line_importer.cpp">
-      <Filter>src\util</Filter>
-    </ClCompile>
     <ClCompile Include="src\Dataset.cpp">
       <Filter>src\data</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
     <None Include="shaders\clear_storage_pass.comp">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\kbuffer_resolve.comp">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\kbuffer_resolve.frag">
       <Filter>shaders</Filter>
     </None>
@@ -75,9 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\helper_functions.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\line_importer.h">
       <Filter>src\util</Filter>
     </ClInclude>
     <ClInclude Include="src\host_structures.h">

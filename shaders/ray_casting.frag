@@ -157,15 +157,8 @@ void main() {
     }
 
     vec3 illumination = calculate_illumination(inFragColor.rgb, camWS, posWsOnCone, tnor.yzw);
-    vec4 color = vec4(illumination, 1 - inFragColor.a);
-    
-    /*
-    vec3 lig = normalize(vec3(0.7,0.6,0.3));
-    vec3 hal = normalize(-viewRayWS+lig);
-    vec3 nor = tnor.yzw;
-    float ndotl = clamp( dot(nor,lig), 0.0, 1.0 );
-
-    vec4 color = vec4(inFragColor.rgb * ndotl * inFragColor.a, 1-inFragColor.a );()*/
+    vec4 color = vec4(illumination * inFragColor.a, 1 - inFragColor.a);
+   
 
     uint64_t value = pack(gl_FragCoord.z, color);
 
