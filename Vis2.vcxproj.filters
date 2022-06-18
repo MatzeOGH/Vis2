@@ -63,9 +63,6 @@
     <None Include="shaders\clear_storage_pass.comp">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\kbuffer_resolve.comp">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\kbuffer_resolve.frag">
       <Filter>shaders</Filter>
     </None>

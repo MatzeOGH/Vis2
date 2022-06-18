@@ -30,7 +30,6 @@
     <None Include="shaders\2d_lines.vert" />
     <None Include="shaders\billboard_creation.geom" />
     <None Include="shaders\clear_storage_pass.comp" />
-    <None Include="shaders\kbuffer_resolve.comp" />
     <None Include="shaders\kbuffer_resolve.frag" />
     <None Include="shaders\kbuffer_resolve.vert" />
     <None Include="shaders\ray_casting.frag" />
