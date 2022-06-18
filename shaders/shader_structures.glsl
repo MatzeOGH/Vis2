@@ -29,6 +29,7 @@ struct matrices_and_user_input {
 	vec4 mVertexRadiusBounds;
 	
 	bool mBillboardClippingEnabled;
+	bool mBillboardShadingEnabled;
 	uint mVertexColorMode;
 	uint mVertexAlphaMode;
 	uint mVertexRadiusMode;

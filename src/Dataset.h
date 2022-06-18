@@ -59,7 +59,21 @@ public:
 
 	float getMaxVertexAdjacentLineLength() { return this->mMaxVertexAdjacentLineLength; }
 
+	bool isFileOpen() { return mLineCount > 0; }
+
+	glm::vec3 getDimensions() {
+		return mMaximumCoordinateBounds - mMinimumCoordinateBounds;
+	}
+
+	glm::vec2 getVelocityBounds() {
+		return glm::vec2(mMinVelocity, mMaxVelocity);
+	}
+
+	std::string getName() { return mName; }
+
 private:
+	std::string mName; // The name of the file
+
 	std::vector<Poly> mPolyLineBuffer; // contains the loaded polylines
 	float mLastLoadingTime = 0.0F; // stores the time it took to load the data into cpu memory
 	float mLastPreprocessTime = 0.0F; // stores the time it took to preprocess the current data in seconds

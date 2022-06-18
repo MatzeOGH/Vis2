@@ -14,13 +14,8 @@ vec2 positions[6] = vec2[](
 );
 
 
-layout (location = 0) out VertexData {
-	vec2 texCoords;
-} v_out;
-
 void main()
 {
-	v_out.texCoords = positions[gl_VertexIndex];
     gl_Position = vec4(positions[gl_VertexIndex] * 2.0 - 1.0, 0.0, 1.0);
 }
 

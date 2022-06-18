@@ -14,6 +14,8 @@
 
 #include <algorithm>
 
+#define IMGUI_COLLAPSEINDENTWIDTH 20.0F
+
 /// <summary>
 /// The maximum number of Layers inside the k buffer
 /// </summary>
@@ -212,8 +214,11 @@ public:
 			mOpenFileDialog.SetTypeFilters({ ".obj" });
 
 			imguiManager->add_callback([this]() {
-				ImGui::Begin("Line Renderer - Tool Box", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_AlwaysAutoResize);
-				ImGui::TextColored(ImVec4(0.f, .6f, .8f, 1.f), "[F1]: Toggle input-mode");
+				auto resolution = gvk::context().main_window()->resolution();
+				ImGui::Begin("Line Renderer - Tool Box", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+				ImGui::SetWindowSize(ImVec2(0.0F, resolution.y + 2.0), ImGuiCond_Always);
+				ImGui::SetWindowPos(ImVec2(-1.0F, -1.0F), ImGuiCond_Once);
+
 				if (ImGui::BeginMenuBar()) {
 					if (ImGui::BeginMenu("File")) {
 						if (ImGui::MenuItem("Load Data-File")) {
@@ -227,61 +232,37 @@ public:
 					}
 					ImGui::EndMenuBar();
 				}
-				ImGui::SetWindowPos(ImVec2(10.0F, 10.0F), ImGuiCond_Once);
 
-				std::string fps = std::format("{:.0f} FPS", ImGui::GetIO().Framerate);
-				static std::vector<float> values;
-				values.push_back(ImGui::GetIO().Framerate);
-				if (values.size() > 90) values.erase(values.begin());
-				ImGui::PlotLines(fps.c_str(), values.data(), static_cast<int>(values.size()), 0, nullptr, 0.0f, FLT_MAX, ImVec2(0.0f, 20.0f));
-
-
-				ImGui::ColorEdit4("Background", mClearColor);
-				ImGui::Separator();
-				ImGui::Checkbox("Main Render Pass Enabled", &mMainRenderPassEnabled);
-				if (mMainRenderPassEnabled) {
-					ImGui::Checkbox("Billboard-Clipping", &mBillboardClippingEnabled);
-				}
-				ImGui::Separator();
-				ImGui::Checkbox("Show Helper Lines", &mDraw2DHelperLines);
-				if (mDraw2DHelperLines) {
-					ImGui::ColorEdit4("Line-Color", mHelperLineColor);
-				}
-				ImGui::Separator();
-				ImGui::Checkbox("Resolve K-Buffer", &mResolveKBuffer);
-				ImGui::SliderInt("K-Buffer Layer", &mKBufferLayer, 1, kBufferLayerCount);
-				ImGui::Separator();
-				if (ImGui::CollapsingHeader("Camera")) {
-					ImGui::PushID("Cam");
-					std::string camPos = std::format("Position: {}", vec3ToString(mQuakeCam->translation()));
-					ImGui::Text(camPos.c_str());
-					std::string camDir = std::format("Direction: {}", vec3ToString(mQuakeCam->rotation() * glm::vec3(0, 0, -1)));
-					ImGui::Text(camDir.c_str());
-					if (ImGui::Button("Reset Camera"))
-						resetCamera();
+				if (ImGui::CollapsingHeader("Background", ImGuiTreeNodeFlags_DefaultOpen)) {
+					ImGui::PushID("BG");
+					ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+					ImGui::ColorPicker3("Color", mClearColor, ImGuiColorEditFlags_PickerHueWheel);
+					ImGui::SliderFloat("Gradient", &mClearColor[3], 0.0F, 1.0F);
+					ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
 					ImGui::PopID();
 				}
-				ImGui::End();
 
-				// LIGHTING & MATERIALS WINDOW
-				ImGui::Begin("Lighting & Material", NULL, ImGuiWindowFlags_AlwaysAutoResize);
-				ImGui::SetWindowPos(ImVec2(970.0F, 10.0F), ImGuiCond_Once);
-				if (ImGui::CollapsingHeader("Ambient Light", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::ColorEdit4("Color", mAmbLightColor);
+				if (ImGui::CollapsingHeader("Debug Properties")) {
+					ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+					ImGui::Checkbox("Main Render Pass Enabled", &mMainRenderPassEnabled);
+					if (mMainRenderPassEnabled) {
+						ImGui::Checkbox("Billboard-Clipping", &mBillboardClippingEnabled);
+						ImGui::Checkbox("Billboard-Shading", &mBillboardShadingEnabled); // TODO
+					}
+					ImGui::Separator();
+					ImGui::Checkbox("Show Helper Lines", &mDraw2DHelperLines);
+					if (mDraw2DHelperLines) {
+						ImGui::ColorEdit4("Color", mHelperLineColor);
+					}
+					ImGui::Separator();
+					ImGui::Checkbox("Resolve K-Buffer", &mResolveKBuffer);
+					ImGui::SliderInt("Layer", &mKBufferLayer, 1, kBufferLayerCount);
+					ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
 				}
-				if (ImGui::CollapsingHeader("Directional Light", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::SliderFloat("Intensity", &mDirLightIntensity, 0.0F, 10.0F);
-					ImGui::ColorEdit4("Color", mDirLightColor);
-					ImGui::SliderFloat3("Direction", mDirLightDirection, -1.0F, 1.0F);
-				}
-				if (ImGui::CollapsingHeader("Material Constants", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::SliderFloat3("Amb/Dif/Spec", mMaterialReflectivity, 0.0F, 3.0F);
-					ImGui::SliderFloat("Shininess", &mMaterialReflectivity[3], 0.0F, 128.0F);
-				}
-				
 				if (ImGui::CollapsingHeader("Vertex Color", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::PushID("VC");
-					const char* vertexColorModes[] = { "Static", "Velocity dependent", "Length dependent", "per Polyline", "per Line"};
+					ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+					const char* vertexColorModes[] = { "Static", "Velocity dependent", "Length dependent", "per Polyline", "per Line" };
 					ImGui::Combo("Mode", &mVertexColorMode, vertexColorModes, IM_ARRAYSIZE(vertexColorModes));
 					if (mVertexColorMode == 0) {
 						ImGui::ColorEdit3("Color", mVertexColorStatic);
@@ -289,33 +270,106 @@ public:
 					else if (mVertexColorMode < 3) {
 						ImGui::ColorEdit3("Min-Color", mVertexColorMin);
 						ImGui::ColorEdit3("Max-Color", mVertexColorMax);
+						if (ImGui::Button("Invert colors")) {
+							float colorBuffer[3];
+							std::copy(mVertexColorMin, mVertexColorMin + 3, colorBuffer);
+							std::copy(mVertexColorMax, mVertexColorMax + 3, mVertexColorMin);
+							std::copy(colorBuffer, colorBuffer + 3, mVertexColorMax);
+						}
 					}
-					if (ImGui::Button("Invert colors")) {
-						float colorBuffer[3];
-						std::copy(mVertexColorMin, mVertexColorMin + 3, colorBuffer);
-						std::copy(mVertexColorMax, mVertexColorMax + 3, mVertexColorMin);
-						std::copy(colorBuffer, colorBuffer + 3, mVertexColorMax);
-					}
+					ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
 					ImGui::PopID();
 				}
 				if (ImGui::CollapsingHeader("Vertex Transparency", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::PushID("VT");
+					ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
 					const char* vertexAlphaModes[] = { "Static", "Velocity dependent", "Length dependent" };
 					ImGui::Combo("Mode", &mVertexAlphaMode, vertexAlphaModes, IM_ARRAYSIZE(vertexAlphaModes));
 					if (mVertexAlphaMode == 0) ImGui::SliderFloat("Alpha", &mVertexAlphaStatic, 0.0F, 1.0F);
-					else ImGui::SliderFloat2("Bounds", mVertexAlphaBounds, 0.0F, 1.0F);
-					ImGui::Checkbox("Invert", &mVertexAlphaInvert);
+					else {
+						ImGui::SliderFloat2("Bounds", mVertexAlphaBounds, 0.0F, 1.0F);
+						ImGui::Checkbox("Invert", &mVertexAlphaInvert);
+					}
+					ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
 					ImGui::PopID();
 				}
 				if (ImGui::CollapsingHeader("Vertex Radius", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::PushID("VR");
+					ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
 					const char* vertexRadiusModes[] = { "Static", "Velocity dependent", "Length dependent" };
 					ImGui::Combo("Mode", &mVertexRadiusMode, vertexRadiusModes, IM_ARRAYSIZE(vertexRadiusModes));
 					if (mVertexRadiusMode == 0) ImGui::SliderFloat("Alpha", &mVertexRadiusStatic, 0.0F, 1.0F);
-					else ImGui::SliderFloat2("Bounds", mVertexRadiusBounds, 0.0F, 0.02F, "%.4f");
-					ImGui::Checkbox("Invert", &mVertexRadiusInvert);
+					else {
+						ImGui::SliderFloat2("Bounds", mVertexRadiusBounds, 0.0F, 0.02F, "%.4f");
+						ImGui::Checkbox("Invert", &mVertexRadiusInvert);
+					}
+					ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
 					ImGui::PopID();
 				}
+
+				if (ImGui::CollapsingHeader("Camera")) {
+					ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+					auto camPos = mQuakeCam->translation();
+					auto camDir = mQuakeCam->rotation() * glm::vec3(0, 0, -1);
+					ImGui::Text("Position:  %.3f | %.3f | %.3f", camPos.x, camPos.y, camPos.z);
+					ImGui::Text("Direction: %.3f | %.3f | %.3f", camDir.x, camDir.y, camDir.z);
+					if (ImGui::Button("Reset Camera"))
+						resetCamera();
+					ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
+				}
+				if (ImGui::CollapsingHeader("Lighting & Material")) {
+					ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+					if (ImGui::CollapsingHeader("Ambient Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+						ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+						ImGui::ColorEdit4("Color", mAmbLightColor);
+						ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
+					}
+					if (ImGui::CollapsingHeader("Directional Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+						ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+						ImGui::SliderFloat("Intensity", &mDirLightIntensity, 0.0F, 10.0F);
+						ImGui::ColorEdit4("Color", mDirLightColor);
+						ImGui::SliderFloat3("Direction", mDirLightDirection, -1.0F, 1.0F);
+						ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
+					}
+					if (ImGui::CollapsingHeader("Material Constants", ImGuiTreeNodeFlags_DefaultOpen)) {
+						ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+						ImGui::SliderFloat3("Amb/Dif/Spec", mMaterialReflectivity, 0.0F, 3.0F);
+						ImGui::SliderFloat("Shininess", &mMaterialReflectivity[3], 0.0F, 128.0F);
+						ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
+					}
+					ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
+				}
+				ImGui::End();
+
+				// LIGHTING & MATERIALS WINDOW
+				ImGui::Begin("Statistics", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+				ImGui::SetWindowPos(ImVec2(resolution.x - ImGui::GetWindowWidth() + 1.0F, -1.0F), ImGuiCond_Always);
+				ImGui::TextColored(ImVec4(0.7f, 0.2f, .3f, 1.f), "[F1]: Toggle input-mode");
+				std::string fps = std::format("{:.0f} FPS", ImGui::GetIO().Framerate);
+				static std::vector<float> values;
+				values.push_back(ImGui::GetIO().Framerate);
+				if (values.size() > 90) values.erase(values.begin());
+				ImGui::PlotLines(fps.c_str(), values.data(), static_cast<int>(values.size()), 0, nullptr, 0.0f, FLT_MAX, ImVec2(0.0f, 60.0f));
+
+				if (mDataset->isFileOpen()) {
+					if (ImGui::CollapsingHeader("Dataset Information", ImGuiTreeNodeFlags_DefaultOpen)) {
+						ImGui::Indent(IMGUI_COLLAPSEINDENTWIDTH);
+						ImGui::Text("File:             %s", mDataset->getName().c_str());
+						ImGui::Text("Line-Count:       %d", mDataset->getLineCount());
+						ImGui::Text("Polyline-Count:   %d", mDataset->getPolylineCount());
+						ImGui::Text("Vertex-Count:     %d", mDataset->getVertexCount());
+						ImGui::Separator();
+						auto dim = mDataset->getDimensions();
+						auto vel = mDataset->getVelocityBounds();
+						ImGui::Text("Dimensions:       %.1f x %.1f x %.1f", dim.x, dim.y, dim.z);
+						ImGui::Text("Velocity-Bounds:  %.5f - %.5f", vel.x, vel.y);
+						ImGui::Separator();
+						ImGui::Text("Loading-Time:     %.3f s", mDataset->getLastLoadingTime());
+						ImGui::Text("Preprocess-Time:  %.3f s", mDataset->getLastPreprocessTime());
+						ImGui::Indent(-IMGUI_COLLAPSEINDENTWIDTH);
+					}
+				}
+
 				ImGui::End();
 
 				mOpenFileDialog.Display();
@@ -326,8 +380,6 @@ public:
 					this->loadDatasetFromFile(filename);
 				}
 			});
-
-			
 		}
 
 		mQuakeCam = std::make_shared<quake_camera>();
@@ -380,7 +432,7 @@ public:
 		const auto resolution = context().main_window()->resolution();
 
 		// The ImGui-Context had to be created, thats why its here
-		if (mRenderCallCount == 0) activateImGuiStyle(false, 0.7);
+		if (mRenderCallCount == 0) activateImGuiStyle(false, 0.8);
 
 		// Update UBO:
 		matrices_and_user_input uni;
@@ -388,7 +440,7 @@ public:
 		uni.mProjMatrix = mQuakeCam->projection_matrix();
 		uni.mCamPos = glm::vec4(mQuakeCam->translation(), 1.0f);
 		uni.mCamDir = glm::vec4(mQuakeCam->rotation() * glm::vec3(0, 0, -1), 0.0f);
-		uni.mClearColor = glm::make_vec4(mClearColor);
+		uni.mClearColor = glm::vec4(mClearColor[0], mClearColor[1], mClearColor[2], 1 - mClearColor[3]);
 		uni.mHelperLineColor = glm::make_vec4(mHelperLineColor);
 		uni.mkBufferInfo = glm::vec4(resolution.x, resolution.y, mKBufferLayer, 0);
 		uni.mDirLightDirection = glm::normalize(glm::vec4(glm::make_vec3(mDirLightDirection), 0.0f));
@@ -396,6 +448,7 @@ public:
 		uni.mAmbLightColor = glm::make_vec4(mAmbLightColor);
 		uni.mMaterialLightReponse = glm::make_vec4(mMaterialReflectivity);
 		uni.mBillboardClippingEnabled = mBillboardClippingEnabled;
+		uni.mBillboardShadingEnabled = mBillboardShadingEnabled;
 		uni.mVertexColorMode = mVertexColorMode;
 		if (mVertexColorMode == 0)
 			uni.mVertexColorMin = glm::vec4(glm::make_vec3(mVertexColorStatic), 0.0F);
@@ -419,6 +472,7 @@ public:
 		uni.mDataMaxVertexAdjacentLineLength = mDataset->getMaxVertexAdjacentLineLength();
 		uni.mVertexAlphaInvert = mVertexAlphaInvert;
 		uni.mVertexRadiusInvert = mVertexRadiusInvert;
+
 
 		buffer& cUBO = mUniformBuffer;
 		cUBO->fill(&uni, 0);
@@ -538,11 +592,12 @@ private:
 	/** One descriptor cache to use for allocating all the descriptor sets from: */
 	avk::descriptor_cache mDescriptorCache;
 
-	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 0.8F };
+	float mClearColor[4] = { 1.0F, 1.0F, 1.0F, 0.2F };
 	ImGui::FileBrowser mOpenFileDialog;
 
 	bool mDraw2DHelperLines = false;
 	bool mBillboardClippingEnabled = true;
+	bool mBillboardShadingEnabled = true;
 	float mHelperLineColor[4] = { 64.0f / 255.0f, 224.0f / 255.0f, 208.0f / 255.0f, 1.0f };
 
 	bool mMainRenderPassEnabled = true;
@@ -584,9 +639,7 @@ int main()
 	try {
 		// Create a window, set some configuration parameters (also relevant for its swap chain), and open it:
 		auto mainWnd = gvk::context().create_window(titel);
-		mainWnd->set_resolution({ 1280, 768 });
-		//mainWnd->set_resolution({ 1920, 1080 });
-
+		mainWnd->set_resolution({ 1440, 800 });
 		mainWnd->set_additional_back_buffer_attachments({
 			avk::attachment::declare(vk::Format::eD32Sfloat, avk::on_load::clear, avk::usage::depth_stencil, avk::on_store::dont_care)
 		});
@@ -596,6 +649,8 @@ int main()
 		mainWnd->set_number_of_concurrent_frames(1u); // lets not make it more complex than it has to be xD
 		mainWnd->open();
 
+		glfwMaximizeWindow(mainWnd->handle()->mHandle);
+		
 		// Change Icon of the Window
 		if (std::filesystem::exists({ "icon_small.png" })) {
 			GLFWimage images[1];
@@ -616,8 +671,14 @@ int main()
 		auto ui = gvk::imgui_manager(singleQueue);
 
 		// Pass everything to gvk::start and off we go:
+		
 		start(
 			gvk::application_name(titel),
+			gvk::required_device_extensions()
+				.add_extension(VK_KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME),
+			[](vk::PhysicalDeviceVulkan12Features& aVulkan12Featues) {
+				aVulkan12Featues.setShaderBufferInt64Atomics(VK_TRUE);
+			},
 			mainWnd,
 			app,
 			ui

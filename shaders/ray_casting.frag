@@ -156,9 +156,11 @@ void main() {
         if (dp1 > 0 || dp2 > 0) discard;
     }
 
-    vec3 illumination = calculate_illumination(inFragColor.rgb, camWS, posWsOnCone, tnor.yzw);
+    vec3 illumination = inFragColor.rgb;
+    if (uboMatricesAndUserInput.mBillboardShadingEnabled) {
+        illumination = calculate_illumination(inFragColor.rgb, camWS, posWsOnCone, tnor.yzw);
+    }
     vec4 color = vec4(illumination * inFragColor.a, 1 - inFragColor.a);
-   
 
     uint64_t value = pack(gl_FragCoord.z, color);
 

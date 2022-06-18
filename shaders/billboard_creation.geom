@@ -227,7 +227,7 @@ void main() {
         float factor = distance(gl_in[1].gl_Position, gl_in[2].gl_Position) / uboMatricesAndUserInput.mDataMaxLineLength;
         factor = uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - factor : factor;
         radA = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, factor);
-        radA = radB;
+        radB = radA;
     }
 
 

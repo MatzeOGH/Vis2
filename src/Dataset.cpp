@@ -36,6 +36,7 @@ void Dataset::importFromFile(std::string filename)
 	const std::filesystem::path obj_extension{ ".obj" };
 	if (filePath.extension() != obj_extension) throw std::runtime_error("extension error: " + filePath.extension().string());
 	if (!std::filesystem::exists(filePath)) throw std::runtime_error("file " + filePath.filename().string() + " does not exist");
+	mName = filePath.filename().string();
 
 	// open ifstream for file
 	std::ifstream inFile{ filePath, std::ios::in | std::ios::binary };

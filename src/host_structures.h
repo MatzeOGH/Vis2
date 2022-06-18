@@ -57,6 +57,8 @@ struct matrices_and_user_input {
 	glm::vec4 mVertexRadiusBounds;
 
 	VkBool32 mBillboardClippingEnabled;
+	VkBool32 mBillboardShadingEnabled;
+
 	uint32_t mVertexColorMode;
 	uint32_t mVertexAlphaMode;
 	uint32_t mVertexRadiusMode;
