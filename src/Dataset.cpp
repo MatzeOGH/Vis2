@@ -40,9 +40,9 @@ void Dataset::importFromFile(std::string filename)
 	inFile.read(data.data(), data.size());
 
 	std::vector<Vertex> tmpVertexBuffer;
-	std::vector<Line> mNewLineBuffer;
+	std::vector<Poly> newPolyBuffer;
 	Vertex tmpVertex;
-	int currObjectId = 0;
+	unsigned int currVertexCountInPolyBuffer = 0;
 
 	eStatus status = eStatus::INITIAL;
 	int curLine = 1;
@@ -66,12 +66,9 @@ void Dataset::importFromFile(std::string filename)
 				
 				// The following works since the size of newLineBuffer is similar to the current index number and should speed up the process even more
 				// as we don't have to walk through the unnecessary length of the indices
-				unsigned int jumpForward = (getDigitCountForUInt(mNewLineBuffer.size()) + 1) * tmpVertexBuffer.size(); 
-				for (unsigned int i2 = 0; i2 < tmpVertexBuffer.size() - 1; i2++) {
-					mNewLineBuffer.push_back({ currObjectId, tmpVertexBuffer[i2], tmpVertexBuffer[i2 + 1u] });
-				}
-				tmpVertexBuffer.clear();
-				currObjectId++;
+				unsigned int jumpForward = (getDigitCountForUInt(currVertexCountInPolyBuffer) + 1) * tmpVertexBuffer.size(); 
+				currVertexCountInPolyBuffer += tmpVertexBuffer.size();
+				newPolyBuffer.push_back({ std::move(tmpVertexBuffer) });
 				if (data[i+1] != '\r' && data[i+1] != '\0') i += jumpForward;	// Only jump forward if there is no immediate line break
 				status = eStatus::IGNOREUNTILNEWLINE;
 			}
@@ -150,7 +147,7 @@ void Dataset::importFromFile(std::string filename)
 
 	this->mLastLoadingTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - start).count() * 0.000000001;
 
-	mLineBuffer = std::move(mNewLineBuffer);
+	mPolyLineBuffer = std::move(newPolyBuffer);
 
 	this->preprocessLineData();
 
@@ -161,50 +158,43 @@ void Dataset::fillGPUReadyBuffer(std::vector<Vertex>& newVertexBuffer, std::vect
 {
 	newVertexBuffer.clear();
 	newIndexBuffer.clear();
-	newVertexBuffer.reserve(mLineBuffer.size() * 2);
-	newIndexBuffer.reserve(mLineBuffer.size() * 2);
+	newVertexBuffer.reserve(mVertexCount);
+	newIndexBuffer.reserve(mVertexCount);
 	uint32_t currIndex = 0;
-	for (Line& l : mLineBuffer) {
-		newVertexBuffer.push_back(l.vFrom);
-		newVertexBuffer.push_back(l.vTo);
-		newIndexBuffer.push_back(currIndex++);
-		newIndexBuffer.push_back(currIndex++);
+	for (Poly& pl : mPolyLineBuffer) {
+		for (uint32_t i = 0; i < pl.vertices.size() - 1; i++) {
+			newVertexBuffer.push_back(pl.vertices[i]);
+			newVertexBuffer.push_back(pl.vertices[i + 1]);
+			newIndexBuffer.push_back(currIndex++);
+			newIndexBuffer.push_back(currIndex++);
+		}
 	}
 }
 
 void Dataset::preprocessLineData()
 {
 	auto start = std::chrono::steady_clock::now();
+	
+	mLineCount = 0;
+	mVertexCount = 0;
+	for (Poly& pLine : mPolyLineBuffer) {
+		for (unsigned int i = 0; i < pLine.vertices.size(); i++) {
+			Vertex& v = pLine.vertices[i];
+			v.pos = glm::clamp(v.pos, 0.0F, 1.0F);
+			v.radius = glm::clamp(v.radius, 0.0F, 1.0F);
 
-	int lastObjectId = -1;
-	mPolylineCount = 0;
-	for (unsigned int i = 0; i < mLineBuffer.size(); i++) {
-		Line& l = mLineBuffer[i];
-		// We only support positions in the positive octant and inside the unitcube
-		l.vFrom.pos = glm::clamp(l.vFrom.pos, 0.0F, 1.0F);
-		l.vTo.pos = glm::clamp(l.vTo.pos, 0.0F, 1.0F);
-		l.vFrom.radius = glm::clamp(l.vFrom.radius, 0.0F, 1.0F);
-		l.vTo.radius = glm::clamp(l.vTo.radius, 0.0F, 1.0F);
-
-		mMaximumCoordinateBounds = glm::max(l.vTo.pos, mMaximumCoordinateBounds);
-		mMinimumCoordinateBounds = glm::min(l.vTo.pos, mMinimumCoordinateBounds);
-		mMinVelocity = glm::min(l.vTo.radius, mMinVelocity);
-		mMaxVelocity = glm::max(l.vTo.radius, mMaxVelocity);
-
-		if (lastObjectId != l.objectId) {
-			// Start-caps appear just once so make sure we check it for its bounds
-			mMaximumCoordinateBounds = glm::max(l.vFrom.pos, mMaximumCoordinateBounds);
-			mMinimumCoordinateBounds = glm::min(l.vFrom.pos, mMinimumCoordinateBounds);
-			mMinVelocity = glm::min(l.vFrom.radius, mMinVelocity);
-			mMaxVelocity = glm::max(l.vFrom.radius, mMaxVelocity);
-			// Its a new object so we have to inverse the x axis of the last and this point:
-			if (i > 0) mLineBuffer[i].vTo.pos.x *= -1.0; // This was an end-cap
-			l.vFrom.pos.x *= -1.0; // This is a start-cap
-			mPolylineCount++;
+			mMaximumCoordinateBounds = glm::max(v.pos, mMaximumCoordinateBounds);
+			mMinimumCoordinateBounds = glm::min(v.pos, mMinimumCoordinateBounds);
+			mMinVelocity = glm::min(v.radius, mMinVelocity);
+			mMaxVelocity = glm::max(v.radius, mMaxVelocity);
 		}
-		lastObjectId = l.objectId;
+		// Mark beginnings and ends
+		pLine.vertices[0].pos.x *= -1;
+		pLine.vertices[pLine.vertices.size() - 1].pos.x *= -1;
+
+		mLineCount += pLine.vertices.size() / 2 - 1;
+		mVertexCount += pLine.vertices.size();
 	}
-	mLineBuffer[mLineBuffer.size() - 1].vTo.pos.x *= -1.0; // the last one is also an endcap
 
 	this->mLastPreprocessTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - start).count() * 0.000000001;
 }

@@ -4,60 +4,87 @@
 #include <vector>
 #include <string>
 
+/// <summary>
+/// Represents one point of a line
+/// </summary>
 struct Vertex {
+
+	/// <summary>
+	/// The position of the point
+	/// </summary>
 	glm::vec3 pos = { -1.0F, -1.0F, -1.0F };
-	//glm::vec4 color = { 0.5f, 0.5f, 0.5f, 1.0f };
+
+	/// <summary>
+	/// The radius/velocity of this point
+	/// </summary>
 	float radius = -1.0F;
 };
 
-struct Line {
+/// <summary>
+/// Represents a connected group of lines
+/// </summary>
+struct Poly {
 
 	/// <summary>
-	/// The unique id of the polyline this line is part of. (Could be useful later)
+	/// The vertices that make up this Polyline
 	/// </summary>
-	int objectId;
+	std::vector<Vertex> vertices;
 
-	/// <summary>
-	/// The vertex-object this line originates from
-	/// </summary>
-	Vertex vFrom;
-
-	/// <summary>
-	/// The vertex-object this line ends up at
-	/// </summary>
-	Vertex vTo;
 };
 
+/// <summary>
+/// This class represents a Line-Dataset. It furthermore offers functionality to load data of an .obj-file and
+/// does some preprocessing-steps.
+/// </summary>
 class Dataset
 {
 
 public:
 	void importFromFile(std::string filename);
 
+	/// <summary>
+	/// This function fills a vertex-list and an index list. the vertices at in between points of a line
+	/// get duplicated as proposed in the paper.
+	/// </summary>
 	void fillGPUReadyBuffer(std::vector<Vertex>& newVertexBuffer, std::vector<uint32_t>& newIndexBuffer);
 
 	/// <summary>
-	/// Returns the time it took to import the last file
+	/// Returns the time it took to import the last file in seconds
 	/// </summary>
 	float getLastLoadingTime() { return mLastLoadingTime; }
 
+	/// <summary>
+	/// Returns the time it took to preprocess the last file in seconds
+	/// </summary>
 	float getLastPreprocessTime() { return mLastPreprocessTime; }
 
-	int getLineCount() { return this->mLineBuffer.size(); }
+	/// <summary>
+	/// Returns the amount of line individual line segments inside the file
+	/// </summary>
+	int getLineCount() { return this->mLineCount; }
 
-	int getPolylineCount() { return this->mPolylineCount; }
+	/// <summary>
+	/// Returns the amount of connected line segments
+	/// </summary>
+	int getPolylineCount() { return this->mPolyLineBuffer.size(); }
+
+	/// <summary>
+	/// Returns the amount of singular vertices in the dataset
+	/// </summary>
+	int getVertexCount() { return this->mVertexCount; }
 
 private:
-	std::vector<Line> mLineBuffer;
-	float mLastLoadingTime = 0.0F;
-	float mLastPreprocessTime = 0.0F;
+	std::vector<Poly> mPolyLineBuffer; // contains the loaded polylines
+	float mLastLoadingTime = 0.0F; // stores the time it took to load the data into cpu memory
+	float mLastPreprocessTime = 0.0F; // stores the time it took to preprocess the current data in seconds
 
 	glm::vec3 mMinimumCoordinateBounds = glm::vec3(1.0F, 1.0F, 1.0F);
 	glm::vec3 mMaximumCoordinateBounds = glm::vec3(0.0F, 0.0F, 0.0F);
 	float mMinVelocity = 1.0F;
 	float mMaxVelocity = 0.0F;
 
-	int mPolylineCount = 0;
+	int mLineCount = 0;
+	int mVertexCount = 0;
 
 	/// <summary>
 	/// This function gathers information about the dataset which is later used for the dynamic
