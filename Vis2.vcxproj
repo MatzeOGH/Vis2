@@ -17,7 +17,6 @@
   <ItemGroup>
     <ClCompile Include="src\Dataset.cpp" />
     <ClCompile Include="src\helper_functions.cpp" />
-    <ClCompile Include="src\line_importer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -43,7 +42,6 @@
     <ClInclude Include="src\Dataset.h" />
     <ClInclude Include="src\helper_functions.h" />
     <ClInclude Include="src\host_structures.h" />
-    <ClInclude Include="src\line_importer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Vis2.rc" />
