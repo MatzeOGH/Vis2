@@ -7,11 +7,9 @@
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
 layout(location = 0) in vec3 inPosition;
-layout(location = 1) in vec4 inColor;
 
 layout (location = 1) out vec4 outColor;
 
 void main() {
     gl_Position =  uboMatricesAndUserInput.mProjMatrix * uboMatricesAndUserInput.mViewMatrix * vec4(inPosition, 1.0);
-    outColor = inColor;
 }

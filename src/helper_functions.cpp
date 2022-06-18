@@ -88,3 +88,13 @@ void activateImGuiStyle(bool darkMode, float alpha)
     }
 
 }
+
+unsigned int getDigitCountForUInt(unsigned int src)
+{
+    unsigned int cnt = 1;
+    while (src > 9) {
+        src /= 10;
+        cnt++;
+    }
+    return cnt;
+}

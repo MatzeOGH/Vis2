@@ -1,9 +1,33 @@
 #pragma once
 
+#include <vulkan/vulkan_core.h>
+
+/// <summary>
+/// Represents one point of a line
+/// </summary>
 struct Vertex {
-	glm::vec3 pos;
-	glm::vec4 color;
-	float radius;
+
+	/// <summary>
+	/// The position of the point
+	/// </summary>
+	glm::vec3 pos = { -1.0F, -1.0F, -1.0F };
+
+	/// <summary>
+	/// The radius/velocity of this point
+	/// </summary>
+	float radius = -1.0F;
+};
+
+/// <summary>
+/// Represents a connected group of lines
+/// </summary>
+struct Poly {
+
+	/// <summary>
+	/// The vertices that make up this Polyline
+	/// </summary>
+	std::vector<Vertex> vertices;
+
 };
 
 struct draw_call_t

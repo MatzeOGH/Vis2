@@ -17,6 +17,9 @@
     <Filter Include="src\util">
       <UniqueIdentifier>{2d0c4843-3f96-4e9c-bb0b-3ca7a315afaa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\data">
+      <UniqueIdentifier>{fc84d41d-d9b8-4713-9d77-ecb65ba87b6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -27,6 +30,9 @@
     </ClCompile>
     <ClCompile Include="src\line_importer.cpp">
       <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Dataset.cpp">
+      <Filter>src\data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +84,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\Dataset.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Vis2.rc" />

@@ -8,9 +8,9 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-#include "line_importer.h"
-#include "host_structures.h"
 #include "helper_functions.h"
+#include "host_structures.h"
+#include "Dataset.h"
 
 /// <summary>
 /// The maximum number of Layers inside the k buffer
@@ -24,11 +24,38 @@ public:
 
 	line_renderer_app(avk::queue& aQueue)
 		: mQueue{ &aQueue } {}
+
+	void loadDatasetFromFile(std::string& filename) {
+		using namespace avk;
+		using namespace gvk;
+
+		mDataset->importFromFile(filename);
+
+		std::vector<Vertex> gpuVertexData;
+		mDataset->fillGPUReadyBuffer(gpuVertexData, mDrawCalls);
+
+		// Create new GPU Buffer
+		mNewVertexBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eVertexBuffer, storage_buffer_meta::create_from_data(gpuVertexData), vertex_buffer_meta::create_from_data(gpuVertexData));
+		mNewVertexBuffer.enable_shared_ownership();
+
+		// Fill them and wait for completion
+		auto fenc = context().record_and_submit_with_fence(
+			{
+				mNewVertexBuffer->fill(gpuVertexData.data(), 0)
+			},
+			mQueue
+		);
+		fenc->wait_until_signalled();
+
+		mReplaceOldBufferWithNextFrame = true;
+	}
 		
 	void initialize() override
 	{
 		using namespace avk;
 		using namespace gvk;
+
+		mDataset = std::make_unique<Dataset>();
 
 		const auto resolution = context().main_window()->resolution();
 
@@ -37,6 +64,10 @@ public:
 
 		// Create a descriptor cache that helps us to conveniently create descriptor sets:
 		mDescriptorCache = gvk::context().create_descriptor_cache();
+
+		std::vector<Vertex> gpuVertexData = { {} };
+		mVertexBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eVertexBuffer, storage_buffer_meta::create_from_data(gpuVertexData), vertex_buffer_meta::create_from_data(gpuVertexData));
+		mVertexBuffer.enable_shared_ownership();
 
 		// Create a storage buffer for the k buffer
 		const size_t kBufferSize = resolution.x * resolution.y * kBufferLayerCount * sizeof(uint64_t);
@@ -71,7 +102,6 @@ public:
 
 		mPipeline = context().create_graphics_pipeline_for(
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
-			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::radius)->to_location(2),
 
 
@@ -115,7 +145,6 @@ public:
 
 		m2DLinePipeline = context().create_graphics_pipeline_for(
 			from_buffer_binding(0)->stream_per_vertex(&Vertex::pos)->to_location(0),
-			from_buffer_binding(0)->stream_per_vertex(&Vertex::color)->to_location(1),
 
 			vertex_shader("shaders/2d_lines.vert"),
 			fragment_shader("shaders/2d_lines.frag"),
@@ -256,44 +285,7 @@ public:
 					// ToDo Load Data-File into buffer
 					std::string filename = mOpenFileDialog.GetSelected().string();
 					mOpenFileDialog.ClearSelected();
-
-					// load position buffer
-					std::vector<glm::vec3> position_buffer;
-					std::vector<float> radius_buffer;
-					std::vector<line_draw_info_t> line_draw_infos;
-					import_file_fast(std::move(filename), position_buffer, radius_buffer, line_draw_infos);
-
-					const size_t offset = offsetof(Vertex, color);
-					std::vector<Vertex> newVertexData;
-					for (size_t idx = 0; idx < position_buffer.size(); ++idx)
-					{
-						newVertexData.push_back({
-							position_buffer[idx],
-							{0.5f, 0.5f, 0.5f, 1.0f},
-							radius_buffer[idx]
-						});
-					}
-
-					mDrawCalls.clear();
-					for (auto line_draw_info : line_draw_infos) {
-						mDrawCalls.emplace_back(
-							line_draw_info.vertexIds[0],
-							line_draw_info.vertexIds.size());
-
-						// set start and end flag 
-						newVertexData[line_draw_info.vertexIds[0]].pos.x *= -1;
-						newVertexData[line_draw_info.vertexIds[0] + line_draw_info.vertexIds.size() - 1].pos.x *= -1;
-					}
-
-					mNewVertexBuffer = context().create_buffer(memory_usage::device, {}, vertex_buffer_meta::create_from_data(newVertexData));
-					mNewVertexBuffer.enable_shared_ownership();
-					auto fenc = context().record_and_submit_with_fence(
-						{ mNewVertexBuffer->fill(newVertexData.data(), 0) },
-						mQueue
-					);
-					fenc->wait_until_signalled();
-
-					mReplaceOldVertexBuffer = true;
+					this->loadDatasetFromFile(filename);
 				}
 			});
 
@@ -367,9 +359,9 @@ public:
 
 		auto mainWnd = context().main_window();
 		
-		if (mReplaceOldVertexBuffer) {
+		if (mReplaceOldBufferWithNextFrame) {
 			mVertexBuffer = std::move(mNewVertexBuffer);
-			mReplaceOldVertexBuffer = false;
+			mReplaceOldBufferWithNextFrame = false;
 		}
 		
 		auto& commandPool = context().get_command_pool_for_single_use_command_buffers(*mQueue);
@@ -459,6 +451,8 @@ public:
 
 private:
 
+	std::unique_ptr<Dataset> mDataset;
+
 	avk::queue* mQueue;
 	avk::graphics_pipeline mPipeline;
 	avk::graphics_pipeline mResolvePass;
@@ -469,7 +463,7 @@ private:
 	avk::buffer mVertexBuffer;
 	avk::buffer mNewVertexBuffer;
 	avk::buffer mkBuffer;
-	bool mReplaceOldVertexBuffer = false;
+	bool mReplaceOldBufferWithNextFrame = false;
 
 	std::shared_ptr<gvk::quake_camera> mQuakeCam;
 	avk::buffer mUniformBuffer;
