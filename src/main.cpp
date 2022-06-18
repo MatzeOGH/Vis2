@@ -243,7 +243,7 @@ public:
 				}
 				ImGui::Separator();
 				ImGui::Checkbox("Resolve K-Buffer", &mResolveKBuffer);
-				ImGui::SliderInt("K-Buffer Layer", &mKBufferLayer, 0, kBufferLayerCount);
+				ImGui::SliderInt("K-Buffer Layer", &mKBufferLayer, 1, kBufferLayerCount);
 				ImGui::Separator();
 				if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::PushID("Cam");
@@ -325,6 +325,14 @@ public:
 				}
 			}
 		}
+
+		// 
+		mUpdater->on(swapchain_changed_event(context().main_window()))
+			.invoke([this]() {
+					const auto resolution = context().main_window()->resolution();
+					const size_t kBufferSize = resolution.x * resolution.y * kBufferLayerCount * sizeof(uint64_t);
+					mkBuffer = context().create_buffer(memory_usage::device, vk::BufferUsageFlagBits::eStorageBuffer, storage_buffer_meta::create_from_size(kBufferSize));
+				});
 	}
 		
 	void render() override
@@ -494,7 +502,7 @@ private:
 	long mRenderCallCount = 0;
 
 	bool mResolveKBuffer = true;
-	int mKBufferLayer = kBufferLayerCount;
+	int mKBufferLayer = 4;
 };
 
 int main()
