@@ -16,7 +16,6 @@ var class_g_l_s_l_1_1ray__casting =
     [ "layout", "class_g_l_s_l_1_1ray__casting.html#a7c68c318e59cd87ce694e5044ff6df46", null ],
     [ "layout", "class_g_l_s_l_1_1ray__casting.html#ad050f78abad103f16b75da9385b18d62", null ],
     [ "layout", "class_g_l_s_l_1_1ray__casting.html#abd373789871e3da4d27bb9e53cc8664c", null ],
-    [ "layout", "class_g_l_s_l_1_1ray__casting.html#a9b53a0f348e169c5b3cced8fbedd583a", null ],
     [ "layout", "class_g_l_s_l_1_1ray__casting.html#a0404fcf4cf2b083b9e727f58082387a1", null ],
     [ "listPos", "class_g_l_s_l_1_1ray__casting.html#a13f9ad88030eb53c6878d24c98a6e9de", null ],
     [ "main", "class_g_l_s_l_1_1ray__casting.html#aa4b15a2efb34cf2255929aa75075377a", null ],
@@ -25,6 +24,5 @@ var class_g_l_s_l_1_1ray__casting =
     [ "release_semaphore", "class_g_l_s_l_1_1ray__casting.html#ae7ad80718fcbd3e417ca42858cc75a0f", null ],
     [ "unpack", "class_g_l_s_l_1_1ray__casting.html#aea27e617b364da8c3a7eded923c742d8", null ],
     [ "unpack", "class_g_l_s_l_1_1ray__casting.html#aea27e617b364da8c3a7eded923c742d8", null ],
-    [ "K_MAX", "class_g_l_s_l_1_1ray__casting.html#a975af62e664b14cfa0a8c353c8e7c2eb", null ],
     [ "kBuffer", "class_g_l_s_l_1_1ray__casting.html#a0f06ff7d0ebb5adc1e70761ad09c3e32", null ]
 ];

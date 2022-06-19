@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -101,57 +101,71 @@ $(document).ready(function(){initNavTree('struct_vertex.html',''); initResizable
 </div><!--header-->
 <div class="contents">
 
+<p>Represents one point of a line  
+ <a href="struct_vertex.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="host__structures_8h_source.html">host_structures.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a858242dc7b40c034c5e13c589b30cfb4"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_vertex.html#a858242dc7b40c034c5e13c589b30cfb4">pos</a></td></tr>
-<tr class="separator:a858242dc7b40c034c5e13c589b30cfb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7ecd21578677765699b8831e0011696"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_vertex.html#aa7ecd21578677765699b8831e0011696">color</a></td></tr>
-<tr class="separator:aa7ecd21578677765699b8831e0011696"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1557d6cedc92aa455814ca5096223ce"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_vertex.html#ab1557d6cedc92aa455814ca5096223ce">radius</a></td></tr>
-<tr class="separator:ab1557d6cedc92aa455814ca5096223ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a030819fdc241743bbd3e180a6b132ed3"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_vertex.html#a030819fdc241743bbd3e180a6b132ed3">position</a> = { -1.0F, -1.0F, -1.0F }</td></tr>
+<tr class="memdesc:a030819fdc241743bbd3e180a6b132ed3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The position of the point  <a href="struct_vertex.html#a030819fdc241743bbd3e180a6b132ed3">More...</a><br /></td></tr>
+<tr class="separator:a030819fdc241743bbd3e180a6b132ed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75f9c75b5fdecef0c6377e2b25761a9b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_vertex.html#a75f9c75b5fdecef0c6377e2b25761a9b">data</a> = -1.0F</td></tr>
+<tr class="memdesc:a75f9c75b5fdecef0c6377e2b25761a9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The data (velocity/radius/vorticity) of this point  <a href="struct_vertex.html#a75f9c75b5fdecef0c6377e2b25761a9b">More...</a><br /></td></tr>
+<tr class="separator:a75f9c75b5fdecef0c6377e2b25761a9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81cf9865d8ae021b48ad9399c8e063b1"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_vertex.html#a81cf9865d8ae021b48ad9399c8e063b1">curvature</a> = -1.0F</td></tr>
+<tr class="memdesc:a81cf9865d8ae021b48ad9399c8e063b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The curvature of this point (angle between adjacent lines) The value is mapped in between 0 and 1 by the Dataset-class  <a href="struct_vertex.html#a81cf9865d8ae021b48ad9399c8e063b1">More...</a><br /></td></tr>
+<tr class="separator:a81cf9865d8ae021b48ad9399c8e063b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="aa7ecd21578677765699b8831e0011696" name="aa7ecd21578677765699b8831e0011696"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7ecd21578677765699b8831e0011696">&#9670;&nbsp;</a></span>color</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >Represents one point of a line </p>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="a81cf9865d8ae021b48ad9399c8e063b1" name="a81cf9865d8ae021b48ad9399c8e063b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81cf9865d8ae021b48ad9399c8e063b1">&#9670;&nbsp;</a></span>curvature</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">glm::vec4 Vertex::color</td>
+          <td class="memname">float Vertex::curvature = -1.0F</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>The curvature of this point (angle between adjacent lines) The value is mapped in between 0 and 1 by the Dataset-class </p>
+
 </div>
 </div>
-<a id="a858242dc7b40c034c5e13c589b30cfb4" name="a858242dc7b40c034c5e13c589b30cfb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a858242dc7b40c034c5e13c589b30cfb4">&#9670;&nbsp;</a></span>pos</h2>
+<a id="a75f9c75b5fdecef0c6377e2b25761a9b" name="a75f9c75b5fdecef0c6377e2b25761a9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75f9c75b5fdecef0c6377e2b25761a9b">&#9670;&nbsp;</a></span>data</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">glm::vec3 Vertex::pos</td>
+          <td class="memname">float Vertex::data = -1.0F</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>The data (velocity/radius/vorticity) of this point </p>
+
 </div>
 </div>
-<a id="ab1557d6cedc92aa455814ca5096223ce" name="ab1557d6cedc92aa455814ca5096223ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab1557d6cedc92aa455814ca5096223ce">&#9670;&nbsp;</a></span>radius</h2>
+<a id="a030819fdc241743bbd3e180a6b132ed3" name="a030819fdc241743bbd3e180a6b132ed3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a030819fdc241743bbd3e180a6b132ed3">&#9670;&nbsp;</a></span>position</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float Vertex::radius</td>
+          <td class="memname">glm::vec3 Vertex::position = { -1.0F, -1.0F, -1.0F }</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>The position of the point </p>
 
 </div>
 </div>

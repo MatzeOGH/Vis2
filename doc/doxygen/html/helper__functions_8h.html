@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -100,15 +100,18 @@ $(document).ready(function(){initNavTree('helper__functions_8h.html',''); initRe
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;glm/glm.hpp&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
 </div>
 <p><a href="helper__functions_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a5aa57dc0a8084045d0e5f37ed4fb014a"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="helper__functions_8h.html#a5aa57dc0a8084045d0e5f37ed4fb014a">uIntTo4Col</a> (unsigned int val)</td></tr>
-<tr class="separator:a5aa57dc0a8084045d0e5f37ed4fb014a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6455cdf317d3d6d2b24a2b3a15b8c8bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="helper__functions_8h.html#a6455cdf317d3d6d2b24a2b3a15b8c8bf">activateImGuiStyle</a> (bool darkMode=true, float alpha=0.2F)</td></tr>
+<tr class="memdesc:a6455cdf317d3d6d2b24a2b3a15b8c8bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Needs to be called after the setup of the dear gui and changes the color theme. WARNING: lightMode is buggy!  <a href="helper__functions_8h.html#a6455cdf317d3d6d2b24a2b3a15b8c8bf">More...</a><br /></td></tr>
 <tr class="separator:a6455cdf317d3d6d2b24a2b3a15b8c8bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8f34791b6602e2e0d4a7e40093340bd"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="helper__functions_8h.html#aa8f34791b6602e2e0d4a7e40093340bd">getDigitCountForUInt</a> (unsigned int src)</td></tr>
+<tr class="memdesc:aa8f34791b6602e2e0d4a7e40093340bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the count of digits of the given unsined int. Example: getDigitCountForUInt(21349) = 5  <a href="helper__functions_8h.html#aa8f34791b6602e2e0d4a7e40093340bd">More...</a><br /></td></tr>
+<tr class="separator:aa8f34791b6602e2e0d4a7e40093340bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a6455cdf317d3d6d2b24a2b3a15b8c8bf" name="a6455cdf317d3d6d2b24a2b3a15b8c8bf"></a>
@@ -137,23 +140,34 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Needs to be called after the setup of the dear gui and changes the color theme. WARNING: lightMode is buggy! </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">darkMode</td><td>dark/light mode flag</td></tr>
+    <tr><td class="paramname">alpha</td><td>The overall alpha level of the theme</td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a5aa57dc0a8084045d0e5f37ed4fb014a" name="a5aa57dc0a8084045d0e5f37ed4fb014a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5aa57dc0a8084045d0e5f37ed4fb014a">&#9670;&nbsp;</a></span>uIntTo4Col()</h2>
+<a id="aa8f34791b6602e2e0d4a7e40093340bd" name="aa8f34791b6602e2e0d4a7e40093340bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8f34791b6602e2e0d4a7e40093340bd">&#9670;&nbsp;</a></span>getDigitCountForUInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">glm::vec4 uIntTo4Col </td>
+          <td class="memname">unsigned int getDigitCountForUInt </td>
           <td>(</td>
           <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>val</em></td><td>)</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns the count of digits of the given unsined int. Example: getDigitCountForUInt(21349) = 5 </p>
 
 </div>
 </div>

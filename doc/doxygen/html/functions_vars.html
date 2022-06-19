@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -96,19 +96,16 @@ $(document).ready(function(){initNavTree('functions_vars.html',''); initResizabl
 <div class="contents">
 &#160;
 
-<h3><a id="index_b" name="index_b"></a>- b -</h3><ul>
-<li>buf2&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a14204bf263dddaa2921c06a3ddbe3144">matrices_and_user_input</a></li>
-</ul>
-
-
 <h3><a id="index_c" name="index_c"></a>- c -</h3><ul>
-<li>color&#160;:&#160;<a class="el" href="struct_g_l_s_l_1_1kbuffer__resolve_1_1_samples.html#ac364045a8cf415f6fbf3bbf7149ac04c">GLSL::kbuffer_resolve::Samples</a>, <a class="el" href="struct_vertex.html#aa7ecd21578677765699b8831e0011696">Vertex</a></li>
+<li>color&#160;:&#160;<a class="el" href="struct_g_l_s_l_1_1kbuffer__resolve_1_1_samples.html#ac364045a8cf415f6fbf3bbf7149ac04c">GLSL::kbuffer_resolve::Samples</a></li>
+<li>curvature&#160;:&#160;<a class="el" href="struct_vertex.html#a81cf9865d8ae021b48ad9399c8e063b1">Vertex</a></li>
 </ul>
 
 
 <h3><a id="index_d" name="index_d"></a>- d -</h3><ul>
+<li>data&#160;:&#160;<a class="el" href="struct_vertex.html#a75f9c75b5fdecef0c6377e2b25761a9b">Vertex</a></li>
 <li>depth&#160;:&#160;<a class="el" href="struct_g_l_s_l_1_1kbuffer__resolve_1_1_samples.html#a925c76fcda537b17960c83899458dd53">GLSL::kbuffer_resolve::Samples</a></li>
-<li>drawCallIndex&#160;:&#160;<a class="el" href="struct_g_l_s_l_1_1passthrough_1_1_push_constants.html#a8dedf3550cf10df24dd1a2b2fdf9cf32">GLSL::passthrough::PushConstants</a></li>
+<li>drawCallIndex&#160;:&#160;<a class="el" href="struct_push_constants.html#aaeea4c408b1add639a97126464b6c333">PushConstants</a></li>
 </ul>
 
 
@@ -119,8 +116,8 @@ $(document).ready(function(){initNavTree('functions_vars.html',''); initResizabl
 
 
 <h3><a id="index_k" name="index_k"></a>- k -</h3><ul>
-<li>K_MAX&#160;:&#160;<a class="el" href="class_g_l_s_l_1_1kbuffer__resolve.html#a2703f947dc6d2147456852e94701e3b4">GLSL::kbuffer_resolve</a>, <a class="el" href="class_g_l_s_l_1_1ray__casting.html#a975af62e664b14cfa0a8c353c8e7c2eb">GLSL::ray_casting</a></li>
-<li>kBuffer&#160;:&#160;<a class="el" href="class_g_l_s_l_1_1kbuffer__resolve.html#a1304375f008f5d5d844e1241ddf8f30b">GLSL::kbuffer_resolve</a>, <a class="el" href="class_g_l_s_l_1_1ray__casting.html#a0f06ff7d0ebb5adc1e70761ad09c3e32">GLSL::ray_casting</a></li>
+<li>K_MAX&#160;:&#160;<a class="el" href="class_g_l_s_l_1_1kbuffer__resolve.html#a2703f947dc6d2147456852e94701e3b4">GLSL::kbuffer_resolve</a></li>
+<li>kBuffer&#160;:&#160;<a class="el" href="class_g_l_s_l_1_1kbuffer__resolve.html#a1304375f008f5d5d844e1241ddf8f30b">GLSL::kbuffer_resolve</a>, <a class="el" href="class_g_l_s_l_1_1tubes3_d.html#ae3f396eb3d6c7401391ccdc75189adc9">GLSL::tubes3D</a></li>
 <li>kBufferInfo&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#ad07fab4dc2360f2f7d00e8df6b35a6ac">matrices_and_user_input</a></li>
 </ul>
 
@@ -128,16 +125,27 @@ $(document).ready(function(){initNavTree('functions_vars.html',''); initResizabl
 <h3><a id="index_m" name="index_m"></a>- m -</h3><ul>
 <li>mAmbLightColor&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a2ecb58d9d264e6423989dc865e974c6e">matrices_and_user_input</a></li>
 <li>mBillboardClippingEnabled&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#adb10df9650f1a331d700108047daa8bf">matrices_and_user_input</a></li>
+<li>mBillboardShadingEnabled&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#ab171b3c2be42c65c976047dc5550c9af">matrices_and_user_input</a></li>
 <li>mCamDir&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a3bc6283413687136ddb8b3c876db280d">matrices_and_user_input</a></li>
 <li>mCamPos&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#adc256b365e9ce985fe445fabe6956a30">matrices_and_user_input</a></li>
 <li>mClearColor&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#aca3806e7f0905aec00d900af3e9b4f78">matrices_and_user_input</a></li>
+<li>mDataMaxLineLength&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a2b4fee633a84564e855b965f7b1e67db">matrices_and_user_input</a></li>
+<li>mDataMaxVertexAdjacentLineLength&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a4c24467923ba2c400727dc6e4bf6b05f">matrices_and_user_input</a></li>
 <li>mDirLightColor&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a5a9a35bfc240a796e85cda4de7fd6491">matrices_and_user_input</a></li>
 <li>mDirLightDirection&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a7758d22d9f8116fe353f75c548cba58f">matrices_and_user_input</a></li>
 <li>mHelperLineColor&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#ab91b0c2af4a11518d39e3303fbcbe6f2">matrices_and_user_input</a></li>
 <li>mkBufferInfo&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a005e7ce3530323d46505eee33251233c">matrices_and_user_input</a></li>
 <li>mMaterialLightReponse&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a8a4116d4c25d467d2d35acba71f87ba6">matrices_and_user_input</a></li>
 <li>mProjMatrix&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a1917ba601251ce6a84fb09077730e3b3">matrices_and_user_input</a></li>
-<li>mUseVertexColorForHelperLines&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#ae46c720408e441a4d8efcbf68b641325">matrices_and_user_input</a></li>
+<li>mVertexAlphaBounds&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#ae52ddbcb8aaf5a027380bdfa5905f7d4">matrices_and_user_input</a></li>
+<li>mVertexAlphaInvert&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a2aa09d3fbcc98447b5ee37e892c6fe5b">matrices_and_user_input</a></li>
+<li>mVertexAlphaMode&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a625c7d45b6be386212d0e14f09b1f28f">matrices_and_user_input</a></li>
+<li>mVertexColorMax&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a7f36fc4a2bfa4a18b727f6cbe5e09a36">matrices_and_user_input</a></li>
+<li>mVertexColorMin&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a63dbe1f19427fcdb45110f9d109c27f9">matrices_and_user_input</a></li>
+<li>mVertexColorMode&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#af4efb8bbf66bc7136faefa005a79d4e3">matrices_and_user_input</a></li>
+<li>mVertexRadiusBounds&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#aa005185e8466f5b4507bbac3b2123fdb">matrices_and_user_input</a></li>
+<li>mVertexRadiusInvert&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a121644d016b310a339cb8fc43962e3eb">matrices_and_user_input</a></li>
+<li>mVertexRadiusMode&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#a05c751c3f5469341cf03815473c0196c">matrices_and_user_input</a></li>
 <li>mViewMatrix&#160;:&#160;<a class="el" href="structmatrices__and__user__input.html#acc4375938d5e2841f6233056ca3ce972">matrices_and_user_input</a></li>
 </ul>
 
@@ -148,19 +156,14 @@ $(document).ready(function(){initNavTree('functions_vars.html',''); initResizabl
 
 
 <h3><a id="index_p" name="index_p"></a>- p -</h3><ul>
-<li>pos&#160;:&#160;<a class="el" href="struct_vertex.html#a858242dc7b40c034c5e13c589b30cfb4">Vertex</a></li>
-<li>positions&#160;:&#160;<a class="el" href="class_g_l_s_l_1_1kbuffer__resolve.html#a1250a11d0b61ddde8a853e970ed72d31">GLSL::kbuffer_resolve</a>, <a class="el" href="class_g_l_s_l_1_1sky__gradient.html#a383666ec3d6f73fa7c6dfe62b9a6ae82">GLSL::sky_gradient</a></li>
-</ul>
-
-
-<h3><a id="index_r" name="index_r"></a>- r -</h3><ul>
-<li>radius&#160;:&#160;<a class="el" href="struct_vertex.html#ab1557d6cedc92aa455814ca5096223ce">Vertex</a></li>
+<li>position&#160;:&#160;<a class="el" href="struct_vertex.html#a030819fdc241743bbd3e180a6b132ed3">Vertex</a></li>
+<li>positions&#160;:&#160;<a class="el" href="class_g_l_s_l_1_1background.html#a3a3262e597e0cc0daff8c6236875eca3">GLSL::background</a>, <a class="el" href="class_g_l_s_l_1_1kbuffer__resolve.html#a1250a11d0b61ddde8a853e970ed72d31">GLSL::kbuffer_resolve</a></li>
 </ul>
 
 
 <h3><a id="index_v" name="index_v"></a>- v -</h3><ul>
-<li>v_out&#160;:&#160;<a class="el" href="class_g_l_s_l_1_1kbuffer__resolve.html#afa1d3a7c590019856114a227d305c17c">GLSL::kbuffer_resolve</a>, <a class="el" href="class_g_l_s_l_1_1sky__gradient.html#adf0ac11ce591dfe3ab3d249ebaa4ca8c">GLSL::sky_gradient</a></li>
-<li>vertexIds&#160;:&#160;<a class="el" href="structline__draw__info__t.html#a7125c12bdb476cdfdb307ea20dd78ef7">line_draw_info_t</a></li>
+<li>v_out&#160;:&#160;<a class="el" href="class_g_l_s_l_1_1kbuffer__resolve.html#afa1d3a7c590019856114a227d305c17c">GLSL::kbuffer_resolve</a></li>
+<li>vertices&#160;:&#160;<a class="el" href="struct_poly.html#a564e7d0e547c911ebd8441e36d643d09">Poly</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

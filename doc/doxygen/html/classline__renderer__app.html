@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -100,6 +100,9 @@ $(document).ready(function(){initNavTree('classline__renderer__app.html',''); in
   <div class="headertitle"><div class="title">line_renderer_app Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>This is the main class of our project. It derives from gvk::invokee and as such gets invoked by the framework each update and render-step.  
+ <a href="classline__renderer__app.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for line_renderer_app:</div>
 <div class="dyncontent">
@@ -111,14 +114,34 @@ Inheritance diagram for line_renderer_app:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a95238be851a49d4e5e31d7865e7bb565"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#a95238be851a49d4e5e31d7865e7bb565">line_renderer_app</a> (avk::queue &amp;aQueue)</td></tr>
 <tr class="separator:a95238be851a49d4e5e31d7865e7bb565"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe3418859f06b171caea1ce433186e8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#abe3418859f06b171caea1ce433186e8e">loadDatasetFromFile</a> (std::string &amp;filename)</td></tr>
+<tr class="memdesc:abe3418859f06b171caea1ce433186e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a Line-Data set (only .obj supported) into the appropriate GPU buffers utilizing the Dataset-class.  <a href="classline__renderer__app.html#abe3418859f06b171caea1ce433186e8e">More...</a><br /></td></tr>
+<tr class="separator:abe3418859f06b171caea1ce433186e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad14395c8474053aa5e70e8fbde208446"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#ad14395c8474053aa5e70e8fbde208446">resetCamera</a> ()</td></tr>
+<tr class="memdesc:ad14395c8474053aa5e70e8fbde208446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the camera to the initial position and looking direction.  <a href="classline__renderer__app.html#ad14395c8474053aa5e70e8fbde208446">More...</a><br /></td></tr>
+<tr class="separator:ad14395c8474053aa5e70e8fbde208446"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a034617004cd62bce861e8737a95bab3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#a034617004cd62bce861e8737a95bab3e">toggleInputMode</a> ()</td></tr>
+<tr class="memdesc:a034617004cd62bce861e8737a95bab3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switches from mouse-interaction mode (ui-mode) to camera mode  <a href="classline__renderer__app.html#a034617004cd62bce861e8737a95bab3e">More...</a><br /></td></tr>
+<tr class="separator:a034617004cd62bce861e8737a95bab3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a548c5638ea6285815c3ac97016231a19"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#a548c5638ea6285815c3ac97016231a19">inCameraMode</a> ()</td></tr>
+<tr class="memdesc:a548c5638ea6285815c3ac97016231a19"><td class="mdescLeft">&#160;</td><td class="mdescRight">return true if currently in camera mode  <a href="classline__renderer__app.html#a548c5638ea6285815c3ac97016231a19">More...</a><br /></td></tr>
+<tr class="separator:a548c5638ea6285815c3ac97016231a19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6499300b1c638afae1a099501ddaf358"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#a6499300b1c638afae1a099501ddaf358">renderUI</a> ()</td></tr>
+<tr class="memdesc:a6499300b1c638afae1a099501ddaf358"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function draws the whole GUI using "dearImGui" commands and gets invoked by the ImGuiManager.  <a href="classline__renderer__app.html#a6499300b1c638afae1a099501ddaf358">More...</a><br /></td></tr>
+<tr class="separator:a6499300b1c638afae1a099501ddaf358"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a477fd26c7088bb84100294da727cda05"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#a477fd26c7088bb84100294da727cda05">initialize</a> () override</td></tr>
+<tr class="memdesc:a477fd26c7088bb84100294da727cda05"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function gets called by the framework before the first iteration of the render-loop. It initializes all of our needed buffers, textures, renderpasses and pipelines.  <a href="classline__renderer__app.html#a477fd26c7088bb84100294da727cda05">More...</a><br /></td></tr>
 <tr class="separator:a477fd26c7088bb84100294da727cda05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca2f19291add6fbb04e26e2ba86c7b78"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#aca2f19291add6fbb04e26e2ba86c7b78">update</a> () override</td></tr>
+<tr class="memdesc:aca2f19291add6fbb04e26e2ba86c7b78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles key-inputs. (gets called by framework before each render-call)  <a href="classline__renderer__app.html#aca2f19291add6fbb04e26e2ba86c7b78">More...</a><br /></td></tr>
 <tr class="separator:aca2f19291add6fbb04e26e2ba86c7b78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c420706cc8ad700842ce27809bead5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classline__renderer__app.html#a6c420706cc8ad700842ce27809bead5c">render</a> () override</td></tr>
+<tr class="memdesc:a6c420706cc8ad700842ce27809bead5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Refreshes the UBO-Buffer and invokes all rendering pipelines/stages  <a href="classline__renderer__app.html#a6c420706cc8ad700842ce27809bead5c">More...</a><br /></td></tr>
 <tr class="separator:a6c420706cc8ad700842ce27809bead5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >This is the main class of our project. It derives from gvk::invokee and as such gets invoked by the framework each update and render-step. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a95238be851a49d4e5e31d7865e7bb565" name="a95238be851a49d4e5e31d7865e7bb565"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a95238be851a49d4e5e31d7865e7bb565">&#9670;&nbsp;</a></span>line_renderer_app()</h2>
 
@@ -146,6 +169,33 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a548c5638ea6285815c3ac97016231a19" name="a548c5638ea6285815c3ac97016231a19"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a548c5638ea6285815c3ac97016231a19">&#9670;&nbsp;</a></span>inCameraMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool line_renderer_app::inCameraMode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>return true if currently in camera mode </p>
+
+</div>
+</div>
 <a id="a477fd26c7088bb84100294da727cda05" name="a477fd26c7088bb84100294da727cda05"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a477fd26c7088bb84100294da727cda05">&#9670;&nbsp;</a></span>initialize()</h2>
 
@@ -168,6 +218,42 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>This function gets called by the framework before the first iteration of the render-loop. It initializes all of our needed buffers, textures, renderpasses and pipelines. </p>
+
+</div>
+</div>
+<a id="abe3418859f06b171caea1ce433186e8e" name="abe3418859f06b171caea1ce433186e8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe3418859f06b171caea1ce433186e8e">&#9670;&nbsp;</a></span>loadDatasetFromFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void line_renderer_app::loadDatasetFromFile </td>
+          <td>(</td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Loads a Line-Data set (only .obj supported) into the appropriate GPU buffers utilizing the Dataset-class. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td>The full filename of the .obj dataset file</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -194,6 +280,89 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Refreshes the UBO-Buffer and invokes all rendering pipelines/stages </p>
+
+</div>
+</div>
+<a id="a6499300b1c638afae1a099501ddaf358" name="a6499300b1c638afae1a099501ddaf358"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6499300b1c638afae1a099501ddaf358">&#9670;&nbsp;</a></span>renderUI()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void line_renderer_app::renderUI </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>This function draws the whole GUI using "dearImGui" commands and gets invoked by the ImGuiManager. </p>
+
+</div>
+</div>
+<a id="ad14395c8474053aa5e70e8fbde208446" name="ad14395c8474053aa5e70e8fbde208446"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad14395c8474053aa5e70e8fbde208446">&#9670;&nbsp;</a></span>resetCamera()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void line_renderer_app::resetCamera </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Resets the camera to the initial position and looking direction. </p>
+
+</div>
+</div>
+<a id="a034617004cd62bce861e8737a95bab3e" name="a034617004cd62bce861e8737a95bab3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a034617004cd62bce861e8737a95bab3e">&#9670;&nbsp;</a></span>toggleInputMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void line_renderer_app::toggleInputMode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Switches from mouse-interaction mode (ui-mode) to camera mode </p>
+
 </div>
 </div>
 <a id="aca2f19291add6fbb04e26e2ba86c7b78" name="aca2f19291add6fbb04e26e2ba86c7b78"></a>
@@ -218,6 +387,8 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Handles key-inputs. (gets called by framework before each render-call) </p>
 
 </div>
 </div>

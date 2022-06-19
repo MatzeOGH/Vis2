@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -100,12 +100,13 @@ $(document).ready(function(){initNavTree('helper__functions_8h_source.html','');
 <a href="helper__functions_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;glm/glm.hpp&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>glm::vec4 <a class="code hl_function" href="helper__functions_8h.html#a5aa57dc0a8084045d0e5f37ed4fb014a">uIntTo4Col</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> val);</div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keywordtype">void</span> <a class="code hl_function" href="helper__functions_8h.html#a6455cdf317d3d6d2b24a2b3a15b8c8bf">activateImGuiStyle</a>(<span class="keywordtype">bool</span> darkMode = <span class="keyword">true</span>, <span class="keywordtype">float</span> alpha = 0.2F);</div>
-<div class="ttc" id="ahelper__functions_8h_html_a5aa57dc0a8084045d0e5f37ed4fb014a"><div class="ttname"><a href="helper__functions_8h.html#a5aa57dc0a8084045d0e5f37ed4fb014a">uIntTo4Col</a></div><div class="ttdeci">glm::vec4 uIntTo4Col(unsigned int val)</div><div class="ttdef"><b>Definition:</b> helper_functions.cpp:4</div></div>
-<div class="ttc" id="ahelper__functions_8h_html_a6455cdf317d3d6d2b24a2b3a15b8c8bf"><div class="ttname"><a href="helper__functions_8h.html#a6455cdf317d3d6d2b24a2b3a15b8c8bf">activateImGuiStyle</a></div><div class="ttdeci">void activateImGuiStyle(bool darkMode=true, float alpha=0.2F)</div><div class="ttdef"><b>Definition:</b> helper_functions.cpp:14</div></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keywordtype">void</span> <a class="code hl_function" href="helper__functions_8h.html#a6455cdf317d3d6d2b24a2b3a15b8c8bf">activateImGuiStyle</a>(<span class="keywordtype">bool</span> darkMode = <span class="keyword">true</span>, <span class="keywordtype">float</span> alpha = 0.2F);</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_function" href="helper__functions_8h.html#aa8f34791b6602e2e0d4a7e40093340bd">getDigitCountForUInt</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> src);</div>
+<div class="ttc" id="ahelper__functions_8h_html_a6455cdf317d3d6d2b24a2b3a15b8c8bf"><div class="ttname"><a href="helper__functions_8h.html#a6455cdf317d3d6d2b24a2b3a15b8c8bf">activateImGuiStyle</a></div><div class="ttdeci">void activateImGuiStyle(bool darkMode=true, float alpha=0.2F)</div><div class="ttdoc">Needs to be called after the setup of the dear gui and changes the color theme. WARNING: lightMode is...</div><div class="ttdef"><b>Definition:</b> helper_functions.cpp:6</div></div>
+<div class="ttc" id="ahelper__functions_8h_html_aa8f34791b6602e2e0d4a7e40093340bd"><div class="ttname"><a href="helper__functions_8h.html#aa8f34791b6602e2e0d4a7e40093340bd">getDigitCountForUInt</a></div><div class="ttdeci">unsigned int getDigitCountForUInt(unsigned int src)</div><div class="ttdoc">Returns the count of digits of the given unsined int. Example: getDigitCountForUInt(21349) = 5</div><div class="ttdef"><b>Definition:</b> helper_functions.cpp:84</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -1,38 +1,58 @@
-\hypertarget{struct_vertex}{}\doxysubsection{Vertex Struct Reference}
+\hypertarget{struct_vertex}{}\doxysection{Vertex Struct Reference}
 \label{struct_vertex}\index{Vertex@{Vertex}}
+
+
+Represents one point of a line  
+
+
 
 
 {\ttfamily \#include $<$host\+\_\+structures.\+h$>$}
 
-\doxysubsubsection*{Public Attributes}
+\doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-glm\+::vec3 \mbox{\hyperlink{struct_vertex_a858242dc7b40c034c5e13c589b30cfb4}{pos}}
-\item 
-glm\+::vec4 \mbox{\hyperlink{struct_vertex_aa7ecd21578677765699b8831e0011696}{color}}
-\item 
-float \mbox{\hyperlink{struct_vertex_ab1557d6cedc92aa455814ca5096223ce}{radius}}
-\end{DoxyCompactItemize}
+glm\+::vec3 \mbox{\hyperlink{struct_vertex_a030819fdc241743bbd3e180a6b132ed3}{position}} = \{ -\/1.\+0F, -\/1.\+0F, -\/1.\+0F \}
+\begin{DoxyCompactList}\small\item\em The position of the point \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{struct_vertex_a75f9c75b5fdecef0c6377e2b25761a9b}{data}} = -\/1.\+0F
+\begin{DoxyCompactList}\small\item\em The data (velocity/radius/vorticity) of this point \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{struct_vertex_a81cf9865d8ae021b48ad9399c8e063b1}{curvature}} = -\/1.\+0F
+\begin{DoxyCompactList}\small\item\em The curvature of this point (angle between adjacent lines) The value is mapped in between 0 and 1 by the Dataset-\/class \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\doxysubsubsection{Member Data Documentation}
-\mbox{\Hypertarget{struct_vertex_aa7ecd21578677765699b8831e0011696}\label{struct_vertex_aa7ecd21578677765699b8831e0011696}} 
-\index{Vertex@{Vertex}!color@{color}}
-\index{color@{color}!Vertex@{Vertex}}
-\doxyparagraph{\texorpdfstring{color}{color}}
-{\footnotesize\ttfamily glm\+::vec4 Vertex\+::color}
+\doxysubsection{Detailed Description}
+Represents one point of a line 
 
-\mbox{\Hypertarget{struct_vertex_a858242dc7b40c034c5e13c589b30cfb4}\label{struct_vertex_a858242dc7b40c034c5e13c589b30cfb4}} 
-\index{Vertex@{Vertex}!pos@{pos}}
-\index{pos@{pos}!Vertex@{Vertex}}
-\doxyparagraph{\texorpdfstring{pos}{pos}}
-{\footnotesize\ttfamily glm\+::vec3 Vertex\+::pos}
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{struct_vertex_a81cf9865d8ae021b48ad9399c8e063b1}\label{struct_vertex_a81cf9865d8ae021b48ad9399c8e063b1}} 
+\index{Vertex@{Vertex}!curvature@{curvature}}
+\index{curvature@{curvature}!Vertex@{Vertex}}
+\doxysubsubsection{\texorpdfstring{curvature}{curvature}}
+{\footnotesize\ttfamily float Vertex\+::curvature = -\/1.\+0F}
 
-\mbox{\Hypertarget{struct_vertex_ab1557d6cedc92aa455814ca5096223ce}\label{struct_vertex_ab1557d6cedc92aa455814ca5096223ce}} 
-\index{Vertex@{Vertex}!radius@{radius}}
-\index{radius@{radius}!Vertex@{Vertex}}
-\doxyparagraph{\texorpdfstring{radius}{radius}}
-{\footnotesize\ttfamily float Vertex\+::radius}
+
+
+The curvature of this point (angle between adjacent lines) The value is mapped in between 0 and 1 by the Dataset-\/class 
+
+\mbox{\Hypertarget{struct_vertex_a75f9c75b5fdecef0c6377e2b25761a9b}\label{struct_vertex_a75f9c75b5fdecef0c6377e2b25761a9b}} 
+\index{Vertex@{Vertex}!data@{data}}
+\index{data@{data}!Vertex@{Vertex}}
+\doxysubsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily float Vertex\+::data = -\/1.\+0F}
+
+
+
+The data (velocity/radius/vorticity) of this point 
+
+\mbox{\Hypertarget{struct_vertex_a030819fdc241743bbd3e180a6b132ed3}\label{struct_vertex_a030819fdc241743bbd3e180a6b132ed3}} 
+\index{Vertex@{Vertex}!position@{position}}
+\index{position@{position}!Vertex@{Vertex}}
+\doxysubsubsection{\texorpdfstring{position}{position}}
+{\footnotesize\ttfamily glm\+::vec3 Vertex\+::position = \{ -\/1.\+0F, -\/1.\+0F, -\/1.\+0F \}}
+
+
+
+The position of the point 
 
 
 

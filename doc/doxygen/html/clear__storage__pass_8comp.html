@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -95,6 +95,7 @@ $(document).ready(function(){initNavTree('clear__storage__pass_8comp.html',''); 
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
@@ -103,6 +104,11 @@ $(document).ready(function(){initNavTree('clear__storage__pass_8comp.html',''); 
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="shader__structures_8glsl.html">shader_structures.glsl</a>&quot;</code><br />
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespace_g_l_s_l"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_g_l_s_l.html">GLSL</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a4d908f0178f252b8f0cc9b6ade876495"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clear__storage__pass_8comp.html#a4d908f0178f252b8f0cc9b6ade876495">WORKGROUP_SIZE</a>&#160;&#160;&#160;16</td></tr>
@@ -110,12 +116,8 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a75b98e1cc735e8b3932b15d3a3c90136"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clear__storage__pass_8comp.html#a75b98e1cc735e8b3932b15d3a3c90136">layout</a> (std140, set=0, binding=0) uniform UniformBlock</td></tr>
-<tr class="separator:a75b98e1cc735e8b3932b15d3a3c90136"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b2eb9ddefa66d5706046e5d3ff34b62"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clear__storage__pass_8comp.html#a6b2eb9ddefa66d5706046e5d3ff34b62">layout</a> (set=0, binding=1) buffer writeonly KBuffer</td></tr>
-<tr class="separator:a6b2eb9ddefa66d5706046e5d3ff34b62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21bd2dbac17e3070d27afc69d4312152"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clear__storage__pass_8comp.html#a21bd2dbac17e3070d27afc69d4312152">layout</a> (set=1, binding=0, r32f) volatile coherent uniform image2D alphaImage</td></tr>
-<tr class="separator:a21bd2dbac17e3070d27afc69d4312152"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad759d13139ce5fa1e7180f63b6cc2b3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clear__storage__pass_8comp.html#aad759d13139ce5fa1e7180f63b6cc2b3">layout</a> (set=0, binding=0) uniform UniformBlock</td></tr>
+<tr class="separator:aad759d13139ce5fa1e7180f63b6cc2b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a932ad7c4666430fc5d583f6b2fc23f99"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clear__storage__pass_8comp.html#a932ad7c4666430fc5d583f6b2fc23f99">layout</a> (local_size_x=<a class="el" href="clear__storage__pass_8comp.html#a4d908f0178f252b8f0cc9b6ade876495">WORKGROUP_SIZE</a>, local_size_y=<a class="el" href="clear__storage__pass_8comp.html#a4d908f0178f252b8f0cc9b6ade876495">WORKGROUP_SIZE</a>, local_size_z=1) in</td></tr>
 <tr class="separator:a932ad7c4666430fc5d583f6b2fc23f99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdef7a1fd863a6d3770c1268cb06add3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clear__storage__pass_8comp.html#acdef7a1fd863a6d3770c1268cb06add3">main</a> ()</td></tr>
@@ -143,7 +145,7 @@ Variables</h2></td></tr>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a932ad7c4666430fc5d583f6b2fc23f99" name="a932ad7c4666430fc5d583f6b2fc23f99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a932ad7c4666430fc5d583f6b2fc23f99">&#9670;&nbsp;</a></span>layout() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a932ad7c4666430fc5d583f6b2fc23f99">&#9670;&nbsp;</a></span>layout() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,8 +178,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a6b2eb9ddefa66d5706046e5d3ff34b62" name="a6b2eb9ddefa66d5706046e5d3ff34b62"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b2eb9ddefa66d5706046e5d3ff34b62">&#9670;&nbsp;</a></span>layout() <span class="overload">[2/4]</span></h2>
+<a id="aad759d13139ce5fa1e7180f63b6cc2b3" name="aad759d13139ce5fa1e7180f63b6cc2b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad759d13139ce5fa1e7180f63b6cc2b3">&#9670;&nbsp;</a></span>layout() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -185,74 +187,6 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">layout </td>
           <td>(</td>
-          <td class="paramtype">set&#160;</td>
-          <td class="paramname"> = <code>0</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">binding&#160;</td>
-          <td class="paramname"> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a21bd2dbac17e3070d27afc69d4312152" name="a21bd2dbac17e3070d27afc69d4312152"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21bd2dbac17e3070d27afc69d4312152">&#9670;&nbsp;</a></span>layout() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">layout </td>
-          <td>(</td>
-          <td class="paramtype">set&#160;</td>
-          <td class="paramname"> = <code>1</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">binding&#160;</td>
-          <td class="paramname"> = <code>0</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">r32f&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> volatile</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a75b98e1cc735e8b3932b15d3a3c90136" name="a75b98e1cc735e8b3932b15d3a3c90136"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75b98e1cc735e8b3932b15d3a3c90136">&#9670;&nbsp;</a></span>layout() <span class="overload">[4/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">layout </td>
-          <td>(</td>
-          <td class="paramtype">std140&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">set&#160;</td>
           <td class="paramname"> = <code>0</code>, </td>
         </tr>

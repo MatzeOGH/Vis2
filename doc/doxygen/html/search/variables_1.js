@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['color_0',['color',['../struct_vertex.html#aa7ecd21578677765699b8831e0011696',1,'Vertex::color()'],['../struct_g_l_s_l_1_1kbuffer__resolve_1_1_samples.html#ac364045a8cf415f6fbf3bbf7149ac04c',1,'GLSL::kbuffer_resolve::Samples::color()']]]
+  ['data_0',['data',['../struct_vertex.html#a75f9c75b5fdecef0c6377e2b25761a9b',1,'Vertex']]],
+  ['depth_1',['depth',['../struct_g_l_s_l_1_1kbuffer__resolve_1_1_samples.html#a925c76fcda537b17960c83899458dd53',1,'GLSL::kbuffer_resolve::Samples']]],
+  ['drawcallindex_2',['drawCallIndex',['../struct_push_constants.html#aaeea4c408b1add639a97126464b6c333',1,'PushConstants']]]
 ];

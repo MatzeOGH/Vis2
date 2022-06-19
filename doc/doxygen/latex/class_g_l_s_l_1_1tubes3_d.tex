@@ -1,0 +1,297 @@
+\hypertarget{class_g_l_s_l_1_1tubes3_d}{}\doxysection{GLSL\+::tubes3D Class Reference}
+\label{class_g_l_s_l_1_1tubes3_d}\index{GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a75a857b7c214121038b00b7321024564}{layout}} (set=0, binding=0) uniform Uniform\+Block
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a25f13bc1f928a1a15e19bbc0cd7111f4}{layout}} (location=0) in vec3 in\+Position
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a4af1dd3b8fb27779224230014cade121}{layout}} (location=1) in float in\+Curvature
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_aa7bbfa5936b614d59095ad28687d4677}{layout}} (location=2) in float in\+Data
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a8b6e8b745303eefe225814134b0e572f}{layout}} (location=1) out float out\+Curvature
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a32976d0438c223c6454cf1bbf1603d3e}{layout}} (location=2) out float out\+Data
+\item 
+void \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a4de7d0463b8e21091046702dc06c39fc}{main}} ()
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a75a857b7c214121038b00b7321024564}{layout}} (set=0, binding=0) uniform Uniform\+Block
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a8720b3796c5ef0a6608ffbd328fd0fa7}{layout}} (set=2, binding=0) buffer coherent KBuffer
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a56fb63d5eae199255261a1da509d7a01}{layout}} (location=0) in vec4 in\+View\+Ray
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a358bf4f75fcc10fefeea9ac1d3799e74}{layout}} (location=1) in vec4 in\+Frag\+Color
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_af2f6960d57fcba1c7f8a4b3135805728}{layout}} (location=2) in vec3 in\+PosA
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_acfecbbae09656ccb94f9b0ad6167ee76}{layout}} (location=3) in vec3 in\+PosB
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_ad804001298825d4f9074b04218236bcd}{layout}} (location=4) in vec2 in\+RARB
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a400178cb5c63df83dda9f03c2a5f305c}{layout}} (location=5) in vec3 in\+N0
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a1e850315cfc387f835f2e2e961f895b4}{layout}} (location=6) in vec3 in\+N1
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a6ff9b0e53402a071abb642e7a622b83f}{layout}} (location=7) in vec3 in\+Pos\+WS
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a16f4ad78e0bba3388131f4fb5e9cce56}{layout}} (location=0) out vec4 out\+Color
+\item 
+bool \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_ac17fac953ce851bfdaeedb89170181bb}{acquire\+\_\+semaphore}} (ivec2 coord)
+\item 
+void \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_ac73882d174735a3564c6c206396ed550}{release\+\_\+semaphore}} (ivec2 coord)
+\item 
+void \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a6d662d0915f420fc67cb1c5cb2e34f43}{insert}} (ivec2 coord, uint current\+\_\+count, vec4 color)
+\item 
+uint64\+\_\+t \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a781be54e2142aa7b5f8ba035a96ff2fb}{pack}} (float depth, vec4 color)
+\item 
+void \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a5a3afc764abc103d849384add282b1ae}{unpack}} (uint64\+\_\+t data, out float depth, out vec4 color)
+\item 
+uint \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_adf353670b3ce4a7d75dbe05069f26566}{list\+Pos}} (uint i)
+\item 
+vec4 \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a0f93cc9a569766ad63b0c8a9a664121d}{i\+Rounded\+Cone}} (in vec3 ro, in vec3 rd, in vec3 pa, in vec3 pb, in float ra, in float rb)
+\item 
+float \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a1321c6f02bdab25b350786e82d928a9d}{get\+\_\+distance\+\_\+from\+\_\+plane}} (vec3 point, vec4 plane)
+\item 
+vec3 \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a1457c6aa4082164943bb1b2b11962d28}{calc\+\_\+blinn\+\_\+phong\+\_\+contribution}} (vec3 to\+Light, vec3 to\+Eye, vec3 normal, vec3 diff\+Factor, vec3 spec\+Factor, float spec\+Shininess)
+\item 
+vec3 \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a57408a6b62e987ef2c8762d2ecc3f0d3}{calculate\+\_\+illumination}} (vec3 albedo, vec3 eye\+Pos, vec3 frag\+Pos, vec3 frag\+Norm)
+\item 
+void \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a4de7d0463b8e21091046702dc06c39fc}{main}} ()
+\item 
+uint64\+\_\+t \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a781be54e2142aa7b5f8ba035a96ff2fb}{pack}} (float depth, vec4 color)
+\item 
+void \mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_a5a3afc764abc103d849384add282b1ae}{unpack}} (uint64\+\_\+t data, out float depth, out vec4 color)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_l_s_l_1_1tubes3_d_ae3f396eb3d6c7401391ccdc75189adc9}{k\+Buffer}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A simple passthrough vertex shader to forward data to the geometry shader \begin{DoxyAuthor}{Author}
+Gerald Kimmersdorfer, Mathias Hürbe 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2022 
+\end{DoxyDate}
+\begin{DoxyRemark}{Remarks}
+{\bfseries{Vertex-\/\+Shader}}
+\end{DoxyRemark}
+The ray-\/casting shader to get the exact position/normal and illuminated color for each fragment on the earlier created billboards. It stores overlapping fragments inside the k-\/buffer for the next resolve stage. \begin{DoxyAuthor}{Author}
+Gerald Kimmersdorfer, Mathias Hürbe 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2022 
+\end{DoxyDate}
+\begin{DoxyRemark}{Remarks}
+{\bfseries{Fragment-\/\+Shader}} 
+\end{DoxyRemark}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_ac17fac953ce851bfdaeedb89170181bb}\label{class_g_l_s_l_1_1tubes3_d_ac17fac953ce851bfdaeedb89170181bb}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!acquire\_semaphore@{acquire\_semaphore}}
+\index{acquire\_semaphore@{acquire\_semaphore}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{acquire\_semaphore()}{acquire\_semaphore()}}
+{\footnotesize\ttfamily bool GLSL\+::tubes3\+D\+::acquire\+\_\+semaphore (\begin{DoxyParamCaption}\item[{ivec2}]{coord }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a1457c6aa4082164943bb1b2b11962d28}\label{class_g_l_s_l_1_1tubes3_d_a1457c6aa4082164943bb1b2b11962d28}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!calc\_blinn\_phong\_contribution@{calc\_blinn\_phong\_contribution}}
+\index{calc\_blinn\_phong\_contribution@{calc\_blinn\_phong\_contribution}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{calc\_blinn\_phong\_contribution()}{calc\_blinn\_phong\_contribution()}}
+{\footnotesize\ttfamily vec3 GLSL\+::tubes3\+D\+::calc\+\_\+blinn\+\_\+phong\+\_\+contribution (\begin{DoxyParamCaption}\item[{vec3}]{to\+Light,  }\item[{vec3}]{to\+Eye,  }\item[{vec3}]{normal,  }\item[{vec3}]{diff\+Factor,  }\item[{vec3}]{spec\+Factor,  }\item[{float}]{spec\+Shininess }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a57408a6b62e987ef2c8762d2ecc3f0d3}\label{class_g_l_s_l_1_1tubes3_d_a57408a6b62e987ef2c8762d2ecc3f0d3}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!calculate\_illumination@{calculate\_illumination}}
+\index{calculate\_illumination@{calculate\_illumination}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{calculate\_illumination()}{calculate\_illumination()}}
+{\footnotesize\ttfamily vec3 GLSL\+::tubes3\+D\+::calculate\+\_\+illumination (\begin{DoxyParamCaption}\item[{vec3}]{albedo,  }\item[{vec3}]{eye\+Pos,  }\item[{vec3}]{frag\+Pos,  }\item[{vec3}]{frag\+Norm }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a1321c6f02bdab25b350786e82d928a9d}\label{class_g_l_s_l_1_1tubes3_d_a1321c6f02bdab25b350786e82d928a9d}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!get\_distance\_from\_plane@{get\_distance\_from\_plane}}
+\index{get\_distance\_from\_plane@{get\_distance\_from\_plane}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{get\_distance\_from\_plane()}{get\_distance\_from\_plane()}}
+{\footnotesize\ttfamily float GLSL\+::tubes3\+D\+::get\+\_\+distance\+\_\+from\+\_\+plane (\begin{DoxyParamCaption}\item[{vec3}]{point,  }\item[{vec4}]{plane }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a6d662d0915f420fc67cb1c5cb2e34f43}\label{class_g_l_s_l_1_1tubes3_d_a6d662d0915f420fc67cb1c5cb2e34f43}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!insert@{insert}}
+\index{insert@{insert}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily void GLSL\+::tubes3\+D\+::insert (\begin{DoxyParamCaption}\item[{ivec2}]{coord,  }\item[{uint}]{current\+\_\+count,  }\item[{vec4}]{color }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a0f93cc9a569766ad63b0c8a9a664121d}\label{class_g_l_s_l_1_1tubes3_d_a0f93cc9a569766ad63b0c8a9a664121d}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!iRoundedCone@{iRoundedCone}}
+\index{iRoundedCone@{iRoundedCone}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{iRoundedCone()}{iRoundedCone()}}
+{\footnotesize\ttfamily vec4 GLSL\+::tubes3\+D\+::i\+Rounded\+Cone (\begin{DoxyParamCaption}\item[{in vec3}]{ro,  }\item[{in vec3}]{rd,  }\item[{in vec3}]{pa,  }\item[{in vec3}]{pb,  }\item[{in float}]{ra,  }\item[{in float}]{rb }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a25f13bc1f928a1a15e19bbc0cd7111f4}\label{class_g_l_s_l_1_1tubes3_d_a25f13bc1f928a1a15e19bbc0cd7111f4}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [1/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a56fb63d5eae199255261a1da509d7a01}\label{class_g_l_s_l_1_1tubes3_d_a56fb63d5eae199255261a1da509d7a01}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [2/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a16f4ad78e0bba3388131f4fb5e9cce56}\label{class_g_l_s_l_1_1tubes3_d_a16f4ad78e0bba3388131f4fb5e9cce56}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [3/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a4af1dd3b8fb27779224230014cade121}\label{class_g_l_s_l_1_1tubes3_d_a4af1dd3b8fb27779224230014cade121}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [4/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a358bf4f75fcc10fefeea9ac1d3799e74}\label{class_g_l_s_l_1_1tubes3_d_a358bf4f75fcc10fefeea9ac1d3799e74}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [5/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a8b6e8b745303eefe225814134b0e572f}\label{class_g_l_s_l_1_1tubes3_d_a8b6e8b745303eefe225814134b0e572f}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [6/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_aa7bbfa5936b614d59095ad28687d4677}\label{class_g_l_s_l_1_1tubes3_d_aa7bbfa5936b614d59095ad28687d4677}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [7/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 2} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_af2f6960d57fcba1c7f8a4b3135805728}\label{class_g_l_s_l_1_1tubes3_d_af2f6960d57fcba1c7f8a4b3135805728}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [8/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 2} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a32976d0438c223c6454cf1bbf1603d3e}\label{class_g_l_s_l_1_1tubes3_d_a32976d0438c223c6454cf1bbf1603d3e}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [9/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 2} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_acfecbbae09656ccb94f9b0ad6167ee76}\label{class_g_l_s_l_1_1tubes3_d_acfecbbae09656ccb94f9b0ad6167ee76}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [10/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 3} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_ad804001298825d4f9074b04218236bcd}\label{class_g_l_s_l_1_1tubes3_d_ad804001298825d4f9074b04218236bcd}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [11/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 4} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a400178cb5c63df83dda9f03c2a5f305c}\label{class_g_l_s_l_1_1tubes3_d_a400178cb5c63df83dda9f03c2a5f305c}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [12/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 5} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a1e850315cfc387f835f2e2e961f895b4}\label{class_g_l_s_l_1_1tubes3_d_a1e850315cfc387f835f2e2e961f895b4}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [13/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 6} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a6ff9b0e53402a071abb642e7a622b83f}\label{class_g_l_s_l_1_1tubes3_d_a6ff9b0e53402a071abb642e7a622b83f}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [14/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 7} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a75a857b7c214121038b00b7321024564}\label{class_g_l_s_l_1_1tubes3_d_a75a857b7c214121038b00b7321024564}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [15/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{set}]{ = {\ttfamily 0},  }\item[{binding}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a75a857b7c214121038b00b7321024564}\label{class_g_l_s_l_1_1tubes3_d_a75a857b7c214121038b00b7321024564}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [16/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{set}]{ = {\ttfamily 0},  }\item[{binding}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a8720b3796c5ef0a6608ffbd328fd0fa7}\label{class_g_l_s_l_1_1tubes3_d_a8720b3796c5ef0a6608ffbd328fd0fa7}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!layout@{layout}}
+\index{layout@{layout}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [17/17]}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::layout (\begin{DoxyParamCaption}\item[{set}]{ = {\ttfamily 2},  }\item[{binding}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_adf353670b3ce4a7d75dbe05069f26566}\label{class_g_l_s_l_1_1tubes3_d_adf353670b3ce4a7d75dbe05069f26566}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!listPos@{listPos}}
+\index{listPos@{listPos}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{listPos()}{listPos()}}
+{\footnotesize\ttfamily uint GLSL\+::tubes3\+D\+::list\+Pos (\begin{DoxyParamCaption}\item[{uint}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a4de7d0463b8e21091046702dc06c39fc}\label{class_g_l_s_l_1_1tubes3_d_a4de7d0463b8e21091046702dc06c39fc}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!main@{main}}
+\index{main@{main}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void GLSL\+::tubes3\+D\+::main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a4de7d0463b8e21091046702dc06c39fc}\label{class_g_l_s_l_1_1tubes3_d_a4de7d0463b8e21091046702dc06c39fc}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!main@{main}}
+\index{main@{main}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void GLSL\+::tubes3\+D\+::main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a781be54e2142aa7b5f8ba035a96ff2fb}\label{class_g_l_s_l_1_1tubes3_d_a781be54e2142aa7b5f8ba035a96ff2fb}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!pack@{pack}}
+\index{pack@{pack}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{pack()}{pack()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily uint64\+\_\+t GLSL\+::tubes3\+D\+::pack (\begin{DoxyParamCaption}\item[{float}]{depth,  }\item[{vec4}]{color }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a781be54e2142aa7b5f8ba035a96ff2fb}\label{class_g_l_s_l_1_1tubes3_d_a781be54e2142aa7b5f8ba035a96ff2fb}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!pack@{pack}}
+\index{pack@{pack}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{pack()}{pack()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily uint64\+\_\+t GLSL\+::tubes3\+D\+::pack (\begin{DoxyParamCaption}\item[{float}]{depth,  }\item[{vec4}]{color }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_ac73882d174735a3564c6c206396ed550}\label{class_g_l_s_l_1_1tubes3_d_ac73882d174735a3564c6c206396ed550}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!release\_semaphore@{release\_semaphore}}
+\index{release\_semaphore@{release\_semaphore}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{release\_semaphore()}{release\_semaphore()}}
+{\footnotesize\ttfamily void GLSL\+::tubes3\+D\+::release\+\_\+semaphore (\begin{DoxyParamCaption}\item[{ivec2}]{coord }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a5a3afc764abc103d849384add282b1ae}\label{class_g_l_s_l_1_1tubes3_d_a5a3afc764abc103d849384add282b1ae}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!unpack@{unpack}}
+\index{unpack@{unpack}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{unpack()}{unpack()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void GLSL\+::tubes3\+D\+::unpack (\begin{DoxyParamCaption}\item[{uint64\+\_\+t}]{data,  }\item[{out float}]{depth,  }\item[{out vec4}]{color }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_a5a3afc764abc103d849384add282b1ae}\label{class_g_l_s_l_1_1tubes3_d_a5a3afc764abc103d849384add282b1ae}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!unpack@{unpack}}
+\index{unpack@{unpack}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{unpack()}{unpack()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void GLSL\+::tubes3\+D\+::unpack (\begin{DoxyParamCaption}\item[{uint64\+\_\+t}]{data,  }\item[{out float}]{depth,  }\item[{out vec4}]{color }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_g_l_s_l_1_1tubes3_d_ae3f396eb3d6c7401391ccdc75189adc9}\label{class_g_l_s_l_1_1tubes3_d_ae3f396eb3d6c7401391ccdc75189adc9}} 
+\index{GLSL::tubes3D@{GLSL::tubes3D}!kBuffer@{kBuffer}}
+\index{kBuffer@{kBuffer}!GLSL::tubes3D@{GLSL::tubes3D}}
+\doxysubsubsection{\texorpdfstring{kBuffer}{kBuffer}}
+{\footnotesize\ttfamily GLSL\+::tubes3\+D\+::k\+Buffer}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/tmp/\+Vis2/shaders/\mbox{\hyperlink{passthrough_8vert}{passthrough.\+vert}}\item 
+C\+:/tmp/\+Vis2/shaders/\mbox{\hyperlink{ray__casting_8frag}{ray\+\_\+casting.\+frag}}\end{DoxyCompactItemize}

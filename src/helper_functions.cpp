@@ -3,16 +3,6 @@
 #include <sstream>
 #include <iomanip>
 
-glm::vec4 uIntTo4Col(unsigned int val) {
-	// Jeweils 8 bit für eine Komponente
-	glm::vec4 tmp(0.0f);
-	tmp.r = (float)((val & 0xFF000000) >> (8 * 3)) / 255.0f;
-	tmp.g = (float)((val & 0x00FF0000) >> (8 * 2)) / 255.0f;
-	tmp.b = (float)((val & 0x0000FF00) >> (8 * 1)) / 255.0f;
-	tmp.a = (float)((val & 0x000000FF) >> (8 * 0)) / 255.0f;
-	return tmp;
-}
-
 void activateImGuiStyle(bool darkMode, float alpha)
 {
     ImGuiStyle& style = ImGui::GetStyle();
@@ -89,13 +79,6 @@ void activateImGuiStyle(bool darkMode, float alpha)
         }
     }
 
-}
-
-std::string vec3ToString(glm::vec3 src)
-{
-    std::stringstream ss;
-    ss << std::setprecision(3) << src.x << " | " << src.y << " | " << src.z;
-    return ss.str();
 }
 
 unsigned int getDigitCountForUInt(unsigned int src)

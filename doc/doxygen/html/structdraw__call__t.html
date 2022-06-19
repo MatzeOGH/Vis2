@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -101,16 +101,23 @@ $(document).ready(function(){initNavTree('structdraw__call__t.html',''); initRes
 </div><!--header-->
 <div class="contents">
 
+<p>This structure holds information about when a polyline starts and how long it is inside a sorted Vertex-Buffer  
+ <a href="structdraw__call__t.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="host__structures_8h_source.html">host_structures.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a2624950e64ab98cba28322cc862201e1"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structdraw__call__t.html#a2624950e64ab98cba28322cc862201e1">firstIndex</a></td></tr>
+<tr class="memdesc:a2624950e64ab98cba28322cc862201e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The index of the first vertex inside the buffer array  <a href="structdraw__call__t.html#a2624950e64ab98cba28322cc862201e1">More...</a><br /></td></tr>
 <tr class="separator:a2624950e64ab98cba28322cc862201e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b9a643768221a37355a83ffd97efcc2"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structdraw__call__t.html#a0b9a643768221a37355a83ffd97efcc2">numberOfPrimitives</a></td></tr>
+<tr class="memdesc:a0b9a643768221a37355a83ffd97efcc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of vertices that belong to this polyline  <a href="structdraw__call__t.html#a0b9a643768221a37355a83ffd97efcc2">More...</a><br /></td></tr>
 <tr class="separator:a0b9a643768221a37355a83ffd97efcc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Data Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >This structure holds information about when a polyline starts and how long it is inside a sorted Vertex-Buffer </p>
+</div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a2624950e64ab98cba28322cc862201e1" name="a2624950e64ab98cba28322cc862201e1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2624950e64ab98cba28322cc862201e1">&#9670;&nbsp;</a></span>firstIndex</h2>
 
@@ -122,6 +129,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>The index of the first vertex inside the buffer array </p>
 
 </div>
 </div>
@@ -136,6 +145,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>The number of vertices that belong to this polyline </p>
 
 </div>
 </div>

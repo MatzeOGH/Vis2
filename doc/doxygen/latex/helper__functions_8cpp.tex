@@ -1,26 +1,43 @@
-\hypertarget{helper__functions_8cpp}{}\doxysubsection{C\+:/tmp/\+Vis2/src/helper\+\_\+functions.cpp File Reference}
+\hypertarget{helper__functions_8cpp}{}\doxysection{C\+:/tmp/\+Vis2/src/helper\+\_\+functions.cpp File Reference}
 \label{helper__functions_8cpp}\index{C:/tmp/Vis2/src/helper\_functions.cpp@{C:/tmp/Vis2/src/helper\_functions.cpp}}
 {\ttfamily \#include \char`\"{}helper\+\_\+functions.\+h\char`\"{}}\newline
 {\ttfamily \#include $<$imgui.\+h$>$}\newline
-\doxysubsubsection*{Functions}
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include $<$iomanip$>$}\newline
+\doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-glm\+::vec4 \mbox{\hyperlink{helper__functions_8cpp_a5aa57dc0a8084045d0e5f37ed4fb014a}{u\+Int\+To4\+Col}} (unsigned int val)
-\item 
 void \mbox{\hyperlink{helper__functions_8cpp_abef1f5c1f9b43e2c36ba3588627338a9}{activate\+Im\+Gui\+Style}} (bool dark\+Mode, float alpha)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Needs to be called after the setup of the dear gui and changes the color theme. WARNING\+: light\+Mode is buggy! \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{helper__functions_8cpp_aa8f34791b6602e2e0d4a7e40093340bd}{get\+Digit\+Count\+For\+UInt}} (unsigned int src)
+\begin{DoxyCompactList}\small\item\em Returns the count of digits of the given unsined int. Example\+: get\+Digit\+Count\+For\+UInt(21349) = 5 \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\doxysubsubsection{Function Documentation}
+\doxysubsection{Function Documentation}
 \mbox{\Hypertarget{helper__functions_8cpp_abef1f5c1f9b43e2c36ba3588627338a9}\label{helper__functions_8cpp_abef1f5c1f9b43e2c36ba3588627338a9}} 
 \index{helper\_functions.cpp@{helper\_functions.cpp}!activateImGuiStyle@{activateImGuiStyle}}
 \index{activateImGuiStyle@{activateImGuiStyle}!helper\_functions.cpp@{helper\_functions.cpp}}
-\doxyparagraph{\texorpdfstring{activateImGuiStyle()}{activateImGuiStyle()}}
-{\footnotesize\ttfamily void activate\+Im\+Gui\+Style (\begin{DoxyParamCaption}\item[{bool}]{dark\+Mode,  }\item[{float}]{alpha }\end{DoxyParamCaption})}
+\doxysubsubsection{\texorpdfstring{activateImGuiStyle()}{activateImGuiStyle()}}
+{\footnotesize\ttfamily void activate\+Im\+Gui\+Style (\begin{DoxyParamCaption}\item[{bool}]{dark\+Mode = {\ttfamily true},  }\item[{float}]{alpha = {\ttfamily 0.2F} }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{helper__functions_8cpp_a5aa57dc0a8084045d0e5f37ed4fb014a}\label{helper__functions_8cpp_a5aa57dc0a8084045d0e5f37ed4fb014a}} 
-\index{helper\_functions.cpp@{helper\_functions.cpp}!uIntTo4Col@{uIntTo4Col}}
-\index{uIntTo4Col@{uIntTo4Col}!helper\_functions.cpp@{helper\_functions.cpp}}
-\doxyparagraph{\texorpdfstring{uIntTo4Col()}{uIntTo4Col()}}
-{\footnotesize\ttfamily glm\+::vec4 u\+Int\+To4\+Col (\begin{DoxyParamCaption}\item[{unsigned int}]{val }\end{DoxyParamCaption})}
+
+
+Needs to be called after the setup of the dear gui and changes the color theme. WARNING\+: light\+Mode is buggy! 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dark\+Mode} & dark/light mode flag\\
+\hline
+{\em alpha} & The overall alpha level of the theme\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{helper__functions_8cpp_aa8f34791b6602e2e0d4a7e40093340bd}\label{helper__functions_8cpp_aa8f34791b6602e2e0d4a7e40093340bd}} 
+\index{helper\_functions.cpp@{helper\_functions.cpp}!getDigitCountForUInt@{getDigitCountForUInt}}
+\index{getDigitCountForUInt@{getDigitCountForUInt}!helper\_functions.cpp@{helper\_functions.cpp}}
+\doxysubsubsection{\texorpdfstring{getDigitCountForUInt()}{getDigitCountForUInt()}}
+{\footnotesize\ttfamily unsigned int get\+Digit\+Count\+For\+UInt (\begin{DoxyParamCaption}\item[{unsigned int}]{src }\end{DoxyParamCaption})}
+
+
+
+Returns the count of digits of the given unsined int. Example\+: get\+Digit\+Count\+For\+UInt(21349) = 5 
 

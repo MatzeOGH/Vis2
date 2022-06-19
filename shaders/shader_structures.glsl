@@ -1,22 +1,22 @@
-#ifndef SHADER_STRUCTURES_GLSL
+/**
+ * Contains the ubo struct for variables. Gets included by most shaders
+ * @author Gerald Kimmersdorfer, Mathias Hürbe
+ * @date 2022
+ */
 
+#ifndef SHADER_STRUCTURES_GLSL
 // ###### UNIFORMS AND PUSH CONSTANTS ###############
 // Uniform buffer struct, containing camera matrices and user input:
-// It is updated every frame.
+// It is updated every frame. For more information about the member Variables 
+// have a look at host_structures.h
 struct matrices_and_user_input {
-	// view matrix as returned from quake_camera
 	mat4 mViewMatrix;
-	// projection matrix as returned from quake_camera
 	mat4 mProjMatrix;
-	// transformation matrix which tranforms to camera's position
 	vec4 mCamPos;
-	// Facing Vector of camera
 	vec4 mCamDir;
-	// background color
 	vec4 mClearColor;
-	// The color of the 2d debug lines if activated
 	vec4 mHelperLineColor;
-	vec4 kBufferInfo; // contains resx, resy and kbuffer levels
+	vec4 kBufferInfo; 
 
 	vec4 mDirLightDirection;
     vec4 mDirLightColor;

@@ -1,3 +1,10 @@
+/**
+ * This fragment shader unpacks all the data inside the kbuffer and outputs it on the current framebuffer
+ * @author Gerald Kimmersdorfer, Mathias Hürbe
+ * @date 2022
+ * @namespace GLSL
+ * @class kbuffer_resolve
+ */
 #version 460
 #extension GL_EXT_nonuniform_qualifier : require
 #extension GL_ARB_gpu_shader_int64 : enable

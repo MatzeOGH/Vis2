@@ -1,3 +1,11 @@
+/**
+ * The ray-casting shader to get the exact position/normal and illuminated color for each fragment on
+ * the earlier created billboards. It stores overlapping fragments inside the k-buffer for the next resolve stage.
+ * @author Gerald Kimmersdorfer, Mathias Hürbe
+ * @date 2022
+ * @namespace GLSL
+ * @class tubes3D
+ */
 #version 460
 #extension GL_EXT_nonuniform_qualifier : require
 #extension GL_ARB_separate_shader_objects : enable

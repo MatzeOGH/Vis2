@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['get_5fdistance_5ffrom_5fplane_0',['get_distance_from_plane',['../class_g_l_s_l_1_1ray__casting.html#ae7a9b1d5c95478681215b32597b36146',1,'GLSL::ray_casting']]]
+  ['dataset_0',['Dataset',['../class_dataset.html#a2ef0a4a688a218d55ef061c6df659a4a',1,'Dataset']]]
 ];

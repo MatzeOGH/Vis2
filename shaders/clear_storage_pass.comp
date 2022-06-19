@@ -1,9 +1,14 @@
+/**
+ * A simple compute shader which clears the k-buffer
+ * @author Gerald Kimmersdorfer, Mathias Hürbe
+ * @date 2022
+ * @namespace GLSL
+ * @class kbuffer_clear
+ */
 #version 460
 #extension GL_ARB_gpu_shader_int64 : enable
 #extension GL_GOOGLE_include_directive : enable
 #include "shader_structures.glsl"
-
-
 
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 layout (set = 0, binding = 1) buffer writeonly KBuffer{ uint64_t data[]; } kBuffer;

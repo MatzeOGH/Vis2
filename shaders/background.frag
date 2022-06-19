@@ -1,3 +1,10 @@
+/**
+ * A simple fragment shader that outputs a simple gradient for a given color
+ * @author Gerald Kimmersdorfer, Mathias Hürbe
+ * @date 2022
+ * @namespace GLSL
+ * @class background
+ */
 #version 460
 #extension GL_EXT_nonuniform_qualifier : require
 #extension GL_ARB_separate_shader_objects : enable

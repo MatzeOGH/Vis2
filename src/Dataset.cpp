@@ -99,7 +99,7 @@ void Dataset::importFromFile(std::string filename)
 						std::cerr << "float parsing failure of vt-string '" << tmpNumber << "' in line " << curLine << std::endl;
 					}
 					else {
-						tmpVertex.radius = result;
+						tmpVertex.data = result;
 						// vertex info is now complete. Add to vertexbuffer:
 						tmpVertexBuffer.push_back(tmpVertex);
 						status = eStatus::INITIAL;
@@ -127,7 +127,7 @@ void Dataset::importFromFile(std::string filename)
 						tPi++;
 						if (tPi == 3) {
 							// We gathered three floats:
-							tmpVertex.pos = tmpPosition;
+							tmpVertex.position = tmpPosition;
 							tPi = 0;
 							status = eStatus::INITIAL;
 						}
@@ -195,39 +195,53 @@ void Dataset::preprocessLineData()
 {
 	auto start = std::chrono::steady_clock::now();
 	
+	auto boundsCurvature = glm::vec2(100.0F, 0.0F);
 	mLineCount = 0;
 	mVertexCount = 0;
 	for (Poly& pLine : mPolyLineBuffer) {
 		float lastLineLength = 0.0F;
 		for (unsigned int i = 0; i < pLine.vertices.size(); i++) {
 			Vertex& v = pLine.vertices[i];
-			v.pos = glm::clamp(v.pos, 0.0F, 1.0F);
-			v.radius = glm::clamp(v.radius, 0.0F, 1.0F);
+			v.position = glm::clamp(v.position, 0.0F, 1.0F);
+			v.data = glm::clamp(v.data, 0.0F, 1.0F);
 
-			mMaximumCoordinateBounds = glm::max(v.pos, mMaximumCoordinateBounds);
-			mMinimumCoordinateBounds = glm::min(v.pos, mMinimumCoordinateBounds);
-			mMinVelocity = glm::min(v.radius, mMinVelocity);
-			mMaxVelocity = glm::max(v.radius, mMaxVelocity);
+			mMaximumCoordinateBounds = glm::max(v.position, mMaximumCoordinateBounds);
+			mMinimumCoordinateBounds = glm::min(v.position, mMinimumCoordinateBounds);
+			mMinDataValue = glm::min(v.data, mMinDataValue);
+			mMaxDataValue = glm::max(v.data, mMaxDataValue);
 			
 			float preLength = 0.0F;
 			float postLength = 0.0F;
-			if (i > 0) preLength = glm::distance(pLine.vertices[i - 1].pos, pLine.vertices[i].pos);
-			if (i < pLine.vertices.size() - 1) postLength = glm::distance(pLine.vertices[i].pos, pLine.vertices[i + 1].pos);
+			if (i > 0) preLength = glm::distance(pLine.vertices[i - 1].position, pLine.vertices[i].position);
+			if (i < pLine.vertices.size() - 1) postLength = glm::distance(pLine.vertices[i].position, pLine.vertices[i + 1].position);
 			mMaxLineLength = glm::max(mMaxLineLength, preLength);
 			mMaxVertexAdjacentLineLength = glm::max(mMaxVertexAdjacentLineLength, preLength + postLength);
+
+			if (preLength > 0 && postLength > 0) { //means its an in between point and not degenerate so calculate curvature
+				glm::vec3 a = pLine.vertices[i + 1].position - pLine.vertices[i].position;
+				glm::vec3 b = pLine.vertices[i - 1].position - pLine.vertices[i].position;
+				float alpha = glm::acos(glm::dot(a, b) / (preLength * postLength));
+				boundsCurvature[0] = glm::min(alpha, boundsCurvature[0]);
+				boundsCurvature[1] = glm::max(alpha, boundsCurvature[1]);
+				pLine.vertices[i].curvature = alpha;
+			}
 		}
 		// Mark beginnings and ends
-		pLine.vertices[0].pos.x *= -1;
-		pLine.vertices[pLine.vertices.size() - 1].pos.x *= -1;
+		pLine.vertices[0].position.x *= -1;
+		pLine.vertices[pLine.vertices.size() - 1].position.x *= -1;
 
 		mLineCount += pLine.vertices.size() / 2 - 1;
 		mVertexCount += pLine.vertices.size();
 	}
 
-	// Now lets run again and scale tje velocity in between 0 and 1
+	// Now lets run again and scale the data and curvature in between 0 and 1
 	for (Poly& pLine : mPolyLineBuffer) {
 		for (Vertex& v : pLine.vertices) {
-			v.radius = (v.radius - mMinVelocity) / (mMaxVelocity - mMinVelocity);
+			v.data = (v.data - mMinDataValue) / (mMaxDataValue - mMinDataValue);
+			// Note: The following is not the best solution. Degenerate points(lines) should maybe get the curvature
+			// of the next or previous one. But in our datasets those dont happen anyway
+			if (v.curvature < 0.0) v.curvature = boundsCurvature[0]; 
+			v.curvature = 1.0F - (v.curvature - boundsCurvature[0]) / (boundsCurvature[1] - boundsCurvature[0]);
 		}
 	}
 
@@ -240,8 +254,8 @@ void Dataset::initializeValues()
 	mLastPreprocessTime = 0.0F; 
 	mMinimumCoordinateBounds = glm::vec3(1.0F, 1.0F, 1.0F);
 	mMaximumCoordinateBounds = glm::vec3(0.0F, 0.0F, 0.0F);
-	mMinVelocity = 1.0F;
-	mMaxVelocity = 0.0F;
+	mMinDataValue = 1.0F;
+	mMaxDataValue = 0.0F;
 	mLineCount = 0;
 	mVertexCount = 0;
 	mMaxLineLength = 0.0F;

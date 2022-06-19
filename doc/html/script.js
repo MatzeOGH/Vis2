@@ -79,8 +79,8 @@ $(document).ready(function () {
     scrollBar: true,
     responsiveWidth: 400,
     navigation: true,
-    navigationTooltips: ["home", "about", "portfolio", "contact", "connect"],
-    anchors: ["home", "about", "portfolio", "contact", "connect"],
+    navigationTooltips: ["home", "download", "gallery"],
+    anchors: ["home", "download", "gallery"],
     menu: "#myMenu",
     fitToSection: false,
 
@@ -127,16 +127,16 @@ $(document).ready(function () {
   });
 
   // fullpage.js link navigation
-  $(document).on("click", "#skills", function () {
+  $(document).on("click", "#home", function () {
+    $.fn.fullpage.moveTo(1);
+  });
+
+  $(document).on("click", "#download", function () {
     $.fn.fullpage.moveTo(2);
   });
 
-  $(document).on("click", "#projects", function () {
+  $(document).on("click", "#gallery", function () {
     $.fn.fullpage.moveTo(3);
-  });
-
-  $(document).on("click", "#contact", function () {
-    $.fn.fullpage.moveTo(4);
   });
 
   // smooth scrolling

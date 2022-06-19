@@ -16,6 +16,10 @@ class Dataset
 public:
 	Dataset();
 
+	/// <summary>
+	/// Load the data of the given ".obj" file into the cpu (mPolyLine-Buffer) and starts some preprocessing work.
+	/// </summary>
+	/// <param name="filename">The full filename to the obj-file</param>
 	void importFromFile(std::string filename);
 
 	/// <summary>
@@ -55,20 +59,39 @@ public:
 	/// </summary>
 	int getVertexCount() { return this->mVertexCount; }
 
+	/// <summary>
+	/// returns the length of the longest line inside the dataset.
+	/// </summary>
 	float getMaxLineLength() { return this->mMaxLineLength; }
 
+	/// <summary>
+	/// returns the summed up length of the vertex with the longest adjacend lines.
+	/// </summary>
 	float getMaxVertexAdjacentLineLength() { return this->mMaxVertexAdjacentLineLength; }
 
+	/// <summary>
+	/// returns true if a file was loaded and the polyline buffer is full
+	/// </summary>
 	bool isFileOpen() { return mLineCount > 0; }
 
+	/// <summary>
+	/// returns the dimensions of the dataset
+	/// </summary>
 	glm::vec3 getDimensions() {
 		return mMaximumCoordinateBounds - mMinimumCoordinateBounds;
 	}
 
-	glm::vec2 getVelocityBounds() {
-		return glm::vec2(mMinVelocity, mMaxVelocity);
+	/// <summary>
+	/// returns the min- and maximum 
+	/// </summary>
+	/// <returns></returns>
+	glm::vec2 getDataBounds() {
+		return glm::vec2(mMinDataValue, mMaxDataValue);
 	}
 
+	/// <summary>
+	/// Returns the filename of the currently loaded dataset
+	/// </summary>
 	std::string getName() { return mName; }
 
 private:
@@ -80,8 +103,8 @@ private:
 
 	glm::vec3 mMinimumCoordinateBounds = glm::vec3(1.0F, 1.0F, 1.0F);
 	glm::vec3 mMaximumCoordinateBounds = glm::vec3(0.0F, 0.0F, 0.0F);
-	float mMinVelocity = 1.0F;
-	float mMaxVelocity = 0.0F;
+	float mMinDataValue = 1.0F;
+	float mMaxDataValue = 0.0F;
 
 	int mLineCount = 0;
 	int mVertexCount = 0;
@@ -92,7 +115,7 @@ private:
 	/// <summary>
 	/// This function gathers information about the dataset which is later used for the dynamic
 	/// transformations. It furthermore edits the x coordinate of the end- and start points for correct
-	/// cap clipping. It furthermore transforms scales the velocity in between 0 and 1
+	/// cap clipping. It furthermore transforms scales the data and curvature in between 0 and 1
 	/// </summary>
 	void preprocessLineData();
 

@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -95,32 +95,84 @@ $(document).ready(function(){initNavTree('billboard__creation_8geom.html',''); i
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">billboard_creation.geom File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="shader__structures_8glsl.html">shader_structures.glsl</a>&quot;</code><br />
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_push_constants.html">PushConstants</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespace_g_l_s_l"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_g_l_s_l.html">GLSL</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a352efc090f3e8a1ab4d257aa9a67369c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#a352efc090f3e8a1ab4d257aa9a67369c">layout</a> (lines_adjacency) in</td></tr>
 <tr class="separator:a352efc090f3e8a1ab4d257aa9a67369c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7588a72a58e83eb07b44ec1fbbb86e5f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#a7588a72a58e83eb07b44ec1fbbb86e5f">layout</a> (triangle_strip, max_vertices=4) out</td></tr>
 <tr class="separator:a7588a72a58e83eb07b44ec1fbbb86e5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff965cbad2587d84562467dd22a6106e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#aff965cbad2587d84562467dd22a6106e">layout</a> (push_constant) uniform PushConstantsBlock</td></tr>
+<tr class="separator:aff965cbad2587d84562467dd22a6106e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad759d13139ce5fa1e7180f63b6cc2b3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#aad759d13139ce5fa1e7180f63b6cc2b3">layout</a> (set=0, binding=0) uniform UniformBlock</td></tr>
 <tr class="separator:aad759d13139ce5fa1e7180f63b6cc2b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad06cd310b7efa0bb2e4eac46443023a4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#ad06cd310b7efa0bb2e4eac46443023a4">layout</a> (location=1) in vec4 inColor[]</td></tr>
-<tr class="separator:ad06cd310b7efa0bb2e4eac46443023a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d729f53318385720de8ef43e2976ae3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#a9d729f53318385720de8ef43e2976ae3">construct_simple_billboard</a> (vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos)</td></tr>
-<tr class="separator:a9d729f53318385720de8ef43e2976ae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9884b665da98700fb52b177ef9a4079f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#a9884b665da98700fb52b177ef9a4079f">construct_billboard_for_line</a> (vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos, vec4 camDir)</td></tr>
-<tr class="separator:a9884b665da98700fb52b177ef9a4079f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd3ffe52503c705c0d57eaf0d0f68ff9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#afd3ffe52503c705c0d57eaf0d0f68ff9">layout</a> (location=1) in float inCurvature[]</td></tr>
+<tr class="separator:afd3ffe52503c705c0d57eaf0d0f68ff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60aad99a0527320d608e91b043163390"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#a60aad99a0527320d608e91b043163390">construct_billboard_for_line</a> (vec4 posA, vec4 posB, float radA, float radB, vec4 eyePos, vec4 camDir, vec4 posAPre, vec4 posBSuc, vec4 colA, vec4 colB)</td></tr>
+<tr class="separator:a60aad99a0527320d608e91b043163390"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb11c6d9d31fc0230c743e8392a19fea"><td class="memItemLeft" align="right" valign="top">uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#afb11c6d9d31fc0230c743e8392a19fea">compute_hash</a> (uint a)</td></tr>
+<tr class="separator:afb11c6d9d31fc0230c743e8392a19fea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c8ff1937cc330b19ecb0cc8f4bbf8a8"><td class="memItemLeft" align="right" valign="top">vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#a3c8ff1937cc330b19ecb0cc8f4bbf8a8">color_from_id_hash</a> (uint a)</td></tr>
+<tr class="separator:a3c8ff1937cc330b19ecb0cc8f4bbf8a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdef7a1fd863a6d3770c1268cb06add3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="billboard__creation_8geom.html#acdef7a1fd863a6d3770c1268cb06add3">main</a> ()</td></tr>
 <tr class="separator:acdef7a1fd863a6d3770c1268cb06add3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a9884b665da98700fb52b177ef9a4079f" name="a9884b665da98700fb52b177ef9a4079f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9884b665da98700fb52b177ef9a4079f">&#9670;&nbsp;</a></span>construct_billboard_for_line()</h2>
+<a id="a3c8ff1937cc330b19ecb0cc8f4bbf8a8" name="a3c8ff1937cc330b19ecb0cc8f4bbf8a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c8ff1937cc330b19ecb0cc8f4bbf8a8">&#9670;&nbsp;</a></span>color_from_id_hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vec3 color_from_id_hash </td>
+          <td>(</td>
+          <td class="paramtype">uint&#160;</td>
+          <td class="paramname"><em>a</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afb11c6d9d31fc0230c743e8392a19fea" name="afb11c6d9d31fc0230c743e8392a19fea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb11c6d9d31fc0230c743e8392a19fea">&#9670;&nbsp;</a></span>compute_hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint compute_hash </td>
+          <td>(</td>
+          <td class="paramtype">uint&#160;</td>
+          <td class="paramname"><em>a</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a60aad99a0527320d608e91b043163390" name="a60aad99a0527320d608e91b043163390"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60aad99a0527320d608e91b043163390">&#9670;&nbsp;</a></span>construct_billboard_for_line()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -159,53 +211,31 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">vec4&#160;</td>
-          <td class="paramname"><em>camDir</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9d729f53318385720de8ef43e2976ae3" name="a9d729f53318385720de8ef43e2976ae3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d729f53318385720de8ef43e2976ae3">&#9670;&nbsp;</a></span>construct_simple_billboard()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void construct_simple_billboard </td>
-          <td>(</td>
-          <td class="paramtype">vec4&#160;</td>
-          <td class="paramname"><em>posA</em>, </td>
+          <td class="paramname"><em>camDir</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">vec4&#160;</td>
-          <td class="paramname"><em>posB</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>radA</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>radB</em>, </td>
+          <td class="paramname"><em>posAPre</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">vec4&#160;</td>
-          <td class="paramname"><em>eyePos</em>&#160;</td>
+          <td class="paramname"><em>posBSuc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">vec4&#160;</td>
+          <td class="paramname"><em>colA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">vec4&#160;</td>
+          <td class="paramname"><em>colB</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -218,7 +248,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a352efc090f3e8a1ab4d257aa9a67369c" name="a352efc090f3e8a1ab4d257aa9a67369c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a352efc090f3e8a1ab4d257aa9a67369c">&#9670;&nbsp;</a></span>layout() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a352efc090f3e8a1ab4d257aa9a67369c">&#9670;&nbsp;</a></span>layout() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -235,8 +265,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad06cd310b7efa0bb2e4eac46443023a4" name="ad06cd310b7efa0bb2e4eac46443023a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad06cd310b7efa0bb2e4eac46443023a4">&#9670;&nbsp;</a></span>layout() <span class="overload">[2/4]</span></h2>
+<a id="afd3ffe52503c705c0d57eaf0d0f68ff9" name="afd3ffe52503c705c0d57eaf0d0f68ff9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd3ffe52503c705c0d57eaf0d0f68ff9">&#9670;&nbsp;</a></span>layout() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -253,8 +283,26 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="aff965cbad2587d84562467dd22a6106e" name="aff965cbad2587d84562467dd22a6106e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff965cbad2587d84562467dd22a6106e">&#9670;&nbsp;</a></span>layout() <span class="overload">[3/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">layout </td>
+          <td>(</td>
+          <td class="paramtype">push_constant&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aad759d13139ce5fa1e7180f63b6cc2b3" name="aad759d13139ce5fa1e7180f63b6cc2b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aad759d13139ce5fa1e7180f63b6cc2b3">&#9670;&nbsp;</a></span>layout() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aad759d13139ce5fa1e7180f63b6cc2b3">&#9670;&nbsp;</a></span>layout() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -282,7 +330,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a7588a72a58e83eb07b44ec1fbbb86e5f" name="a7588a72a58e83eb07b44ec1fbbb86e5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7588a72a58e83eb07b44ec1fbbb86e5f">&#9670;&nbsp;</a></span>layout() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7588a72a58e83eb07b44ec1fbbb86e5f">&#9670;&nbsp;</a></span>layout() <span class="overload">[5/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

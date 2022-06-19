@@ -1,51 +1,136 @@
-\hypertarget{classline__renderer__app}{}\doxysubsection{line\+\_\+renderer\+\_\+app Class Reference}
+\hypertarget{classline__renderer__app}{}\doxysection{line\+\_\+renderer\+\_\+app Class Reference}
 \label{classline__renderer__app}\index{line\_renderer\_app@{line\_renderer\_app}}
+
+
+This is the main class of our project. It derives from gvk\+::invokee and as such gets invoked by the framework each update and render-\/step.  
+
+
 Inheritance diagram for line\+\_\+renderer\+\_\+app\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{classline__renderer__app}
 \end{center}
 \end{figure}
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classline__renderer__app_a95238be851a49d4e5e31d7865e7bb565}{line\+\_\+renderer\+\_\+app}} (avk\+::queue \&a\+Queue)
 \item 
+void \mbox{\hyperlink{classline__renderer__app_abe3418859f06b171caea1ce433186e8e}{load\+Dataset\+From\+File}} (std\+::string \&filename)
+\begin{DoxyCompactList}\small\item\em Loads a Line-\/\+Data set (only .obj supported) into the appropriate GPU buffers utilizing the Dataset-\/class. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classline__renderer__app_ad14395c8474053aa5e70e8fbde208446}{reset\+Camera}} ()
+\begin{DoxyCompactList}\small\item\em Resets the camera to the initial position and looking direction. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classline__renderer__app_a034617004cd62bce861e8737a95bab3e}{toggle\+Input\+Mode}} ()
+\begin{DoxyCompactList}\small\item\em Switches from mouse-\/interaction mode (ui-\/mode) to camera mode \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classline__renderer__app_a548c5638ea6285815c3ac97016231a19}{in\+Camera\+Mode}} ()
+\begin{DoxyCompactList}\small\item\em return true if currently in camera mode \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classline__renderer__app_a6499300b1c638afae1a099501ddaf358}{render\+UI}} ()
+\begin{DoxyCompactList}\small\item\em This function draws the whole GUI using \char`\"{}dear\+Im\+Gui\char`\"{} commands and gets invoked by the Im\+Gui\+Manager. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classline__renderer__app_a477fd26c7088bb84100294da727cda05}{initialize}} () override
-\item 
+\begin{DoxyCompactList}\small\item\em This function gets called by the framework before the first iteration of the render-\/loop. It initializes all of our needed buffers, textures, renderpasses and pipelines. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classline__renderer__app_aca2f19291add6fbb04e26e2ba86c7b78}{update}} () override
-\item 
+\begin{DoxyCompactList}\small\item\em Handles key-\/inputs. (gets called by framework before each render-\/call) \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classline__renderer__app_a6c420706cc8ad700842ce27809bead5c}{render}} () override
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Refreshes the UBO-\/\+Buffer and invokes all rendering pipelines/stages \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\doxysubsubsection{Constructor \& Destructor Documentation}
+\doxysubsection{Detailed Description}
+This is the main class of our project. It derives from gvk\+::invokee and as such gets invoked by the framework each update and render-\/step. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classline__renderer__app_a95238be851a49d4e5e31d7865e7bb565}\label{classline__renderer__app_a95238be851a49d4e5e31d7865e7bb565}} 
 \index{line\_renderer\_app@{line\_renderer\_app}!line\_renderer\_app@{line\_renderer\_app}}
 \index{line\_renderer\_app@{line\_renderer\_app}!line\_renderer\_app@{line\_renderer\_app}}
-\doxyparagraph{\texorpdfstring{line\_renderer\_app()}{line\_renderer\_app()}}
+\doxysubsubsection{\texorpdfstring{line\_renderer\_app()}{line\_renderer\_app()}}
 {\footnotesize\ttfamily line\+\_\+renderer\+\_\+app\+::line\+\_\+renderer\+\_\+app (\begin{DoxyParamCaption}\item[{avk\+::queue \&}]{a\+Queue }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
-\doxysubsubsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classline__renderer__app_a548c5638ea6285815c3ac97016231a19}\label{classline__renderer__app_a548c5638ea6285815c3ac97016231a19}} 
+\index{line\_renderer\_app@{line\_renderer\_app}!inCameraMode@{inCameraMode}}
+\index{inCameraMode@{inCameraMode}!line\_renderer\_app@{line\_renderer\_app}}
+\doxysubsubsection{\texorpdfstring{inCameraMode()}{inCameraMode()}}
+{\footnotesize\ttfamily bool line\+\_\+renderer\+\_\+app\+::in\+Camera\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+return true if currently in camera mode 
+
 \mbox{\Hypertarget{classline__renderer__app_a477fd26c7088bb84100294da727cda05}\label{classline__renderer__app_a477fd26c7088bb84100294da727cda05}} 
 \index{line\_renderer\_app@{line\_renderer\_app}!initialize@{initialize}}
 \index{initialize@{initialize}!line\_renderer\_app@{line\_renderer\_app}}
-\doxyparagraph{\texorpdfstring{initialize()}{initialize()}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
 {\footnotesize\ttfamily void line\+\_\+renderer\+\_\+app\+::initialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}}
 
+
+
+This function gets called by the framework before the first iteration of the render-\/loop. It initializes all of our needed buffers, textures, renderpasses and pipelines. 
+
+\mbox{\Hypertarget{classline__renderer__app_abe3418859f06b171caea1ce433186e8e}\label{classline__renderer__app_abe3418859f06b171caea1ce433186e8e}} 
+\index{line\_renderer\_app@{line\_renderer\_app}!loadDatasetFromFile@{loadDatasetFromFile}}
+\index{loadDatasetFromFile@{loadDatasetFromFile}!line\_renderer\_app@{line\_renderer\_app}}
+\doxysubsubsection{\texorpdfstring{loadDatasetFromFile()}{loadDatasetFromFile()}}
+{\footnotesize\ttfamily void line\+\_\+renderer\+\_\+app\+::load\+Dataset\+From\+File (\begin{DoxyParamCaption}\item[{std\+::string \&}]{filename }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Loads a Line-\/\+Data set (only .obj supported) into the appropriate GPU buffers utilizing the Dataset-\/class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & The full filename of the .obj dataset file\\
+\hline
+\end{DoxyParams}
 \mbox{\Hypertarget{classline__renderer__app_a6c420706cc8ad700842ce27809bead5c}\label{classline__renderer__app_a6c420706cc8ad700842ce27809bead5c}} 
 \index{line\_renderer\_app@{line\_renderer\_app}!render@{render}}
 \index{render@{render}!line\_renderer\_app@{line\_renderer\_app}}
-\doxyparagraph{\texorpdfstring{render()}{render()}}
+\doxysubsubsection{\texorpdfstring{render()}{render()}}
 {\footnotesize\ttfamily void line\+\_\+renderer\+\_\+app\+::render (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}}
+
+
+
+Refreshes the UBO-\/\+Buffer and invokes all rendering pipelines/stages 
+
+\mbox{\Hypertarget{classline__renderer__app_a6499300b1c638afae1a099501ddaf358}\label{classline__renderer__app_a6499300b1c638afae1a099501ddaf358}} 
+\index{line\_renderer\_app@{line\_renderer\_app}!renderUI@{renderUI}}
+\index{renderUI@{renderUI}!line\_renderer\_app@{line\_renderer\_app}}
+\doxysubsubsection{\texorpdfstring{renderUI()}{renderUI()}}
+{\footnotesize\ttfamily void line\+\_\+renderer\+\_\+app\+::render\+UI (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function draws the whole GUI using \char`\"{}dear\+Im\+Gui\char`\"{} commands and gets invoked by the Im\+Gui\+Manager. 
+
+\mbox{\Hypertarget{classline__renderer__app_ad14395c8474053aa5e70e8fbde208446}\label{classline__renderer__app_ad14395c8474053aa5e70e8fbde208446}} 
+\index{line\_renderer\_app@{line\_renderer\_app}!resetCamera@{resetCamera}}
+\index{resetCamera@{resetCamera}!line\_renderer\_app@{line\_renderer\_app}}
+\doxysubsubsection{\texorpdfstring{resetCamera()}{resetCamera()}}
+{\footnotesize\ttfamily void line\+\_\+renderer\+\_\+app\+::reset\+Camera (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Resets the camera to the initial position and looking direction. 
+
+\mbox{\Hypertarget{classline__renderer__app_a034617004cd62bce861e8737a95bab3e}\label{classline__renderer__app_a034617004cd62bce861e8737a95bab3e}} 
+\index{line\_renderer\_app@{line\_renderer\_app}!toggleInputMode@{toggleInputMode}}
+\index{toggleInputMode@{toggleInputMode}!line\_renderer\_app@{line\_renderer\_app}}
+\doxysubsubsection{\texorpdfstring{toggleInputMode()}{toggleInputMode()}}
+{\footnotesize\ttfamily void line\+\_\+renderer\+\_\+app\+::toggle\+Input\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Switches from mouse-\/interaction mode (ui-\/mode) to camera mode 
 
 \mbox{\Hypertarget{classline__renderer__app_aca2f19291add6fbb04e26e2ba86c7b78}\label{classline__renderer__app_aca2f19291add6fbb04e26e2ba86c7b78}} 
 \index{line\_renderer\_app@{line\_renderer\_app}!update@{update}}
 \index{update@{update}!line\_renderer\_app@{line\_renderer\_app}}
-\doxyparagraph{\texorpdfstring{update()}{update()}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
 {\footnotesize\ttfamily void line\+\_\+renderer\+\_\+app\+::update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}}
+
+
+
+Handles key-\/inputs. (gets called by framework before each render-\/call) 
 
 
 

@@ -34,7 +34,7 @@
   <td id="projectalign">
    <div id="projectname">Vis2 Line Renderer
    </div>
-   <div id="projectbrief">Linedata-Renderer with transparancy and ambient occlusion</div>
+   <div id="projectbrief">Linedata-Renderer with transparancy</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -101,36 +101,85 @@ $(document).ready(function(){initNavTree('structmatrices__and__user__input.html'
 </div><!--header-->
 <div class="contents">
 
+<p>A container for the general UBO that we send to the shaders which contains all of the user controllable data  
+ <a href="structmatrices__and__user__input.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="host__structures_8h_source.html">host_structures.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:acc4375938d5e2841f6233056ca3ce972"><td class="memItemLeft" align="right" valign="top">glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#acc4375938d5e2841f6233056ca3ce972">mViewMatrix</a></td></tr>
+<tr class="memdesc:acc4375938d5e2841f6233056ca3ce972"><td class="mdescLeft">&#160;</td><td class="mdescRight">The view matrix given by the quake cam  <a href="structmatrices__and__user__input.html#acc4375938d5e2841f6233056ca3ce972">More...</a><br /></td></tr>
 <tr class="separator:acc4375938d5e2841f6233056ca3ce972"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1917ba601251ce6a84fb09077730e3b3"><td class="memItemLeft" align="right" valign="top">glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a1917ba601251ce6a84fb09077730e3b3">mProjMatrix</a></td></tr>
+<tr class="memdesc:a1917ba601251ce6a84fb09077730e3b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The projection matrix given by the quake cam  <a href="structmatrices__and__user__input.html#a1917ba601251ce6a84fb09077730e3b3">More...</a><br /></td></tr>
 <tr class="separator:a1917ba601251ce6a84fb09077730e3b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc256b365e9ce985fe445fabe6956a30"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#adc256b365e9ce985fe445fabe6956a30">mCamPos</a></td></tr>
+<tr class="memdesc:adc256b365e9ce985fe445fabe6956a30"><td class="mdescLeft">&#160;</td><td class="mdescRight">The position of the camera/eye in world space  <a href="structmatrices__and__user__input.html#adc256b365e9ce985fe445fabe6956a30">More...</a><br /></td></tr>
 <tr class="separator:adc256b365e9ce985fe445fabe6956a30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bc6283413687136ddb8b3c876db280d"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a3bc6283413687136ddb8b3c876db280d">mCamDir</a></td></tr>
+<tr class="memdesc:a3bc6283413687136ddb8b3c876db280d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The looking direction of the camera/eye in world space  <a href="structmatrices__and__user__input.html#a3bc6283413687136ddb8b3c876db280d">More...</a><br /></td></tr>
 <tr class="separator:a3bc6283413687136ddb8b3c876db280d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca3806e7f0905aec00d900af3e9b4f78"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#aca3806e7f0905aec00d900af3e9b4f78">mClearColor</a></td></tr>
+<tr class="memdesc:aca3806e7f0905aec00d900af3e9b4f78"><td class="mdescLeft">&#160;</td><td class="mdescRight">rgb ... The background color for the background shader a ... The strength of the gradient  <a href="structmatrices__and__user__input.html#aca3806e7f0905aec00d900af3e9b4f78">More...</a><br /></td></tr>
 <tr class="separator:aca3806e7f0905aec00d900af3e9b4f78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab91b0c2af4a11518d39e3303fbcbe6f2"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#ab91b0c2af4a11518d39e3303fbcbe6f2">mHelperLineColor</a></td></tr>
+<tr class="memdesc:ab91b0c2af4a11518d39e3303fbcbe6f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">rgb ... The color for the 2d helper lines. a ... ignored  <a href="structmatrices__and__user__input.html#ab91b0c2af4a11518d39e3303fbcbe6f2">More...</a><br /></td></tr>
 <tr class="separator:ab91b0c2af4a11518d39e3303fbcbe6f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a005e7ce3530323d46505eee33251233c"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a005e7ce3530323d46505eee33251233c">mkBufferInfo</a></td></tr>
+<tr class="memdesc:a005e7ce3530323d46505eee33251233c"><td class="mdescLeft">&#160;</td><td class="mdescRight">contains resx, resy and kbuffer levels  <a href="structmatrices__and__user__input.html#a005e7ce3530323d46505eee33251233c">More...</a><br /></td></tr>
 <tr class="separator:a005e7ce3530323d46505eee33251233c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7758d22d9f8116fe353f75c548cba58f"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a7758d22d9f8116fe353f75c548cba58f">mDirLightDirection</a></td></tr>
+<tr class="memdesc:a7758d22d9f8116fe353f75c548cba58f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The direction of the light/sun in WS  <a href="structmatrices__and__user__input.html#a7758d22d9f8116fe353f75c548cba58f">More...</a><br /></td></tr>
 <tr class="separator:a7758d22d9f8116fe353f75c548cba58f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a9a35bfc240a796e85cda4de7fd6491"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a5a9a35bfc240a796e85cda4de7fd6491">mDirLightColor</a></td></tr>
+<tr class="memdesc:a5a9a35bfc240a796e85cda4de7fd6491"><td class="mdescLeft">&#160;</td><td class="mdescRight">The color of the light/sun multiplied with the intensity a ... ignored  <a href="structmatrices__and__user__input.html#a5a9a35bfc240a796e85cda4de7fd6491">More...</a><br /></td></tr>
 <tr class="separator:a5a9a35bfc240a796e85cda4de7fd6491"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ecb58d9d264e6423989dc865e974c6e"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a2ecb58d9d264e6423989dc865e974c6e">mAmbLightColor</a></td></tr>
+<tr class="memdesc:a2ecb58d9d264e6423989dc865e974c6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The color of the ambient light a ... ignored  <a href="structmatrices__and__user__input.html#a2ecb58d9d264e6423989dc865e974c6e">More...</a><br /></td></tr>
 <tr class="separator:a2ecb58d9d264e6423989dc865e974c6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a4116d4c25d467d2d35acba71f87ba6"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a8a4116d4c25d467d2d35acba71f87ba6">mMaterialLightReponse</a></td></tr>
+<tr class="memdesc:a8a4116d4c25d467d2d35acba71f87ba6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The material light properties for the tubes: r ... ambient light factor g ... diffuse light factor b ... specular light factor a ... shininess  <a href="structmatrices__and__user__input.html#a8a4116d4c25d467d2d35acba71f87ba6">More...</a><br /></td></tr>
 <tr class="separator:a8a4116d4c25d467d2d35acba71f87ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae46c720408e441a4d8efcbf68b641325"><td class="memItemLeft" align="right" valign="top">VkBool32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#ae46c720408e441a4d8efcbf68b641325">mUseVertexColorForHelperLines</a></td></tr>
-<tr class="separator:ae46c720408e441a4d8efcbf68b641325"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63dbe1f19427fcdb45110f9d109c27f9"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a63dbe1f19427fcdb45110f9d109c27f9">mVertexColorMin</a></td></tr>
+<tr class="memdesc:a63dbe1f19427fcdb45110f9d109c27f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The vertex color for minimum values (depending on the mode). Is also used for the color if in static mode a ... ignored  <a href="structmatrices__and__user__input.html#a63dbe1f19427fcdb45110f9d109c27f9">More...</a><br /></td></tr>
+<tr class="separator:a63dbe1f19427fcdb45110f9d109c27f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f36fc4a2bfa4a18b727f6cbe5e09a36"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a7f36fc4a2bfa4a18b727f6cbe5e09a36">mVertexColorMax</a></td></tr>
+<tr class="memdesc:a7f36fc4a2bfa4a18b727f6cbe5e09a36"><td class="mdescLeft">&#160;</td><td class="mdescRight">The vertex color for vertices with maximum values (depending on the mode) a ... ignored  <a href="structmatrices__and__user__input.html#a7f36fc4a2bfa4a18b727f6cbe5e09a36">More...</a><br /></td></tr>
+<tr class="separator:a7f36fc4a2bfa4a18b727f6cbe5e09a36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae52ddbcb8aaf5a027380bdfa5905f7d4"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#ae52ddbcb8aaf5a027380bdfa5905f7d4">mVertexAlphaBounds</a></td></tr>
+<tr class="memdesc:ae52ddbcb8aaf5a027380bdfa5905f7d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The min/max levels for line transparencies in dynamic modes The min value is also used if in static mode ba ... ignored  <a href="structmatrices__and__user__input.html#ae52ddbcb8aaf5a027380bdfa5905f7d4">More...</a><br /></td></tr>
+<tr class="separator:ae52ddbcb8aaf5a027380bdfa5905f7d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa005185e8466f5b4507bbac3b2123fdb"><td class="memItemLeft" align="right" valign="top">glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#aa005185e8466f5b4507bbac3b2123fdb">mVertexRadiusBounds</a></td></tr>
+<tr class="memdesc:aa005185e8466f5b4507bbac3b2123fdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The min/max level for the radius of vertices in dynamic modes The min value is also used if in static mode ba ... ignored  <a href="structmatrices__and__user__input.html#aa005185e8466f5b4507bbac3b2123fdb">More...</a><br /></td></tr>
+<tr class="separator:aa005185e8466f5b4507bbac3b2123fdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb10df9650f1a331d700108047daa8bf"><td class="memItemLeft" align="right" valign="top">VkBool32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#adb10df9650f1a331d700108047daa8bf">mBillboardClippingEnabled</a></td></tr>
+<tr class="memdesc:adb10df9650f1a331d700108047daa8bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag to enable/disable the clipping of the billboard based on the raycasting and for the caps.  <a href="structmatrices__and__user__input.html#adb10df9650f1a331d700108047daa8bf">More...</a><br /></td></tr>
 <tr class="separator:adb10df9650f1a331d700108047daa8bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab171b3c2be42c65c976047dc5550c9af"><td class="memItemLeft" align="right" valign="top">VkBool32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#ab171b3c2be42c65c976047dc5550c9af">mBillboardShadingEnabled</a></td></tr>
+<tr class="memdesc:ab171b3c2be42c65c976047dc5550c9af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag to enable/disable shading of the billboard (raycasting will still be done for possible clipping)  <a href="structmatrices__and__user__input.html#ab171b3c2be42c65c976047dc5550c9af">More...</a><br /></td></tr>
+<tr class="separator:ab171b3c2be42c65c976047dc5550c9af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4efb8bbf66bc7136faefa005a79d4e3"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#af4efb8bbf66bc7136faefa005a79d4e3">mVertexColorMode</a></td></tr>
+<tr class="memdesc:af4efb8bbf66bc7136faefa005a79d4e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The coloring mode for vertices (see main-&gt;renderUI() for possible states)  <a href="structmatrices__and__user__input.html#af4efb8bbf66bc7136faefa005a79d4e3">More...</a><br /></td></tr>
+<tr class="separator:af4efb8bbf66bc7136faefa005a79d4e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a625c7d45b6be386212d0e14f09b1f28f"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a625c7d45b6be386212d0e14f09b1f28f">mVertexAlphaMode</a></td></tr>
+<tr class="memdesc:a625c7d45b6be386212d0e14f09b1f28f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The transparency mode for vertices (see main-&gt;renderUI() for possible states)  <a href="structmatrices__and__user__input.html#a625c7d45b6be386212d0e14f09b1f28f">More...</a><br /></td></tr>
+<tr class="separator:a625c7d45b6be386212d0e14f09b1f28f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05c751c3f5469341cf03815473c0196c"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a05c751c3f5469341cf03815473c0196c">mVertexRadiusMode</a></td></tr>
+<tr class="memdesc:a05c751c3f5469341cf03815473c0196c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The radius mode for vertices (see main-&gt;renderUI() for possible states)  <a href="structmatrices__and__user__input.html#a05c751c3f5469341cf03815473c0196c">More...</a><br /></td></tr>
+<tr class="separator:a05c751c3f5469341cf03815473c0196c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2aa09d3fbcc98447b5ee37e892c6fe5b"><td class="memItemLeft" align="right" valign="top">VkBool32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a2aa09d3fbcc98447b5ee37e892c6fe5b">mVertexAlphaInvert</a></td></tr>
+<tr class="memdesc:a2aa09d3fbcc98447b5ee37e892c6fe5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reverses the factor (depending on the mode) for dynamic transparency if true  <a href="structmatrices__and__user__input.html#a2aa09d3fbcc98447b5ee37e892c6fe5b">More...</a><br /></td></tr>
+<tr class="separator:a2aa09d3fbcc98447b5ee37e892c6fe5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a121644d016b310a339cb8fc43962e3eb"><td class="memItemLeft" align="right" valign="top">VkBool32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a121644d016b310a339cb8fc43962e3eb">mVertexRadiusInvert</a></td></tr>
+<tr class="memdesc:a121644d016b310a339cb8fc43962e3eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reverses the factor (depending on the mode) for dynamic radius if true  <a href="structmatrices__and__user__input.html#a121644d016b310a339cb8fc43962e3eb">More...</a><br /></td></tr>
+<tr class="separator:a121644d016b310a339cb8fc43962e3eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b4fee633a84564e855b965f7b1e67db"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a2b4fee633a84564e855b965f7b1e67db">mDataMaxLineLength</a></td></tr>
+<tr class="memdesc:a2b4fee633a84564e855b965f7b1e67db"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum line length inside the dataset. Which is necessary to calculate a factor from 0-1 in the depending on line length mode.  <a href="structmatrices__and__user__input.html#a2b4fee633a84564e855b965f7b1e67db">More...</a><br /></td></tr>
+<tr class="separator:a2b4fee633a84564e855b965f7b1e67db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c24467923ba2c400727dc6e4bf6b05f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a4c24467923ba2c400727dc6e4bf6b05f">mDataMaxVertexAdjacentLineLength</a></td></tr>
+<tr class="memdesc:a4c24467923ba2c400727dc6e4bf6b05f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum line length of adjacing lines to a vertex inside the dataset. This value is unused so far but could be used for another dynamic mode  <a href="structmatrices__and__user__input.html#a4c24467923ba2c400727dc6e4bf6b05f">More...</a><br /></td></tr>
+<tr class="separator:a4c24467923ba2c400727dc6e4bf6b05f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35ff4ea552b1de7d5955d5f6c4453a9a"><td class="memItemLeft" align="right" valign="top">mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a35ff4ea552b1de7d5955d5f6c4453a9a">mViewMatrix</a></td></tr>
 <tr class="separator:a35ff4ea552b1de7d5955d5f6c4453a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb4f31f7624df4daf09f8698d47b49ba"><td class="memItemLeft" align="right" valign="top">mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#acb4f31f7624df4daf09f8698d47b49ba">mProjMatrix</a></td></tr>
@@ -153,28 +202,34 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a091dd037b3fd4b9d39ed2f8b25aa12bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf63bc66ff72db3f5edbd2294f049d4c"><td class="memItemLeft" align="right" valign="top">vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#acf63bc66ff72db3f5edbd2294f049d4c">mMaterialLightReponse</a></td></tr>
 <tr class="separator:acf63bc66ff72db3f5edbd2294f049d4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe2bb87bcd2abe0dab9a1d8bf8e09da6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#afe2bb87bcd2abe0dab9a1d8bf8e09da6">mUseVertexColorForHelperLines</a></td></tr>
-<tr class="separator:afe2bb87bcd2abe0dab9a1d8bf8e09da6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ede1db5d2257aa7072d8a5249603153"><td class="memItemLeft" align="right" valign="top">vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a3ede1db5d2257aa7072d8a5249603153">mVertexColorMin</a></td></tr>
+<tr class="separator:a3ede1db5d2257aa7072d8a5249603153"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f7b0964cbf7fbbc681548c610887b6c"><td class="memItemLeft" align="right" valign="top">vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a5f7b0964cbf7fbbc681548c610887b6c">mVertexColorMax</a></td></tr>
+<tr class="separator:a5f7b0964cbf7fbbc681548c610887b6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afce889d40c1c190f24fc119683eb12f7"><td class="memItemLeft" align="right" valign="top">vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#afce889d40c1c190f24fc119683eb12f7">mVertexAlphaBounds</a></td></tr>
+<tr class="separator:afce889d40c1c190f24fc119683eb12f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6832dbfdc60cf33dc732394bff600126"><td class="memItemLeft" align="right" valign="top">vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a6832dbfdc60cf33dc732394bff600126">mVertexRadiusBounds</a></td></tr>
+<tr class="separator:a6832dbfdc60cf33dc732394bff600126"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cda3b2c9180113f197231e11638e97d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a4cda3b2c9180113f197231e11638e97d">mBillboardClippingEnabled</a></td></tr>
 <tr class="separator:a4cda3b2c9180113f197231e11638e97d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14204bf263dddaa2921c06a3ddbe3144"><td class="memItemLeft" align="right" valign="top">vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a14204bf263dddaa2921c06a3ddbe3144">buf2</a></td></tr>
-<tr class="separator:a14204bf263dddaa2921c06a3ddbe3144"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f70dbc3fe33a5cc8cfe5a258795217e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a3f70dbc3fe33a5cc8cfe5a258795217e">mBillboardShadingEnabled</a></td></tr>
+<tr class="separator:a3f70dbc3fe33a5cc8cfe5a258795217e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c79d89b2c43f06bc3c1bbc08cfb30e6"><td class="memItemLeft" align="right" valign="top">uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a3c79d89b2c43f06bc3c1bbc08cfb30e6">mVertexColorMode</a></td></tr>
+<tr class="separator:a3c79d89b2c43f06bc3c1bbc08cfb30e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab54a0b56a4f2fda1b2c556c3ffc6e8f8"><td class="memItemLeft" align="right" valign="top">uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#ab54a0b56a4f2fda1b2c556c3ffc6e8f8">mVertexAlphaMode</a></td></tr>
+<tr class="separator:ab54a0b56a4f2fda1b2c556c3ffc6e8f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92f4653b765db1a1488b4d9fb0b38506"><td class="memItemLeft" align="right" valign="top">uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a92f4653b765db1a1488b4d9fb0b38506">mVertexRadiusMode</a></td></tr>
+<tr class="separator:a92f4653b765db1a1488b4d9fb0b38506"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1389bfd4107052856b9648226adbaa01"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a1389bfd4107052856b9648226adbaa01">mVertexAlphaInvert</a></td></tr>
+<tr class="separator:a1389bfd4107052856b9648226adbaa01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48ab3ca4931e0ea776ff491e032a609d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmatrices__and__user__input.html#a48ab3ca4931e0ea776ff491e032a609d">mVertexRadiusInvert</a></td></tr>
+<tr class="separator:a48ab3ca4931e0ea776ff491e032a609d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a14204bf263dddaa2921c06a3ddbe3144" name="a14204bf263dddaa2921c06a3ddbe3144"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14204bf263dddaa2921c06a3ddbe3144">&#9670;&nbsp;</a></span>buf2</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">vec2 matrices_and_user_input::buf2</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >A container for the general UBO that we send to the shaders which contains all of the user controllable data </p>
+<p >Contains the ubo struct for variables. Gets included by most shaders </p><dl class="section author"><dt>Author</dt><dd>Gerald Kimmersdorfer, Mathias Hürbe </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2022 </dd></dl>
+</div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="ad07fab4dc2360f2f7d00e8df6b35a6ac" name="ad07fab4dc2360f2f7d00e8df6b35a6ac"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad07fab4dc2360f2f7d00e8df6b35a6ac">&#9670;&nbsp;</a></span>kBufferInfo</h2>
 
@@ -215,6 +270,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>The color of the ambient light a ... ignored </p>
+
 </div>
 </div>
 <a id="a4cda3b2c9180113f197231e11638e97d" name="a4cda3b2c9180113f197231e11638e97d"></a>
@@ -242,6 +299,38 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Flag to enable/disable the clipping of the billboard based on the raycasting and for the caps. </p>
+
+</div>
+</div>
+<a id="a3f70dbc3fe33a5cc8cfe5a258795217e" name="a3f70dbc3fe33a5cc8cfe5a258795217e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f70dbc3fe33a5cc8cfe5a258795217e">&#9670;&nbsp;</a></span>mBillboardShadingEnabled <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool matrices_and_user_input::mBillboardShadingEnabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab171b3c2be42c65c976047dc5550c9af" name="ab171b3c2be42c65c976047dc5550c9af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab171b3c2be42c65c976047dc5550c9af">&#9670;&nbsp;</a></span>mBillboardShadingEnabled <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkBool32 matrices_and_user_input::mBillboardShadingEnabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Flag to enable/disable shading of the billboard (raycasting will still be done for possible clipping) </p>
 
 </div>
 </div>
@@ -271,6 +360,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>The looking direction of the camera/eye in world space </p>
+
 </div>
 </div>
 <a id="a17a60dd210367129aad817bb253d1c22" name="a17a60dd210367129aad817bb253d1c22"></a>
@@ -298,6 +389,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>The position of the camera/eye in world space </p>
 
 </div>
 </div>
@@ -327,6 +420,40 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>rgb ... The background color for the background shader a ... The strength of the gradient </p>
+
+</div>
+</div>
+<a id="a2b4fee633a84564e855b965f7b1e67db" name="a2b4fee633a84564e855b965f7b1e67db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b4fee633a84564e855b965f7b1e67db">&#9670;&nbsp;</a></span>mDataMaxLineLength</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float matrices_and_user_input::mDataMaxLineLength</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The maximum line length inside the dataset. Which is necessary to calculate a factor from 0-1 in the depending on line length mode. </p>
+
+</div>
+</div>
+<a id="a4c24467923ba2c400727dc6e4bf6b05f" name="a4c24467923ba2c400727dc6e4bf6b05f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c24467923ba2c400727dc6e4bf6b05f">&#9670;&nbsp;</a></span>mDataMaxVertexAdjacentLineLength</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float matrices_and_user_input::mDataMaxVertexAdjacentLineLength</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The maximum line length of adjacing lines to a vertex inside the dataset. This value is unused so far but could be used for another dynamic mode </p>
+
 </div>
 </div>
 <a id="a48b49c9c30bdfc4183df43807df2e8fb" name="a48b49c9c30bdfc4183df43807df2e8fb"></a>
@@ -354,6 +481,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>The color of the light/sun multiplied with the intensity a ... ignored </p>
 
 </div>
 </div>
@@ -383,6 +512,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>The direction of the light/sun in WS </p>
+
 </div>
 </div>
 <a id="a38f8e8b34adfa521c86731d8534e93ae" name="a38f8e8b34adfa521c86731d8534e93ae"></a>
@@ -411,6 +542,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>rgb ... The color for the 2d helper lines. a ... ignored </p>
+
 </div>
 </div>
 <a id="a005e7ce3530323d46505eee33251233c" name="a005e7ce3530323d46505eee33251233c"></a>
@@ -424,6 +557,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>contains resx, resy and kbuffer levels </p>
 
 </div>
 </div>
@@ -453,6 +588,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>The material light properties for the tubes: r ... ambient light factor g ... diffuse light factor b ... specular light factor a ... shininess </p>
+
 </div>
 </div>
 <a id="acb4f31f7624df4daf09f8698d47b49ba" name="acb4f31f7624df4daf09f8698d47b49ba"></a>
@@ -481,33 +618,277 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>The projection matrix given by the quake cam </p>
+
 </div>
 </div>
-<a id="afe2bb87bcd2abe0dab9a1d8bf8e09da6" name="afe2bb87bcd2abe0dab9a1d8bf8e09da6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe2bb87bcd2abe0dab9a1d8bf8e09da6">&#9670;&nbsp;</a></span>mUseVertexColorForHelperLines <span class="overload">[1/2]</span></h2>
+<a id="afce889d40c1c190f24fc119683eb12f7" name="afce889d40c1c190f24fc119683eb12f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afce889d40c1c190f24fc119683eb12f7">&#9670;&nbsp;</a></span>mVertexAlphaBounds <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool matrices_and_user_input::mUseVertexColorForHelperLines</td>
+          <td class="memname">vec4 matrices_and_user_input::mVertexAlphaBounds</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ae46c720408e441a4d8efcbf68b641325" name="ae46c720408e441a4d8efcbf68b641325"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae46c720408e441a4d8efcbf68b641325">&#9670;&nbsp;</a></span>mUseVertexColorForHelperLines <span class="overload">[2/2]</span></h2>
+<a id="ae52ddbcb8aaf5a027380bdfa5905f7d4" name="ae52ddbcb8aaf5a027380bdfa5905f7d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae52ddbcb8aaf5a027380bdfa5905f7d4">&#9670;&nbsp;</a></span>mVertexAlphaBounds <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">VkBool32 matrices_and_user_input::mUseVertexColorForHelperLines</td>
+          <td class="memname">glm::vec4 matrices_and_user_input::mVertexAlphaBounds</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>The min/max levels for line transparencies in dynamic modes The min value is also used if in static mode ba ... ignored </p>
+
+</div>
+</div>
+<a id="a1389bfd4107052856b9648226adbaa01" name="a1389bfd4107052856b9648226adbaa01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1389bfd4107052856b9648226adbaa01">&#9670;&nbsp;</a></span>mVertexAlphaInvert <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool matrices_and_user_input::mVertexAlphaInvert</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2aa09d3fbcc98447b5ee37e892c6fe5b" name="a2aa09d3fbcc98447b5ee37e892c6fe5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2aa09d3fbcc98447b5ee37e892c6fe5b">&#9670;&nbsp;</a></span>mVertexAlphaInvert <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkBool32 matrices_and_user_input::mVertexAlphaInvert</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reverses the factor (depending on the mode) for dynamic transparency if true </p>
+
+</div>
+</div>
+<a id="ab54a0b56a4f2fda1b2c556c3ffc6e8f8" name="ab54a0b56a4f2fda1b2c556c3ffc6e8f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab54a0b56a4f2fda1b2c556c3ffc6e8f8">&#9670;&nbsp;</a></span>mVertexAlphaMode <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint matrices_and_user_input::mVertexAlphaMode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a625c7d45b6be386212d0e14f09b1f28f" name="a625c7d45b6be386212d0e14f09b1f28f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a625c7d45b6be386212d0e14f09b1f28f">&#9670;&nbsp;</a></span>mVertexAlphaMode <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t matrices_and_user_input::mVertexAlphaMode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The transparency mode for vertices (see main-&gt;renderUI() for possible states) </p>
+
+</div>
+</div>
+<a id="a5f7b0964cbf7fbbc681548c610887b6c" name="a5f7b0964cbf7fbbc681548c610887b6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f7b0964cbf7fbbc681548c610887b6c">&#9670;&nbsp;</a></span>mVertexColorMax <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vec4 matrices_and_user_input::mVertexColorMax</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7f36fc4a2bfa4a18b727f6cbe5e09a36" name="a7f36fc4a2bfa4a18b727f6cbe5e09a36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f36fc4a2bfa4a18b727f6cbe5e09a36">&#9670;&nbsp;</a></span>mVertexColorMax <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec4 matrices_and_user_input::mVertexColorMax</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The vertex color for vertices with maximum values (depending on the mode) a ... ignored </p>
+
+</div>
+</div>
+<a id="a3ede1db5d2257aa7072d8a5249603153" name="a3ede1db5d2257aa7072d8a5249603153"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ede1db5d2257aa7072d8a5249603153">&#9670;&nbsp;</a></span>mVertexColorMin <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vec4 matrices_and_user_input::mVertexColorMin</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a63dbe1f19427fcdb45110f9d109c27f9" name="a63dbe1f19427fcdb45110f9d109c27f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63dbe1f19427fcdb45110f9d109c27f9">&#9670;&nbsp;</a></span>mVertexColorMin <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec4 matrices_and_user_input::mVertexColorMin</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The vertex color for minimum values (depending on the mode). Is also used for the color if in static mode a ... ignored </p>
+
+</div>
+</div>
+<a id="a3c79d89b2c43f06bc3c1bbc08cfb30e6" name="a3c79d89b2c43f06bc3c1bbc08cfb30e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c79d89b2c43f06bc3c1bbc08cfb30e6">&#9670;&nbsp;</a></span>mVertexColorMode <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint matrices_and_user_input::mVertexColorMode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af4efb8bbf66bc7136faefa005a79d4e3" name="af4efb8bbf66bc7136faefa005a79d4e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4efb8bbf66bc7136faefa005a79d4e3">&#9670;&nbsp;</a></span>mVertexColorMode <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t matrices_and_user_input::mVertexColorMode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The coloring mode for vertices (see main-&gt;renderUI() for possible states) </p>
+
+</div>
+</div>
+<a id="a6832dbfdc60cf33dc732394bff600126" name="a6832dbfdc60cf33dc732394bff600126"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6832dbfdc60cf33dc732394bff600126">&#9670;&nbsp;</a></span>mVertexRadiusBounds <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vec4 matrices_and_user_input::mVertexRadiusBounds</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa005185e8466f5b4507bbac3b2123fdb" name="aa005185e8466f5b4507bbac3b2123fdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa005185e8466f5b4507bbac3b2123fdb">&#9670;&nbsp;</a></span>mVertexRadiusBounds <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec4 matrices_and_user_input::mVertexRadiusBounds</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The min/max level for the radius of vertices in dynamic modes The min value is also used if in static mode ba ... ignored </p>
+
+</div>
+</div>
+<a id="a48ab3ca4931e0ea776ff491e032a609d" name="a48ab3ca4931e0ea776ff491e032a609d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48ab3ca4931e0ea776ff491e032a609d">&#9670;&nbsp;</a></span>mVertexRadiusInvert <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool matrices_and_user_input::mVertexRadiusInvert</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a121644d016b310a339cb8fc43962e3eb" name="a121644d016b310a339cb8fc43962e3eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a121644d016b310a339cb8fc43962e3eb">&#9670;&nbsp;</a></span>mVertexRadiusInvert <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkBool32 matrices_and_user_input::mVertexRadiusInvert</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reverses the factor (depending on the mode) for dynamic radius if true </p>
+
+</div>
+</div>
+<a id="a92f4653b765db1a1488b4d9fb0b38506" name="a92f4653b765db1a1488b4d9fb0b38506"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92f4653b765db1a1488b4d9fb0b38506">&#9670;&nbsp;</a></span>mVertexRadiusMode <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint matrices_and_user_input::mVertexRadiusMode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a05c751c3f5469341cf03815473c0196c" name="a05c751c3f5469341cf03815473c0196c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05c751c3f5469341cf03815473c0196c">&#9670;&nbsp;</a></span>mVertexRadiusMode <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t matrices_and_user_input::mVertexRadiusMode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The radius mode for vertices (see main-&gt;renderUI() for possible states) </p>
 
 </div>
 </div>
@@ -536,6 +917,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>The view matrix given by the quake cam </p>
 
 </div>
 </div>
