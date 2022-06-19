@@ -13,6 +13,8 @@ To fix overlapping geometry of line segments, the geometry shader passes the vec
 Every fragment that fails one of the tests gets discarded. In the next phase, the fragment's depth and color values are packed into an uint64_t. The depth value is stored in the MSB of the uint64_t to enable fast minimum comparisons without unpacking it. Fragments premultiplied color is stored in ascending depth order in the K-Buffer. If an entry overflows the K-Buffer, it gets blended with the frame buffer. 
 The last phase of the frame resolves the K-Buffer. The resolve pass loads the fragments from the K-Buffer, alpha blends them manually, and outputs the final fragment color. 
 
+> Because of the missing primitive culling step, we opted for an early z test if the K-Buffer is full and discarding any fragment further away than the last entry in the K-Buffer.
+
 
 ## External Libraries
 
