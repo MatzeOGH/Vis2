@@ -585,6 +585,8 @@ public:
 		cmdBfr->handle().draw(6u, 2u, 0u, 0u);
 		cmdBfr->end_render_pass();
 			
+		cmdBfr->establish_buffer_memory_barrier(mkBuffer.get(), pipeline_stage::compute_shader, pipeline_stage::fragment_shader, memory_access::shader_buffers_and_images_write_access, memory_access::shader_buffers_and_images_write_access);
+
 		// Draw the line primitives
 		if (mMainRenderPassEnabled && mVertexBuffer.has_value()) {
 			cmdBfr->begin_render_pass_for_framebuffer(mPipeline->get_renderpass(), context().main_window()->current_backbuffer());
