@@ -58,21 +58,10 @@ void main()
 	float alpha = 1;
 	for(uint i = 0; i < sample_count; ++i)
 	{
-		color = color + samples[i].color.rgb * alpha;
-		alpha *= samples[i].color.a;
+		color = color * (1 -samples[sample_count-i-1].color.a) + samples[sample_count-i-1].color.rgb;
+		alpha *= samples[sample_count-i-1].color.a;
 	}
-
-	/*
-	uint64_t value = kBuffer.data[listPos(0)];
-	uvec2 data = unpackUint2x32(value);
-	color = unpackUnorm4x8(data.x).xyz;
-	*/
-
-	//color = vec3(1.0) - exp(-color * 10);
-	//color = pow(color, vec3(1.0/2.2));
 
 	alpha = 1 - alpha;
 	outColor = vec4(color / alpha, alpha);
-
-	//discard;
 }
