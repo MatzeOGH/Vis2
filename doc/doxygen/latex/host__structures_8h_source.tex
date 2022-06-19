@@ -1,38 +1,63 @@
-\hypertarget{host__structures_8h_source}{}\doxysubsection{host\+\_\+structures.\+h}
+\hypertarget{host__structures_8h_source}{}\doxysection{host\+\_\+structures.\+h}
 \label{host__structures_8h_source}\index{C:/tmp/Vis2/src/host\_structures.h@{C:/tmp/Vis2/src/host\_structures.h}}
 \mbox{\hyperlink{host__structures_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{1 \textcolor{preprocessor}{\#pragma once}}
 \DoxyCodeLine{2 }
-\DoxyCodeLine{3 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_vertex}{Vertex}} \{}
-\DoxyCodeLine{4     glm::vec3 \mbox{\hyperlink{struct_vertex_a858242dc7b40c034c5e13c589b30cfb4}{pos}};}
-\DoxyCodeLine{5     glm::vec4 \mbox{\hyperlink{struct_vertex_aa7ecd21578677765699b8831e0011696}{color}};}
-\DoxyCodeLine{6     \textcolor{keywordtype}{float} \mbox{\hyperlink{struct_vertex_ab1557d6cedc92aa455814ca5096223ce}{radius}};}
-\DoxyCodeLine{7 \};}
-\DoxyCodeLine{8 }
-\DoxyCodeLine{9 \textcolor{keyword}{struct }\mbox{\hyperlink{structdraw__call__t}{draw\_call\_t}}}
-\DoxyCodeLine{10 \{}
-\DoxyCodeLine{11     uint32\_t \mbox{\hyperlink{structdraw__call__t_a2624950e64ab98cba28322cc862201e1}{firstIndex}};}
-\DoxyCodeLine{12     uint32\_t \mbox{\hyperlink{structdraw__call__t_a0b9a643768221a37355a83ffd97efcc2}{numberOfPrimitives}};}
-\DoxyCodeLine{13 \};}
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#include <vulkan/vulkan\_core.h>}}
+\DoxyCodeLine{4 }
+\DoxyCodeLine{8 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_vertex}{Vertex}} \{}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{13     glm::vec3 \mbox{\hyperlink{struct_vertex_a030819fdc241743bbd3e180a6b132ed3}{position}} = \{ -\/1.0F, -\/1.0F, -\/1.0F \};}
 \DoxyCodeLine{14 }
-\DoxyCodeLine{15 \textcolor{keyword}{struct }\mbox{\hyperlink{structmatrices__and__user__input}{matrices\_and\_user\_input}} \{}
-\DoxyCodeLine{16     glm::mat4 \mbox{\hyperlink{structmatrices__and__user__input_acc4375938d5e2841f6233056ca3ce972}{mViewMatrix}};}
-\DoxyCodeLine{17     glm::mat4 \mbox{\hyperlink{structmatrices__and__user__input_a1917ba601251ce6a84fb09077730e3b3}{mProjMatrix}};}
-\DoxyCodeLine{18     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_adc256b365e9ce985fe445fabe6956a30}{mCamPos}};}
-\DoxyCodeLine{19     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a3bc6283413687136ddb8b3c876db280d}{mCamDir}};}
-\DoxyCodeLine{20     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_aca3806e7f0905aec00d900af3e9b4f78}{mClearColor}};}
-\DoxyCodeLine{21     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_ab91b0c2af4a11518d39e3303fbcbe6f2}{mHelperLineColor}};}
-\DoxyCodeLine{22     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a005e7ce3530323d46505eee33251233c}{mkBufferInfo}};}
-\DoxyCodeLine{23 }
-\DoxyCodeLine{24 }
-\DoxyCodeLine{25     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a7758d22d9f8116fe353f75c548cba58f}{mDirLightDirection}}; \textcolor{comment}{// normalize(vec3(-\/0.7, -\/0.6, -\/0.3));}}
-\DoxyCodeLine{26     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a5a9a35bfc240a796e85cda4de7fd6491}{mDirLightColor}}; \textcolor{comment}{// vec3(1.0, 1.0, 1.0);}}
-\DoxyCodeLine{27     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a2ecb58d9d264e6423989dc865e974c6e}{mAmbLightColor}}; \textcolor{comment}{// vec3(0.05, 0.05, 0.05);}}
-\DoxyCodeLine{28     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a8a4116d4c25d467d2d35acba71f87ba6}{mMaterialLightReponse}}; \textcolor{comment}{// vec4(0.5, 1.0, 0.5, 32.0);  // amb, diff, spec, shininess}}
-\DoxyCodeLine{29 }
-\DoxyCodeLine{30     VkBool32 \mbox{\hyperlink{structmatrices__and__user__input_ae46c720408e441a4d8efcbf68b641325}{mUseVertexColorForHelperLines}};}
-\DoxyCodeLine{31     VkBool32 \mbox{\hyperlink{structmatrices__and__user__input_adb10df9650f1a331d700108047daa8bf}{mBillboardClippingEnabled}};}
-\DoxyCodeLine{32 \};}
+\DoxyCodeLine{18     \textcolor{keywordtype}{float} \mbox{\hyperlink{struct_vertex_a75f9c75b5fdecef0c6377e2b25761a9b}{data}} = -\/1.0F;}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{24     \textcolor{keywordtype}{float} \mbox{\hyperlink{struct_vertex_a81cf9865d8ae021b48ad9399c8e063b1}{curvature}} = -\/1.0F;}
+\DoxyCodeLine{25 \};}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{30 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_poly}{Poly}} \{}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{35     std::vector<Vertex> \mbox{\hyperlink{struct_poly_a564e7d0e547c911ebd8441e36d643d09}{vertices}};}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \};}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{43 \textcolor{keyword}{struct }\mbox{\hyperlink{structdraw__call__t}{draw\_call\_t}}}
+\DoxyCodeLine{44 \{}
+\DoxyCodeLine{48     uint32\_t \mbox{\hyperlink{structdraw__call__t_a2624950e64ab98cba28322cc862201e1}{firstIndex}};}
+\DoxyCodeLine{52     uint32\_t \mbox{\hyperlink{structdraw__call__t_a0b9a643768221a37355a83ffd97efcc2}{numberOfPrimitives}};}
+\DoxyCodeLine{53 \};}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{58 \textcolor{keyword}{struct }\mbox{\hyperlink{structmatrices__and__user__input}{matrices\_and\_user\_input}} \{}
+\DoxyCodeLine{62     glm::mat4 \mbox{\hyperlink{structmatrices__and__user__input_acc4375938d5e2841f6233056ca3ce972}{mViewMatrix}};}
+\DoxyCodeLine{66     glm::mat4 \mbox{\hyperlink{structmatrices__and__user__input_a1917ba601251ce6a84fb09077730e3b3}{mProjMatrix}};}
+\DoxyCodeLine{70     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_adc256b365e9ce985fe445fabe6956a30}{mCamPos}};}
+\DoxyCodeLine{74     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a3bc6283413687136ddb8b3c876db280d}{mCamDir}};}
+\DoxyCodeLine{79     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_aca3806e7f0905aec00d900af3e9b4f78}{mClearColor}};}
+\DoxyCodeLine{84     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_ab91b0c2af4a11518d39e3303fbcbe6f2}{mHelperLineColor}};}
+\DoxyCodeLine{88     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a005e7ce3530323d46505eee33251233c}{mkBufferInfo}};}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{93     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a7758d22d9f8116fe353f75c548cba58f}{mDirLightDirection}};}
+\DoxyCodeLine{98     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a5a9a35bfc240a796e85cda4de7fd6491}{mDirLightColor}};}
+\DoxyCodeLine{103     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a2ecb58d9d264e6423989dc865e974c6e}{mAmbLightColor}};}
+\DoxyCodeLine{111     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a8a4116d4c25d467d2d35acba71f87ba6}{mMaterialLightReponse}}; \textcolor{comment}{// vec4(0.5, 1.0, 0.5, 32.0);  // amb, diff, spec, shininess}}
+\DoxyCodeLine{112 }
+\DoxyCodeLine{118     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a63dbe1f19427fcdb45110f9d109c27f9}{mVertexColorMin}};}
+\DoxyCodeLine{123     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_a7f36fc4a2bfa4a18b727f6cbe5e09a36}{mVertexColorMax}};}
+\DoxyCodeLine{129     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_ae52ddbcb8aaf5a027380bdfa5905f7d4}{mVertexAlphaBounds}};}
+\DoxyCodeLine{135     glm::vec4 \mbox{\hyperlink{structmatrices__and__user__input_aa005185e8466f5b4507bbac3b2123fdb}{mVertexRadiusBounds}};}
+\DoxyCodeLine{136 }
+\DoxyCodeLine{141     VkBool32 \mbox{\hyperlink{structmatrices__and__user__input_adb10df9650f1a331d700108047daa8bf}{mBillboardClippingEnabled}};}
+\DoxyCodeLine{145     VkBool32 \mbox{\hyperlink{structmatrices__and__user__input_ab171b3c2be42c65c976047dc5550c9af}{mBillboardShadingEnabled}};}
+\DoxyCodeLine{146 }
+\DoxyCodeLine{150     uint32\_t \mbox{\hyperlink{structmatrices__and__user__input_af4efb8bbf66bc7136faefa005a79d4e3}{mVertexColorMode}};}
+\DoxyCodeLine{154     uint32\_t \mbox{\hyperlink{structmatrices__and__user__input_a625c7d45b6be386212d0e14f09b1f28f}{mVertexAlphaMode}};}
+\DoxyCodeLine{158     uint32\_t \mbox{\hyperlink{structmatrices__and__user__input_a05c751c3f5469341cf03815473c0196c}{mVertexRadiusMode}};}
+\DoxyCodeLine{159 }
+\DoxyCodeLine{163     VkBool32 \mbox{\hyperlink{structmatrices__and__user__input_a2aa09d3fbcc98447b5ee37e892c6fe5b}{mVertexAlphaInvert}};}
+\DoxyCodeLine{167     VkBool32 \mbox{\hyperlink{structmatrices__and__user__input_a121644d016b310a339cb8fc43962e3eb}{mVertexRadiusInvert}};}
+\DoxyCodeLine{172     \textcolor{keywordtype}{float} \mbox{\hyperlink{structmatrices__and__user__input_a2b4fee633a84564e855b965f7b1e67db}{mDataMaxLineLength}};}
+\DoxyCodeLine{177     \textcolor{keywordtype}{float} \mbox{\hyperlink{structmatrices__and__user__input_a4c24467923ba2c400727dc6e4bf6b05f}{mDataMaxVertexAdjacentLineLength}};}
+\DoxyCodeLine{178 }
+\DoxyCodeLine{179 \};}
 
 \end{DoxyCode}

@@ -237,17 +237,17 @@ p {
   padding: 1px 1px 5px 5px;
 }
 
-.aboutme {
+.home {
   background: url("img/splash.jpg")
     no-repeat;
   background-size: cover;
 }
 
-.aboutme h1 {
+.home h1 {
   font-size: 45px;
 }
 
-.aboutme p {
+.home p {
   color: white;
   font-weight: 100;
   font-size: 22.4px;

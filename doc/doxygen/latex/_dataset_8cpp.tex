@@ -1,0 +1,59 @@
+\hypertarget{_dataset_8cpp}{}\doxysection{C\+:/tmp/\+Vis2/src/\+Dataset.cpp File Reference}
+\label{_dataset_8cpp}\index{C:/tmp/Vis2/src/Dataset.cpp@{C:/tmp/Vis2/src/Dataset.cpp}}
+{\ttfamily \#include \char`\"{}Dataset.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$filesystem$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$chrono$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$fast\+\_\+float/fast\+\_\+float.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}helper\+\_\+functions.\+h\char`\"{}}\newline
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23d}{e\+Status}} \{ \newline
+\mbox{\hyperlink{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da91d26e4b2b105c74655093c9becd30b7}{INITIAL}}
+, \mbox{\hyperlink{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da88a5906bd7ae2c2af27e46e6b988bdf4}{AFTERV}}
+, \mbox{\hyperlink{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23dadaf6e1ab29a48aa8ac6c5379ad34540a}{READV}}
+, \mbox{\hyperlink{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23daa5f2c690dc2e88495fb1cc9c08f4184b}{READVT}}
+, \newline
+\mbox{\hyperlink{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23dab03353e8f648f32651a9d3a0e411383b}{READL}}
+, \mbox{\hyperlink{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da8f722ce9718138166bed2820a9926841}{IGNOREUNTILNEWLINE}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23d}\label{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23d}} 
+\index{Dataset.cpp@{Dataset.cpp}!eStatus@{eStatus}}
+\index{eStatus@{eStatus}!Dataset.cpp@{Dataset.cpp}}
+\doxysubsubsection{\texorpdfstring{eStatus}{eStatus}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23d}{e\+Status}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INITIAL@{INITIAL}!Dataset.cpp@{Dataset.cpp}}\index{Dataset.cpp@{Dataset.cpp}!INITIAL@{INITIAL}}}\mbox{\Hypertarget{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da91d26e4b2b105c74655093c9becd30b7}\label{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da91d26e4b2b105c74655093c9becd30b7}} 
+INITIAL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{AFTERV@{AFTERV}!Dataset.cpp@{Dataset.cpp}}\index{Dataset.cpp@{Dataset.cpp}!AFTERV@{AFTERV}}}\mbox{\Hypertarget{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da88a5906bd7ae2c2af27e46e6b988bdf4}\label{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da88a5906bd7ae2c2af27e46e6b988bdf4}} 
+AFTERV&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{READV@{READV}!Dataset.cpp@{Dataset.cpp}}\index{Dataset.cpp@{Dataset.cpp}!READV@{READV}}}\mbox{\Hypertarget{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23dadaf6e1ab29a48aa8ac6c5379ad34540a}\label{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23dadaf6e1ab29a48aa8ac6c5379ad34540a}} 
+READV&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{READVT@{READVT}!Dataset.cpp@{Dataset.cpp}}\index{Dataset.cpp@{Dataset.cpp}!READVT@{READVT}}}\mbox{\Hypertarget{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23daa5f2c690dc2e88495fb1cc9c08f4184b}\label{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23daa5f2c690dc2e88495fb1cc9c08f4184b}} 
+READVT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{READL@{READL}!Dataset.cpp@{Dataset.cpp}}\index{Dataset.cpp@{Dataset.cpp}!READL@{READL}}}\mbox{\Hypertarget{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23dab03353e8f648f32651a9d3a0e411383b}\label{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23dab03353e8f648f32651a9d3a0e411383b}} 
+READL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IGNOREUNTILNEWLINE@{IGNOREUNTILNEWLINE}!Dataset.cpp@{Dataset.cpp}}\index{Dataset.cpp@{Dataset.cpp}!IGNOREUNTILNEWLINE@{IGNOREUNTILNEWLINE}}}\mbox{\Hypertarget{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da8f722ce9718138166bed2820a9926841}\label{_dataset_8cpp_a98f62c57ed523529b59eaed90540d23da8f722ce9718138166bed2820a9926841}} 
+IGNOREUNTILNEWLINE&\\
+\hline
+
+\end{DoxyEnumFields}

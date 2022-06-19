@@ -1,0 +1,213 @@
+\hypertarget{class_dataset}{}\doxysection{Dataset Class Reference}
+\label{class_dataset}\index{Dataset@{Dataset}}
+
+
+This class represents a Line-\/\+Dataset. It furthermore offers functionality to load data of an .obj-\/file and does some preprocessing-\/steps.  
+
+
+
+
+{\ttfamily \#include $<$Dataset.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_dataset_a2ef0a4a688a218d55ef061c6df659a4a}{Dataset}} ()
+\item 
+void \mbox{\hyperlink{class_dataset_aad82a68ac2c9d75bb80660021ccf7430}{import\+From\+File}} (std\+::string filename)
+\begin{DoxyCompactList}\small\item\em Load the data of the given \char`\"{}.\+obj\char`\"{} file into the cpu (m\+Poly\+Line-\/\+Buffer) and starts some preprocessing work. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_dataset_ab0af223de4442033ed909c8fed71206c}{fill\+GPUReady\+Buffer}} (std\+::vector$<$ \mbox{\hyperlink{struct_vertex}{Vertex}} $>$ \&new\+Vertex\+Buffer, std\+::vector$<$ uint32\+\_\+t $>$ \&new\+Index\+Buffer)
+\begin{DoxyCompactList}\small\item\em This function fills a vertex-\/list and an index list. the vertices at in between points of a line get duplicated as proposed in the paper. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_dataset_a34e88404c50aa69f1ba30546296f9e65}{fill\+GPUReady\+Buffer}} (std\+::vector$<$ \mbox{\hyperlink{struct_vertex}{Vertex}} $>$ \&new\+Vertex\+Buffer, std\+::vector$<$ \mbox{\hyperlink{structdraw__call__t}{draw\+\_\+call\+\_\+t}} $>$ \&new\+Draw\+Calls)
+\begin{DoxyCompactList}\small\item\em This function fills a vertex-\/list and a list with information for the draw calls of the different line segments. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_dataset_af8ec4b68d4d9ec10008b3bd588577ef8}{get\+Last\+Loading\+Time}} ()
+\begin{DoxyCompactList}\small\item\em Returns the time it took to import the last file in seconds \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_dataset_aa3f5e0a677b34c829fc7dd750d074f09}{get\+Last\+Preprocess\+Time}} ()
+\begin{DoxyCompactList}\small\item\em Returns the time it took to preprocess the last file in seconds \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_dataset_a3d8914ae22fc2cb9c8dfbfc1e8b03dc9}{get\+Line\+Count}} ()
+\begin{DoxyCompactList}\small\item\em Returns the amount of line individual line segments inside the file \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_dataset_ab75e1b44b8dd99fecda1cfce3981da81}{get\+Polyline\+Count}} ()
+\begin{DoxyCompactList}\small\item\em Returns the amount of connected line segments \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_dataset_a9065d6a43edcef895bc1c7a5616571c6}{get\+Vertex\+Count}} ()
+\begin{DoxyCompactList}\small\item\em Returns the amount of singular vertices in the dataset \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_dataset_a65be640c4cf762869041997fb8bec5d3}{get\+Max\+Line\+Length}} ()
+\begin{DoxyCompactList}\small\item\em returns the length of the longest line inside the dataset. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_dataset_a797dcf538c397d89454586eeebfef143}{get\+Max\+Vertex\+Adjacent\+Line\+Length}} ()
+\begin{DoxyCompactList}\small\item\em returns the summed up length of the vertex with the longest adjacend lines. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_dataset_a0a7743aaeb9dc67d008885c2dc909c52}{is\+File\+Open}} ()
+\begin{DoxyCompactList}\small\item\em returns true if a file was loaded and the polyline buffer is full \end{DoxyCompactList}\item 
+glm\+::vec3 \mbox{\hyperlink{class_dataset_adf45b2aa195a1635afed6f70d6c6d3a6}{get\+Dimensions}} ()
+\begin{DoxyCompactList}\small\item\em returns the dimensions of the dataset \end{DoxyCompactList}\item 
+glm\+::vec2 \mbox{\hyperlink{class_dataset_ae26c0519e6516b41fe0def9c7549afe7}{get\+Data\+Bounds}} ()
+\begin{DoxyCompactList}\small\item\em returns the min-\/ and maximum \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{class_dataset_a744784fdc1a6dc6bc62bd2c0f9eec346}{get\+Name}} ()
+\begin{DoxyCompactList}\small\item\em Returns the filename of the currently loaded dataset \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class represents a Line-\/\+Dataset. It furthermore offers functionality to load data of an .obj-\/file and does some preprocessing-\/steps. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_dataset_a2ef0a4a688a218d55ef061c6df659a4a}\label{class_dataset_a2ef0a4a688a218d55ef061c6df659a4a}} 
+\index{Dataset@{Dataset}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{Dataset()}{Dataset()}}
+{\footnotesize\ttfamily Dataset\+::\+Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_dataset_a34e88404c50aa69f1ba30546296f9e65}\label{class_dataset_a34e88404c50aa69f1ba30546296f9e65}} 
+\index{Dataset@{Dataset}!fillGPUReadyBuffer@{fillGPUReadyBuffer}}
+\index{fillGPUReadyBuffer@{fillGPUReadyBuffer}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{fillGPUReadyBuffer()}{fillGPUReadyBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Dataset\+::fill\+GPUReady\+Buffer (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{struct_vertex}{Vertex}} $>$ \&}]{new\+Vertex\+Buffer,  }\item[{std\+::vector$<$ \mbox{\hyperlink{structdraw__call__t}{draw\+\_\+call\+\_\+t}} $>$ \&}]{new\+Draw\+Calls }\end{DoxyParamCaption})}
+
+
+
+This function fills a vertex-\/list and a list with information for the draw calls of the different line segments. 
+
+\mbox{\Hypertarget{class_dataset_ab0af223de4442033ed909c8fed71206c}\label{class_dataset_ab0af223de4442033ed909c8fed71206c}} 
+\index{Dataset@{Dataset}!fillGPUReadyBuffer@{fillGPUReadyBuffer}}
+\index{fillGPUReadyBuffer@{fillGPUReadyBuffer}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{fillGPUReadyBuffer()}{fillGPUReadyBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Dataset\+::fill\+GPUReady\+Buffer (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{struct_vertex}{Vertex}} $>$ \&}]{new\+Vertex\+Buffer,  }\item[{std\+::vector$<$ uint32\+\_\+t $>$ \&}]{new\+Index\+Buffer }\end{DoxyParamCaption})}
+
+
+
+This function fills a vertex-\/list and an index list. the vertices at in between points of a line get duplicated as proposed in the paper. 
+
+\mbox{\Hypertarget{class_dataset_ae26c0519e6516b41fe0def9c7549afe7}\label{class_dataset_ae26c0519e6516b41fe0def9c7549afe7}} 
+\index{Dataset@{Dataset}!getDataBounds@{getDataBounds}}
+\index{getDataBounds@{getDataBounds}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getDataBounds()}{getDataBounds()}}
+{\footnotesize\ttfamily glm\+::vec2 Dataset\+::get\+Data\+Bounds (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns the min-\/ and maximum 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_dataset_adf45b2aa195a1635afed6f70d6c6d3a6}\label{class_dataset_adf45b2aa195a1635afed6f70d6c6d3a6}} 
+\index{Dataset@{Dataset}!getDimensions@{getDimensions}}
+\index{getDimensions@{getDimensions}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getDimensions()}{getDimensions()}}
+{\footnotesize\ttfamily glm\+::vec3 Dataset\+::get\+Dimensions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns the dimensions of the dataset 
+
+\mbox{\Hypertarget{class_dataset_af8ec4b68d4d9ec10008b3bd588577ef8}\label{class_dataset_af8ec4b68d4d9ec10008b3bd588577ef8}} 
+\index{Dataset@{Dataset}!getLastLoadingTime@{getLastLoadingTime}}
+\index{getLastLoadingTime@{getLastLoadingTime}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getLastLoadingTime()}{getLastLoadingTime()}}
+{\footnotesize\ttfamily float Dataset\+::get\+Last\+Loading\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the time it took to import the last file in seconds 
+
+\mbox{\Hypertarget{class_dataset_aa3f5e0a677b34c829fc7dd750d074f09}\label{class_dataset_aa3f5e0a677b34c829fc7dd750d074f09}} 
+\index{Dataset@{Dataset}!getLastPreprocessTime@{getLastPreprocessTime}}
+\index{getLastPreprocessTime@{getLastPreprocessTime}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getLastPreprocessTime()}{getLastPreprocessTime()}}
+{\footnotesize\ttfamily float Dataset\+::get\+Last\+Preprocess\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the time it took to preprocess the last file in seconds 
+
+\mbox{\Hypertarget{class_dataset_a3d8914ae22fc2cb9c8dfbfc1e8b03dc9}\label{class_dataset_a3d8914ae22fc2cb9c8dfbfc1e8b03dc9}} 
+\index{Dataset@{Dataset}!getLineCount@{getLineCount}}
+\index{getLineCount@{getLineCount}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getLineCount()}{getLineCount()}}
+{\footnotesize\ttfamily int Dataset\+::get\+Line\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the amount of line individual line segments inside the file 
+
+\mbox{\Hypertarget{class_dataset_a65be640c4cf762869041997fb8bec5d3}\label{class_dataset_a65be640c4cf762869041997fb8bec5d3}} 
+\index{Dataset@{Dataset}!getMaxLineLength@{getMaxLineLength}}
+\index{getMaxLineLength@{getMaxLineLength}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getMaxLineLength()}{getMaxLineLength()}}
+{\footnotesize\ttfamily float Dataset\+::get\+Max\+Line\+Length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns the length of the longest line inside the dataset. 
+
+\mbox{\Hypertarget{class_dataset_a797dcf538c397d89454586eeebfef143}\label{class_dataset_a797dcf538c397d89454586eeebfef143}} 
+\index{Dataset@{Dataset}!getMaxVertexAdjacentLineLength@{getMaxVertexAdjacentLineLength}}
+\index{getMaxVertexAdjacentLineLength@{getMaxVertexAdjacentLineLength}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getMaxVertexAdjacentLineLength()}{getMaxVertexAdjacentLineLength()}}
+{\footnotesize\ttfamily float Dataset\+::get\+Max\+Vertex\+Adjacent\+Line\+Length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns the summed up length of the vertex with the longest adjacend lines. 
+
+\mbox{\Hypertarget{class_dataset_a744784fdc1a6dc6bc62bd2c0f9eec346}\label{class_dataset_a744784fdc1a6dc6bc62bd2c0f9eec346}} 
+\index{Dataset@{Dataset}!getName@{getName}}
+\index{getName@{getName}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getName()}{getName()}}
+{\footnotesize\ttfamily std\+::string Dataset\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the filename of the currently loaded dataset 
+
+\mbox{\Hypertarget{class_dataset_ab75e1b44b8dd99fecda1cfce3981da81}\label{class_dataset_ab75e1b44b8dd99fecda1cfce3981da81}} 
+\index{Dataset@{Dataset}!getPolylineCount@{getPolylineCount}}
+\index{getPolylineCount@{getPolylineCount}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getPolylineCount()}{getPolylineCount()}}
+{\footnotesize\ttfamily int Dataset\+::get\+Polyline\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the amount of connected line segments 
+
+\mbox{\Hypertarget{class_dataset_a9065d6a43edcef895bc1c7a5616571c6}\label{class_dataset_a9065d6a43edcef895bc1c7a5616571c6}} 
+\index{Dataset@{Dataset}!getVertexCount@{getVertexCount}}
+\index{getVertexCount@{getVertexCount}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{getVertexCount()}{getVertexCount()}}
+{\footnotesize\ttfamily int Dataset\+::get\+Vertex\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the amount of singular vertices in the dataset 
+
+\mbox{\Hypertarget{class_dataset_aad82a68ac2c9d75bb80660021ccf7430}\label{class_dataset_aad82a68ac2c9d75bb80660021ccf7430}} 
+\index{Dataset@{Dataset}!importFromFile@{importFromFile}}
+\index{importFromFile@{importFromFile}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{importFromFile()}{importFromFile()}}
+{\footnotesize\ttfamily void Dataset\+::import\+From\+File (\begin{DoxyParamCaption}\item[{std\+::string}]{filename }\end{DoxyParamCaption})}
+
+
+
+Load the data of the given \char`\"{}.\+obj\char`\"{} file into the cpu (m\+Poly\+Line-\/\+Buffer) and starts some preprocessing work. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & The full filename to the obj-\/file\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_dataset_a0a7743aaeb9dc67d008885c2dc909c52}\label{class_dataset_a0a7743aaeb9dc67d008885c2dc909c52}} 
+\index{Dataset@{Dataset}!isFileOpen@{isFileOpen}}
+\index{isFileOpen@{isFileOpen}!Dataset@{Dataset}}
+\doxysubsubsection{\texorpdfstring{isFileOpen()}{isFileOpen()}}
+{\footnotesize\ttfamily bool Dataset\+::is\+File\+Open (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns true if a file was loaded and the polyline buffer is full 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/tmp/\+Vis2/src/\mbox{\hyperlink{_dataset_8h}{Dataset.\+h}}\item 
+C\+:/tmp/\+Vis2/src/\mbox{\hyperlink{_dataset_8cpp}{Dataset.\+cpp}}\end{DoxyCompactItemize}

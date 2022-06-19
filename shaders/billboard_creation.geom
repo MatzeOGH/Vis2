@@ -1,3 +1,10 @@
+/**
+ * The geometry shader which outputs viewer facing billboards for each line primitive
+ * @author Gerald Kimmersdorfer, Mathias Hürbe
+ * @date 2022
+ * @namespace GLSL
+ * @class tubes3D
+ */
 #version 460
 #extension GL_EXT_nonuniform_qualifier : require
 #extension GL_ARB_separate_shader_objects : enable
@@ -17,7 +24,8 @@ layout(push_constant) uniform PushConstantsBlock { PushConstants pushConstants; 
 
 layout (set = 0, binding = 0) uniform UniformBlock { matrices_and_user_input uboMatricesAndUserInput; };
 
-layout(location = 2) in float inRadius[];
+layout(location = 1) in float inCurvature[];
+layout(location = 2) in float inData[];
 
 layout(location = 0) out vec4 outViewRay;
 layout(location = 1) out vec4 outColor;
@@ -189,17 +197,20 @@ void main() {
     if (uboMatricesAndUserInput.mVertexColorMode == 0) { // static
         colA.rgb = uboMatricesAndUserInput.mVertexColorMin.rgb;
         colB.rgb = uboMatricesAndUserInput.mVertexColorMin.rgb;
-    } else if (uboMatricesAndUserInput.mVertexColorMode == 1) {  // based on velocity
-        colA.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, inRadius[1]);
-        colB.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, inRadius[2]);
+    } else if (uboMatricesAndUserInput.mVertexColorMode == 1) {  // based on data
+        colA.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, inData[1]);
+        colB.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, inData[2]);
     } else if (uboMatricesAndUserInput.mVertexColorMode == 2) { // based on length
         float factor = distance(gl_in[1].gl_Position, gl_in[2].gl_Position) / uboMatricesAndUserInput.mDataMaxLineLength;
         colA.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, factor);
         colB.rgb = colA.rgb;
-    } else if (uboMatricesAndUserInput.mVertexColorMode == 3) { // per Polyline
+    } else if (uboMatricesAndUserInput.mVertexColorMode == 3) { // based on curvature
+        colA.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, inCurvature[1]);
+        colB.rgb = mix(uboMatricesAndUserInput.mVertexColorMin.rgb, uboMatricesAndUserInput.mVertexColorMax.rgb, inCurvature[2]);
+    } else if (uboMatricesAndUserInput.mVertexColorMode == 4) { // per Polyline
         colA.rgb = color_from_id_hash(pushConstants.drawCallIndex);
         colB.rgb = colA.rgb;
-    } else if (uboMatricesAndUserInput.mVertexColorMode == 4) { // per Line
+    } else if (uboMatricesAndUserInput.mVertexColorMode == 5) { // per Line
         colA.rgb = color_from_id_hash(gl_PrimitiveIDIn);
         colB.rgb = colA.rgb;
     }
@@ -207,30 +218,34 @@ void main() {
     if (uboMatricesAndUserInput.mVertexAlphaMode == 0) {
         colA.a = uboMatricesAndUserInput.mVertexAlphaBounds.x;
         colB.a = uboMatricesAndUserInput.mVertexAlphaBounds.x;
-    } else if (uboMatricesAndUserInput.mVertexAlphaMode == 1) {  // based on velocity
-        colA.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - inRadius[1] : inRadius[1]);
-        colB.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - inRadius[2] : inRadius[2]);
+    } else if (uboMatricesAndUserInput.mVertexAlphaMode == 1) {  // based on data
+        colA.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - inData[1] : inData[1]);
+        colB.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - inData[2] : inData[2]);
     } else if (uboMatricesAndUserInput.mVertexAlphaMode == 2) { // based on length
         float factor = distance(gl_in[1].gl_Position, gl_in[2].gl_Position) / uboMatricesAndUserInput.mDataMaxLineLength;
         factor = uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - factor : factor;
-        colA.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, inRadius[1]);
+        colA.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, inData[1]);
         colB.a = colA.a;
+    } else if (uboMatricesAndUserInput.mVertexAlphaMode == 3) { // based on curvature
+        colA.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - inCurvature[1] : inCurvature[1]);
+        colB.a = mix(uboMatricesAndUserInput.mVertexAlphaBounds.x, uboMatricesAndUserInput.mVertexAlphaBounds.y, uboMatricesAndUserInput.mVertexAlphaInvert ? 1 - inCurvature[2] : inCurvature[2]);
     }
     
     if (uboMatricesAndUserInput.mVertexRadiusMode == 0) {
         radA = uboMatricesAndUserInput.mVertexRadiusBounds.x;
         radB = uboMatricesAndUserInput.mVertexRadiusBounds.x;
-    } else if (uboMatricesAndUserInput.mVertexRadiusMode == 1) {  // based on velocity
-        radA = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - inRadius[1] : inRadius[1]);
-        radB = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - inRadius[2] : inRadius[2]);
+    } else if (uboMatricesAndUserInput.mVertexRadiusMode == 1) {  // based on data
+        radA = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - inData[1] : inData[1]);
+        radB = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - inData[2] : inData[2]);
     } else if (uboMatricesAndUserInput.mVertexRadiusMode == 2) { // based on length
         float factor = distance(gl_in[1].gl_Position, gl_in[2].gl_Position) / uboMatricesAndUserInput.mDataMaxLineLength;
         factor = uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - factor : factor;
         radA = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, factor);
         radB = radA;
+    } else if (uboMatricesAndUserInput.mVertexRadiusMode == 3) { // based on curvature
+        radA = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - inCurvature[1] : inCurvature[1]);
+        radB = mix(uboMatricesAndUserInput.mVertexRadiusBounds.x, uboMatricesAndUserInput.mVertexRadiusBounds.y, uboMatricesAndUserInput.mVertexRadiusInvert ? 1 - inCurvature[2] : inCurvature[2]);
     }
-
-
 
     construct_billboard_for_line(
         gl_in[1].gl_Position, gl_in[2].gl_Position,

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['workgroup_5fsize_0',['WORKGROUP_SIZE',['../clear__storage__pass_8comp.html#a4d908f0178f252b8f0cc9b6ade876495',1,'clear_storage_pass.comp']]]
+  ['shader_5fstructures_5fglsl_0',['SHADER_STRUCTURES_GLSL',['../shader__structures_8glsl.html#a1ae661e6e4d72836c80b56508f04513a',1,'shader_structures.glsl']]]
 ];

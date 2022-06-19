@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>VIS2 Advanced Line Renderer</title>
-  <meta name="description" content="An advanced Vulkan Line Renderer with Transparency and AO">
+  <meta name="description" content="An advanced Vulkan Line Renderer with Transparency">
   <link href='https://fonts.googleapis.com/css?family=Raleway:100,200,400,600' rel='stylesheet' type='text/css'>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/jquery.fullPage.min.css" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -20,10 +20,9 @@
     <i class="fa fa-bars fa-3x"></i>
     <div class="header-links">
       <ul>
-        <li data-menuanchor="fourthPage"><a href="#contact">HOME</a></li>
-        <li data-menuanchor="thirdPage"><a href="#portfolio">GALLERY</a></li>
-        <li data-menuanchor="secondPage"><a href="#about">DOWNLOADS</a></li>
-        <li data-menuanchor="secondPage"><a href="#about">ABOUT</a></li>
+        <li data-menuanchor="secondpage"><a href="#gallery">GALLERY</a></li>
+        <li data-menuanchor="thirdpage"><a href="#download">DOWNLOAD</a></li>
+        <li data-menuanchor="firstpage"><a href="#home">HOME</a></li>
       </ul>
     </div>
   </div>
@@ -35,10 +34,9 @@
     <div class="nav-container">
       <div class="nav-links">
         <ul id='myMenu'>
-          <li data-menuanchor="secondPage"><a href="#about">HOME</a></li>
-          <li data-menuanchor="thirdPage"><a href="#portfolio">GALLERY</a></li>
-          <li data-menuanchor="fourthPage"><a href="#contact">DOWNLOADS</a></li>
-          <li data-menuanchor="fiftPage"><a href="#contact">ABOUT</a></li>
+          <li data-menuanchor="firstpage"><a href="#home">HOME</a></li>
+          <li data-menuanchor="secondpage"><a href="#download">DOWNLOAD</a></li>
+          <li data-menuanchor="thirdpage"><a href="#gallery">GALLERY</a></li>
         </ul>
       </div>
     </div>
@@ -51,11 +49,11 @@
 
     <!-- begin section -->
 
-    <div class="section aboutme" data-anchor="aboutme">
+    <div class="section home" data-anchor="home">
       <div id="particles-js"></div>
       <div class="opaque-bg animated fadeInDown">
         <h1 style="color:white">VIS2 LINE RENDERER</h1>
-        <p>INTERACTIVE RENDERER FOR HUGE LINE-DATASETS WITH TRANSPARANCY AND AMBIENT OCCLUSION</p>
+        <p>INTERACTIVE RENDERER FOR HUGE LINE-DATASETS WITH TRANSPARENCY</p>
         <p><span id="holder"></span><span class="blinking-cursor">|</span></p>
       </div>
       <i id="moveDown" class="fa fa-chevron-down fa-3x bounce"></i>
@@ -64,11 +62,9 @@
 
     <!-- begin section -->
 
-    <div class="section" data-anchor="skills">
+    <div class="section" data-anchor="download">
       <div class="container">
         <h1 class="wow fadeInDown" data-wow-delay="0.2s">Advanced Line Renderer</h1>
-
-
         <div class="row">
             <div class="wow fadeInDown col-sm-7 infoBox" data-wow-delay="0.2s">
               <p>
@@ -90,11 +86,11 @@
             <i class="fa fa fa-windows fa-3x"></i>
             Download Executable<br>Windows x64
           </a>
-          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="0.8s" href="#" role="button">
+          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="0.8s" href="doc/index.html" role="button">
             <i class="fa fa fa-book fa-3x"></i>
             Questions? Read the<br>Documentation
           </a>
-          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="1.0s" href="#" role="button">
+          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="1.0s" href="https://github.com/MatzeOGH/Vis2" role="button">
             <i class="fa fa fa-github fa-3x"></i>
             Visit the Project on<br>Github
           </a>
@@ -105,98 +101,31 @@
 
     <!-- begin section -->
 
-    <div class="section" data-anchor="projects">
+    <div class="section" data-anchor="gallery">
       <div class="content-slide">
         <div class="slide">
-          <h1 class="wow fadeInDown" data-wow-delay="0.2s">XFAIRE</h1>
-          <p class="wow fadeInDown" data-wow-delay="0.2s">Digital streaming service</p>
-          <img class="wow fadeInUp" data-wow-delay="0.2s" data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/xfaire.jpg">
+          <h1 class="wow fadeInDown" data-wow-delay="0.2s">VISUALIZE...</h1>
+          <p class="wow fadeInDown" data-wow-delay="0.2s">huge line-data sets</p>
+          <img class="wow fadeInUp" data-wow-delay="0.2s" data-src="img/screenshot2.png">
         </div>
         <div class="slide">
-          <h1>MACHETE ENERGY</h1>
-          <p>Energy drink website</p>
-          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/machete.jpg">
+          <h1>FIND...</h1>
+          <p>relevant parts within your dataset</p>
+          <img data-src="img/screenshot5.png">
         </div>
         <div class="slide">
-          <h1>PORTFOLIO</h1>
-          <p>Mockup of a personal portfolio I was working on for a friend.</p>
-          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/cascioportfolio.jpg">
+          <h1>UNDERSTAND...</h1>
+          <p>the billboard/raycasting based Line-Rendering Algorithm</p>
+          <img data-src="img/screenshot3.png">
         </div>
         <div class="slide">
-          <h1>THATONEBLOG</h1>
-          <p>Minimalist blogging platform.</p>
-          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/blog.jpg">
-        </div>
-        <div class="slide">
-          <h1>PIXBORED</h1>
-          <p>Website for sharing images and gifs.</p>
-          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/pixbored.jpg">
-        </div>
-        <div class="slide">
-          <h1>PERSONAL WEBSITE</h1>
-          <p>Responsive vertical/horizontal header website theme.</p>
-          <img data-src="https://s3-us-west-2.amazonaws.com/bradengelhardt/assets/personalsite.jpg">
+          <h1>and HAVE FUN</h1>
+          <p>with the Vis2 Advanced Line Renderer</p>
+          <img data-src="img/screenshot6.png">
         </div>
       </div>
     </div>
     <!-- end section -->
-
-    <!-- begin section -->
-
-    <div class="section" data-anchor="contact">
-      <div class="content wow fadeInDown" data-wow-delay="0.2s">
-        <h1>CONTACT ME</h1>
-        <p>Whether you're interested in working with me or just want to say hello, I'd love to hear from you!</p>
-        <br>
-        <div class="contact-form">
-
-          <div id="form-messages"></div>
-          <form id="ajax-contact" method="post" role="form" action="contact.php" data-toggle="validator">
-            <div class="form-group has-feedback wow fadeInLeft" data-wow-delay="0.6s">
-              <input type="text" class="form-control" id="name" name="name" placeholder="NAME" data-error="Field can't be blank!" required>
-              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-              <div class="help-block with-errors"></div>
-            </div>
-
-            <div class="form-group has-feedback wow fadeInRight" data-wow-delay="0.8s">
-              <input type="email" class="form-control" id="email" name="email" placeholder="EMAIL" data-error="Field can't be blank!" required>
-              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-              <div class="help-block with-errors"></div>
-            </div>
-
-            <div class="form-group has-feedback wow fadeInLeft" data-wow-delay="1s">
-              <textarea data-minlength="10" class="form-control" id="message" name="message" placeholder="MESSAGE" data-error="Minimum of 10 characters" required></textarea>
-              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-              <div class="help-block with-errors"></div>
-            </div>
-
-            <div class="hidden">
-              <input type="text" class="form-control" id="human" name="human" placeholder="">
-            </div>
-            <div class="wow fadeInUp" data-wow-delay="1s">
-              <button type="submit" id="submit" name="submit" class="btn btn-lg">SEND MESSAGE</button>
-            </div>
-          </form>
-          <br>
-        </div>
-      </div>
-    </div>
-    <!-- end section -->
-
-    <!-- begin section
-
-    <div class="section fp-auto-height">
-      <div class="footer">
-        <p>CONNECT WITH ME</p>
-        <div class="social-links">
-          <span><a href="https://www.linkedin.com/in/bradleyengelhardt" target="_blank"><i class="fa fa-linkedin fa-2x"></i></a></span>
-          <span><a target="_blank" href="https://twitter.com/bradengelhardt" target="_blank"><i class="fa fa-twitter fa-2x"></i></a></span>
-          <span><a href="https://github.com/SquishyAndroid" target="_blank"><i class="fa fa-github fa-2x"></i></a></span>
-          <span><a href="https://codepen.io/SquishyAndroid/pens/public/"><i class="fa fa-codepen fa-2x"></i></a></span>
-        </div>
-      </div>
-    </div>
-     -->
 
   </div>
   <!-- end fullpage -->

@@ -1,4 +1,4 @@
-\hypertarget{main_8cpp}{}\doxysubsection{C\+:/tmp/\+Vis2/src/main.cpp File Reference}
+\hypertarget{main_8cpp}{}\doxysection{C\+:/tmp/\+Vis2/src/main.cpp File Reference}
 \label{main_8cpp}\index{C:/tmp/Vis2/src/main.cpp@{C:/tmp/Vis2/src/main.cpp}}
 {\ttfamily \#include $<$gvk.\+hpp$>$}\newline
 {\ttfamily \#include $<$imgui.\+h$>$}\newline
@@ -6,41 +6,60 @@
 {\ttfamily \#include $<$iostream$>$}\newline
 {\ttfamily \#include $<$sstream$>$}\newline
 {\ttfamily \#include $<$glm/gtx/string\+\_\+cast.\+hpp$>$}\newline
-{\ttfamily \#include \char`\"{}line\+\_\+importer.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}host\+\_\+structures.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}helper\+\_\+functions.\+h\char`\"{}}\newline
-\doxysubsubsection*{Classes}
+{\ttfamily \#include \char`\"{}host\+\_\+structures.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Dataset.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+\doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classline__renderer__app}{line\+\_\+renderer\+\_\+app}}
+\begin{DoxyCompactList}\small\item\em This is the main class of our project. It derives from gvk\+::invokee and as such gets invoked by the framework each update and render-\/step. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{main_8cpp_a80dc32ab37909bac505e303d5946da47}{IMGUI\+\_\+\+COLLAPSEINDENTWIDTH}}~20.\+0F
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Functions}
+\doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 int \mbox{\hyperlink{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
-\end{DoxyCompactItemize}
-\doxysubsubsection*{Variables}
+\begin{DoxyCompactList}\small\item\em Entry point for VIS2 -\/ Line Renderer \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-const size\+\_\+t \mbox{\hyperlink{main_8cpp_a99c9fdd2602f24bfbf68bdc228e21b10}{k\+Buffer\+Layer\+Count}} = 16
+constexpr size\+\_\+t \mbox{\hyperlink{main_8cpp_a290ccd9ebc5a320b8f61682e13298ce4}{k\+Buffer\+Layer\+Count}} = 16
 \begin{DoxyCompactList}\small\item\em The maximum number of Layers inside the k buffer \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\doxysubsubsection{Function Documentation}
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{main_8cpp_a80dc32ab37909bac505e303d5946da47}\label{main_8cpp_a80dc32ab37909bac505e303d5946da47}} 
+\index{main.cpp@{main.cpp}!IMGUI\_COLLAPSEINDENTWIDTH@{IMGUI\_COLLAPSEINDENTWIDTH}}
+\index{IMGUI\_COLLAPSEINDENTWIDTH@{IMGUI\_COLLAPSEINDENTWIDTH}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{IMGUI\_COLLAPSEINDENTWIDTH}{IMGUI\_COLLAPSEINDENTWIDTH}}
+{\footnotesize\ttfamily \#define IMGUI\+\_\+\+COLLAPSEINDENTWIDTH~20.\+0F}
+
+
+
+\doxysubsection{Function Documentation}
 \mbox{\Hypertarget{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
 \index{main.cpp@{main.cpp}!main@{main}}
 \index{main@{main}!main.cpp@{main.cpp}}
-\doxyparagraph{\texorpdfstring{main()}{main()}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
 {\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
-\doxysubsubsection{Variable Documentation}
-\mbox{\Hypertarget{main_8cpp_a99c9fdd2602f24bfbf68bdc228e21b10}\label{main_8cpp_a99c9fdd2602f24bfbf68bdc228e21b10}} 
+Entry point for VIS2 -\/ Line Renderer 
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{main_8cpp_a290ccd9ebc5a320b8f61682e13298ce4}\label{main_8cpp_a290ccd9ebc5a320b8f61682e13298ce4}} 
 \index{main.cpp@{main.cpp}!kBufferLayerCount@{kBufferLayerCount}}
 \index{kBufferLayerCount@{kBufferLayerCount}!main.cpp@{main.cpp}}
-\doxyparagraph{\texorpdfstring{kBufferLayerCount}{kBufferLayerCount}}
-{\footnotesize\ttfamily const size\+\_\+t k\+Buffer\+Layer\+Count = 16}
+\doxysubsubsection{\texorpdfstring{kBufferLayerCount}{kBufferLayerCount}}
+{\footnotesize\ttfamily constexpr size\+\_\+t k\+Buffer\+Layer\+Count = 16\hspace{0.3cm}{\ttfamily [constexpr]}}
 
 
 

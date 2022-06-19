@@ -1,65 +1,91 @@
-\hypertarget{billboard__creation_8geom}{}\doxysubsection{C\+:/tmp/\+Vis2/shaders/billboard\+\_\+creation.geom File Reference}
+\hypertarget{billboard__creation_8geom}{}\doxysection{C\+:/tmp/\+Vis2/shaders/billboard\+\_\+creation.geom File Reference}
 \label{billboard__creation_8geom}\index{C:/tmp/Vis2/shaders/billboard\_creation.geom@{C:/tmp/Vis2/shaders/billboard\_creation.geom}}
 {\ttfamily \#include \char`\"{}shader\+\_\+structures.\+glsl\char`\"{}}\newline
-\doxysubsubsection*{Functions}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_push_constants}{Push\+Constants}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespace_g_l_s_l}{GLSL}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{billboard__creation_8geom_a352efc090f3e8a1ab4d257aa9a67369c}{layout}} (lines\+\_\+adjacency) in
 \item 
 \mbox{\hyperlink{billboard__creation_8geom_a7588a72a58e83eb07b44ec1fbbb86e5f}{layout}} (triangle\+\_\+strip, max\+\_\+vertices=4) out
 \item 
+\mbox{\hyperlink{billboard__creation_8geom_aff965cbad2587d84562467dd22a6106e}{layout}} (push\+\_\+constant) uniform Push\+Constants\+Block
+\item 
 \mbox{\hyperlink{billboard__creation_8geom_aad759d13139ce5fa1e7180f63b6cc2b3}{layout}} (set=0, binding=0) uniform Uniform\+Block
 \item 
-\mbox{\hyperlink{billboard__creation_8geom_ad06cd310b7efa0bb2e4eac46443023a4}{layout}} (location=1) in vec4 in\+Color\mbox{[}$\,$\mbox{]}
+\mbox{\hyperlink{billboard__creation_8geom_afd3ffe52503c705c0d57eaf0d0f68ff9}{layout}} (location=1) in float in\+Curvature\mbox{[}$\,$\mbox{]}
 \item 
-void \mbox{\hyperlink{billboard__creation_8geom_a9d729f53318385720de8ef43e2976ae3}{construct\+\_\+simple\+\_\+billboard}} (vec4 posA, vec4 posB, float radA, float radB, vec4 eye\+Pos)
+void \mbox{\hyperlink{billboard__creation_8geom_a60aad99a0527320d608e91b043163390}{construct\+\_\+billboard\+\_\+for\+\_\+line}} (vec4 posA, vec4 posB, float radA, float radB, vec4 eye\+Pos, vec4 cam\+Dir, vec4 pos\+APre, vec4 pos\+BSuc, vec4 colA, vec4 colB)
 \item 
-void \mbox{\hyperlink{billboard__creation_8geom_a9884b665da98700fb52b177ef9a4079f}{construct\+\_\+billboard\+\_\+for\+\_\+line}} (vec4 posA, vec4 posB, float radA, float radB, vec4 eye\+Pos, vec4 cam\+Dir)
+uint \mbox{\hyperlink{billboard__creation_8geom_afb11c6d9d31fc0230c743e8392a19fea}{compute\+\_\+hash}} (uint a)
+\item 
+vec3 \mbox{\hyperlink{billboard__creation_8geom_a3c8ff1937cc330b19ecb0cc8f4bbf8a8}{color\+\_\+from\+\_\+id\+\_\+hash}} (uint a)
 \item 
 void \mbox{\hyperlink{billboard__creation_8geom_acdef7a1fd863a6d3770c1268cb06add3}{main}} ()
 \end{DoxyCompactItemize}
 
 
-\doxysubsubsection{Function Documentation}
-\mbox{\Hypertarget{billboard__creation_8geom_a9884b665da98700fb52b177ef9a4079f}\label{billboard__creation_8geom_a9884b665da98700fb52b177ef9a4079f}} 
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{billboard__creation_8geom_a3c8ff1937cc330b19ecb0cc8f4bbf8a8}\label{billboard__creation_8geom_a3c8ff1937cc330b19ecb0cc8f4bbf8a8}} 
+\index{billboard\_creation.geom@{billboard\_creation.geom}!color\_from\_id\_hash@{color\_from\_id\_hash}}
+\index{color\_from\_id\_hash@{color\_from\_id\_hash}!billboard\_creation.geom@{billboard\_creation.geom}}
+\doxysubsubsection{\texorpdfstring{color\_from\_id\_hash()}{color\_from\_id\_hash()}}
+{\footnotesize\ttfamily vec3 color\+\_\+from\+\_\+id\+\_\+hash (\begin{DoxyParamCaption}\item[{uint}]{a }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{billboard__creation_8geom_afb11c6d9d31fc0230c743e8392a19fea}\label{billboard__creation_8geom_afb11c6d9d31fc0230c743e8392a19fea}} 
+\index{billboard\_creation.geom@{billboard\_creation.geom}!compute\_hash@{compute\_hash}}
+\index{compute\_hash@{compute\_hash}!billboard\_creation.geom@{billboard\_creation.geom}}
+\doxysubsubsection{\texorpdfstring{compute\_hash()}{compute\_hash()}}
+{\footnotesize\ttfamily uint compute\+\_\+hash (\begin{DoxyParamCaption}\item[{uint}]{a }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{billboard__creation_8geom_a60aad99a0527320d608e91b043163390}\label{billboard__creation_8geom_a60aad99a0527320d608e91b043163390}} 
 \index{billboard\_creation.geom@{billboard\_creation.geom}!construct\_billboard\_for\_line@{construct\_billboard\_for\_line}}
 \index{construct\_billboard\_for\_line@{construct\_billboard\_for\_line}!billboard\_creation.geom@{billboard\_creation.geom}}
-\doxyparagraph{\texorpdfstring{construct\_billboard\_for\_line()}{construct\_billboard\_for\_line()}}
-{\footnotesize\ttfamily void construct\+\_\+billboard\+\_\+for\+\_\+line (\begin{DoxyParamCaption}\item[{vec4}]{posA,  }\item[{vec4}]{posB,  }\item[{float}]{radA,  }\item[{float}]{radB,  }\item[{vec4}]{eye\+Pos,  }\item[{vec4}]{cam\+Dir }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{billboard__creation_8geom_a9d729f53318385720de8ef43e2976ae3}\label{billboard__creation_8geom_a9d729f53318385720de8ef43e2976ae3}} 
-\index{billboard\_creation.geom@{billboard\_creation.geom}!construct\_simple\_billboard@{construct\_simple\_billboard}}
-\index{construct\_simple\_billboard@{construct\_simple\_billboard}!billboard\_creation.geom@{billboard\_creation.geom}}
-\doxyparagraph{\texorpdfstring{construct\_simple\_billboard()}{construct\_simple\_billboard()}}
-{\footnotesize\ttfamily void construct\+\_\+simple\+\_\+billboard (\begin{DoxyParamCaption}\item[{vec4}]{posA,  }\item[{vec4}]{posB,  }\item[{float}]{radA,  }\item[{float}]{radB,  }\item[{vec4}]{eye\+Pos }\end{DoxyParamCaption})}
+\doxysubsubsection{\texorpdfstring{construct\_billboard\_for\_line()}{construct\_billboard\_for\_line()}}
+{\footnotesize\ttfamily void construct\+\_\+billboard\+\_\+for\+\_\+line (\begin{DoxyParamCaption}\item[{vec4}]{posA,  }\item[{vec4}]{posB,  }\item[{float}]{radA,  }\item[{float}]{radB,  }\item[{vec4}]{eye\+Pos,  }\item[{vec4}]{cam\+Dir,  }\item[{vec4}]{pos\+APre,  }\item[{vec4}]{pos\+BSuc,  }\item[{vec4}]{colA,  }\item[{vec4}]{colB }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{billboard__creation_8geom_a352efc090f3e8a1ab4d257aa9a67369c}\label{billboard__creation_8geom_a352efc090f3e8a1ab4d257aa9a67369c}} 
 \index{billboard\_creation.geom@{billboard\_creation.geom}!layout@{layout}}
 \index{layout@{layout}!billboard\_creation.geom@{billboard\_creation.geom}}
-\doxyparagraph{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
 {\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{lines\+\_\+adjacency}]{ }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{billboard__creation_8geom_ad06cd310b7efa0bb2e4eac46443023a4}\label{billboard__creation_8geom_ad06cd310b7efa0bb2e4eac46443023a4}} 
+\mbox{\Hypertarget{billboard__creation_8geom_afd3ffe52503c705c0d57eaf0d0f68ff9}\label{billboard__creation_8geom_afd3ffe52503c705c0d57eaf0d0f68ff9}} 
 \index{billboard\_creation.geom@{billboard\_creation.geom}!layout@{layout}}
 \index{layout@{layout}!billboard\_creation.geom@{billboard\_creation.geom}}
-\doxyparagraph{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
 {\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{location}]{ = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{billboard__creation_8geom_aff965cbad2587d84562467dd22a6106e}\label{billboard__creation_8geom_aff965cbad2587d84562467dd22a6106e}} 
+\index{billboard\_creation.geom@{billboard\_creation.geom}!layout@{layout}}
+\index{layout@{layout}!billboard\_creation.geom@{billboard\_creation.geom}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{push\+\_\+constant}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{billboard__creation_8geom_aad759d13139ce5fa1e7180f63b6cc2b3}\label{billboard__creation_8geom_aad759d13139ce5fa1e7180f63b6cc2b3}} 
 \index{billboard\_creation.geom@{billboard\_creation.geom}!layout@{layout}}
 \index{layout@{layout}!billboard\_creation.geom@{billboard\_creation.geom}}
-\doxyparagraph{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
 {\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{set}]{ = {\ttfamily 0},  }\item[{binding}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{billboard__creation_8geom_a7588a72a58e83eb07b44ec1fbbb86e5f}\label{billboard__creation_8geom_a7588a72a58e83eb07b44ec1fbbb86e5f}} 
 \index{billboard\_creation.geom@{billboard\_creation.geom}!layout@{layout}}
 \index{layout@{layout}!billboard\_creation.geom@{billboard\_creation.geom}}
-\doxyparagraph{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+\doxysubsubsection{\texorpdfstring{layout()}{layout()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
 {\footnotesize\ttfamily layout (\begin{DoxyParamCaption}\item[{triangle\+\_\+strip}]{,  }\item[{max\+\_\+vertices}]{ = {\ttfamily 4} }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{billboard__creation_8geom_acdef7a1fd863a6d3770c1268cb06add3}\label{billboard__creation_8geom_acdef7a1fd863a6d3770c1268cb06add3}} 
 \index{billboard\_creation.geom@{billboard\_creation.geom}!main@{main}}
 \index{main@{main}!billboard\_creation.geom@{billboard\_creation.geom}}
-\doxyparagraph{\texorpdfstring{main()}{main()}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
 {\footnotesize\ttfamily void main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 

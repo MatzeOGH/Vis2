@@ -1,10 +1,11 @@
 var searchData=
 [
-  ['calc_5fblinn_5fphong_5fcontribution_0',['calc_blinn_phong_contribution',['../class_g_l_s_l_1_1ray__casting.html#a1275f9a6de595edcf6f372e433ac5fb9',1,'GLSL::ray_casting']]],
-  ['calculate_5fillumination_1',['calculate_illumination',['../class_g_l_s_l_1_1ray__casting.html#a645c5a47a440091f56bc3e04b88b20f9',1,'GLSL::ray_casting']]],
+  ['calc_5fblinn_5fphong_5fcontribution_0',['calc_blinn_phong_contribution',['../class_g_l_s_l_1_1tubes3_d.html#a1457c6aa4082164943bb1b2b11962d28',1,'GLSL::tubes3D']]],
+  ['calculate_5fillumination_1',['calculate_illumination',['../class_g_l_s_l_1_1tubes3_d.html#a57408a6b62e987ef2c8762d2ecc3f0d3',1,'GLSL::tubes3D']]],
   ['clear_5fstorage_5fpass_2ecomp_2',['clear_storage_pass.comp',['../clear__storage__pass_8comp.html',1,'']]],
-  ['color_3',['color',['../struct_vertex.html#aa7ecd21578677765699b8831e0011696',1,'Vertex::color()'],['../struct_g_l_s_l_1_1kbuffer__resolve_1_1_samples.html#ac364045a8cf415f6fbf3bbf7149ac04c',1,'GLSL::kbuffer_resolve::Samples::color()']]],
-  ['compute_5fhash_4',['compute_hash',['../class_g_l_s_l_1_1passthrough.html#a32e461984aadd005f213a2ce82f9a1fb',1,'GLSL::passthrough']]],
-  ['construct_5fbillboard_5ffor_5fline_5',['construct_billboard_for_line',['../billboard__creation_8geom.html#a9884b665da98700fb52b177ef9a4079f',1,'billboard_creation.geom']]],
-  ['construct_5fsimple_5fbillboard_6',['construct_simple_billboard',['../billboard__creation_8geom.html#a9d729f53318385720de8ef43e2976ae3',1,'billboard_creation.geom']]]
+  ['color_3',['color',['../struct_g_l_s_l_1_1kbuffer__resolve_1_1_samples.html#ac364045a8cf415f6fbf3bbf7149ac04c',1,'GLSL::kbuffer_resolve::Samples']]],
+  ['color_5ffrom_5fid_5fhash_4',['color_from_id_hash',['../billboard__creation_8geom.html#a3c8ff1937cc330b19ecb0cc8f4bbf8a8',1,'billboard_creation.geom']]],
+  ['compute_5fhash_5',['compute_hash',['../billboard__creation_8geom.html#afb11c6d9d31fc0230c743e8392a19fea',1,'billboard_creation.geom']]],
+  ['construct_5fbillboard_5ffor_5fline_6',['construct_billboard_for_line',['../billboard__creation_8geom.html#a60aad99a0527320d608e91b043163390',1,'billboard_creation.geom']]],
+  ['curvature_7',['curvature',['../struct_vertex.html#a81cf9865d8ae021b48ad9399c8e063b1',1,'Vertex']]]
 ];
