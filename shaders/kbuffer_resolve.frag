@@ -58,7 +58,7 @@ void main()
 	float alpha = 1;
 	for(uint i = 0; i < sample_count; ++i)
 	{
-		color = color * (1 -samples[sample_count-i-1].color.a) + samples[sample_count-i-1].color.rgb;
+		color = color * (samples[sample_count-i-1].color.a) + samples[sample_count-i-1].color.rgb;
 		alpha *= samples[sample_count-i-1].color.a;
 	}
 
