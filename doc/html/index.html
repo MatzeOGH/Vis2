@@ -1,141 +1,159 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>VIS2 Advanced Line Renderer</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
   <meta name="description" content="An advanced Vulkan Line Renderer with Transparency">
   <link href='https://fonts.googleapis.com/css?family=Raleway:100,200,400,600' rel='stylesheet' type='text/css'>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/jquery.fullPage.min.css" rel="stylesheet" type="text/css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/jquery.fullPage.min.css" rel="stylesheet"
+        type="text/css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css'><link rel="stylesheet" href="./style.css">
-
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css'>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <!-- navbar header -->
-  <div class="nav-header">
-    <div class="nav-brand">
-      <img src="img/icon.png">
-    </div>
-    <i class="fa fa-bars fa-3x"></i>
-    <div class="header-links">
-      <ul>
-        <li data-menuanchor="secondpage"><a href="#gallery">GALLERY</a></li>
-        <li data-menuanchor="thirdpage"><a href="#download">DOWNLOAD</a></li>
+<!-- navbar header -->
+<div class="nav-header">
+  <div class="nav-brand">
+    <img src="img/icon.png">
+  </div>
+  <i class="fa fa-bars fa-3x"></i>
+  <div class="header-links">
+    <ul>
+      <li data-menuanchor="secondpage"><a href="#gallery">GALLERY</a></li>
+      <li data-menuanchor="thirdpage"><a href="#download">DOWNLOAD</a></li>
+      <li data-menuanchor="firstpage"><a href="#home">HOME</a></li>
+    </ul>
+  </div>
+</div>
+<!-- end navbar header -->
+
+<!-- sidebar slider -->
+<div class="nav-screen">
+  <i class="fa fa-times fa-3x"></i>
+  <div class="nav-container">
+    <div class="nav-links">
+      <ul id='myMenu'>
         <li data-menuanchor="firstpage"><a href="#home">HOME</a></li>
+        <li data-menuanchor="secondpage"><a href="#download">DOWNLOAD</a></li>
+        <li data-menuanchor="thirdpage"><a href="#gallery">GALLERY</a></li>
       </ul>
     </div>
   </div>
-  <!-- end navbar header -->
+</div>
+<!-- end navbar slider -->
 
-  <!-- sidebar slider -->
-  <div class="nav-screen">
-    <i class="fa fa-times fa-3x"></i>
-    <div class="nav-container">
-      <div class="nav-links">
-        <ul id='myMenu'>
-          <li data-menuanchor="firstpage"><a href="#home">HOME</a></li>
-          <li data-menuanchor="secondpage"><a href="#download">DOWNLOAD</a></li>
-          <li data-menuanchor="thirdpage"><a href="#gallery">GALLERY</a></li>
-        </ul>
+<!-- begin fullpage -->
+
+<div id="fullpage">
+
+  <!-- begin section -->
+
+  <div class="section home" data-anchor="home">
+    <div id="particles-js"></div>
+    <div class="opaque-bg animated fadeInDown">
+      <h1 style="color:white">VIS2 LINE RENDERER</h1>
+      <p>INTERACTIVE VULKAN LINE RENDERER FOR HUGE DATASETS SUPPORTING TRANSPARENCY</p>
+      <p><span id="holder"></span><span class="blinking-cursor">|</span></p>
+    </div>
+    <i id="moveDown" class="fa fa-chevron-down fa-3x bounce"></i>
+  </div>
+  <!-- end section -->
+
+  <!-- begin section -->
+
+  <div class="section" data-anchor="download">
+    <div class="container">
+      <h1 class="wow fadeInDown" data-wow-delay="0.2s">Advanced Line Renderer</h1>
+      <div class="row">
+        <div class="wow fadeInDown col-sm-7 infoBox" data-wow-delay="0.2s">
+          <p>
+            The Advanced Line Renderer is a Windows-Application based on the paper <a target="_blank"
+                                                                                      href="https://ieeexplore.ieee.org/document/9216549">"Advanced
+            Rendering of Line Data with Ambient Occlusion and Transparency"</a> by David Groß and Stefan
+            Gumhold.
+          </p>
+          <p>
+            The Project was implemented by Mathias Hürbe and Gerald Kimmersdorfer for the Visualization 2
+            course of the Technical University Vienna in the summer semester 2022.
+          </p>
+          <p>
+            Detailed information about the implementation, aswell as Instructions on how to use it can be
+            found in our Documentation.
+          </p>
+        </div>
+        <div class="col-sm-5">
+          <img id="screenshot1" data-src="img/screenshot1.png" class="wow flipInY" data-wow-delay="0.4s">
+        </div>
+      </div>
+      <div class="row">
+        <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="0.6s" href="#" role="button">
+          <i class="fa fa fa-windows fa-3x"></i>
+          Download Executable<br>Windows x64
+        </a>
+        <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="0.8s" href="doc/index.html"
+           role="button">
+          <i class="fa fa fa-book fa-3x"></i>
+          Questions? Read the<br>Documentation
+        </a>
+        <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="1.0s"
+           href="https://github.com/MatzeOGH/Vis2" role="button">
+          <i class="fa fa fa-github fa-3x"></i>
+          Visit the Project on<br>Github
+        </a>
       </div>
     </div>
   </div>
-  <!-- end navbar slider -->
+  <!-- end section -->
 
-  <!-- begin fullpage -->
+  <!-- begin section -->
 
-  <div id="fullpage">
-
-    <!-- begin section -->
-
-    <div class="section home" data-anchor="home">
-      <div id="particles-js"></div>
-      <div class="opaque-bg animated fadeInDown">
-        <h1 style="color:white">VIS2 LINE RENDERER</h1>
-        <p>INTERACTIVE RENDERER FOR HUGE LINE-DATASETS WITH TRANSPARENCY</p>
-        <p><span id="holder"></span><span class="blinking-cursor">|</span></p>
+  <div class="section" data-anchor="gallery">
+    <div class="content-slide">
+      <div class="slide">
+        <h1 class="wow fadeInDown" data-wow-delay="0.2s">VISUALIZE...</h1>
+        <p class="wow fadeInDown" data-wow-delay="0.2s">huge line-data sets</p>
+        <img class="wow fadeInUp" data-wow-delay="0.2s" data-src="img/screenshot2.png">
       </div>
-      <i id="moveDown" class="fa fa-chevron-down fa-3x bounce"></i>
-    </div>
-    <!-- end section -->
-
-    <!-- begin section -->
-
-    <div class="section" data-anchor="download">
-      <div class="container">
-        <h1 class="wow fadeInDown" data-wow-delay="0.2s">Advanced Line Renderer</h1>
-        <div class="row">
-            <div class="wow fadeInDown col-sm-7 infoBox" data-wow-delay="0.2s">
-              <p>
-                The Advanced Line Renderer is a Windows-Application based on the paper <a target="_blank" href="https://ieeexplore.ieee.org/document/9216549">"Advanced Rendering of Line Data with Ambient Occlusion and Transparency"</a> by David Groß and Stefan Gumhold.
-              </p>
-              <p>
-                The Project was implemented by Mathias Hürbe and Gerald Kimmersdorfer for the Visualization 2 course of the Technical University Vienna in the summer semester 2022.
-              </p>
-              <p>
-                Detailed information about the implementation, aswell as Instructions on how to use it can be found in our Documentation.
-              </p>
-            </div>
-            <div class="col-sm-5">
-              <img id="screenshot1" data-src="img/screenshot1.png" class="wow flipInY" data-wow-delay="0.4s">
-            </div>
-          </div>
-        <div class="row">
-          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="0.6s" href="#" role="button">
-            <i class="fa fa fa-windows fa-3x"></i>
-            Download Executable<br>Windows x64
-          </a>
-          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="0.8s" href="doc/index.html" role="button">
-            <i class="fa fa fa-book fa-3x"></i>
-            Questions? Read the<br>Documentation
-          </a>
-          <a class="wow fadeInUp btn btn-primary btn-lg bigbutton" data-wow-delay="1.0s" href="https://github.com/MatzeOGH/Vis2" role="button">
-            <i class="fa fa fa-github fa-3x"></i>
-            Visit the Project on<br>Github
-          </a>
-        </div>
+      <div class="slide">
+        <h1>FIND...</h1>
+        <p>relevant parts within your dataset</p>
+        <img data-src="img/screenshot5.png">
+      </div>
+      <div class="slide">
+        <h1>UNDERSTAND...</h1>
+        <p>the billboard/raycasting based Line-Rendering Algorithm</p>
+        <img data-src="img/screenshot3.png">
+      </div>
+      <div class="slide">
+        <h1>and HAVE FUN</h1>
+        <p>with the Vis2 Advanced Line Renderer</p>
+        <img data-src="img/screenshot6.png">
       </div>
     </div>
-    <!-- end section -->
-
-    <!-- begin section -->
-
-    <div class="section" data-anchor="gallery">
-      <div class="content-slide">
-        <div class="slide">
-          <h1 class="wow fadeInDown" data-wow-delay="0.2s">VISUALIZE...</h1>
-          <p class="wow fadeInDown" data-wow-delay="0.2s">huge line-data sets</p>
-          <img class="wow fadeInUp" data-wow-delay="0.2s" data-src="img/screenshot2.png">
-        </div>
-        <div class="slide">
-          <h1>FIND...</h1>
-          <p>relevant parts within your dataset</p>
-          <img data-src="img/screenshot5.png">
-        </div>
-        <div class="slide">
-          <h1>UNDERSTAND...</h1>
-          <p>the billboard/raycasting based Line-Rendering Algorithm</p>
-          <img data-src="img/screenshot3.png">
-        </div>
-        <div class="slide">
-          <h1>and HAVE FUN</h1>
-          <p>with the Vis2 Advanced Line Renderer</p>
-          <img data-src="img/screenshot6.png">
-        </div>
-      </div>
-    </div>
-    <!-- end section -->
-
   </div>
-  <!-- end fullpage -->
-</body>
-<!-- partial -->
-  <script src='https://code.jquery.com/jquery-2.1.1.min.js'></script>
+  <!-- end section -->
+
+</div>
+<!-- end fullpage -->
+
+<script src='https://code.jquery.com/jquery-2.1.1.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/jquery.fullPage.min.js'></script><script  src="./script.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/jquery.fullPage.min.js'></script>
+<script src="script.js"></script>
 <script src='https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js'></script>
 
 </body>
+
 </html>
