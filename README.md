@@ -1,11 +1,11 @@
 # Setup and Installation
-<img style="float: right; width: 30%;" src="img/screenshot1.png">
+<img style="float: right; width: 30%;" src="../img/screenshot1.png">
 The Advanced Line Renderer is a Windows-Application based on the paper ["Advanced Rendering of Line Data with Ambient Occlusion and Transparency"](https://ieeexplore.ieee.org/document/9216549) by David Groß and Stefan Gumhold.
 
 The Project was implemented by Mathias Hürbe and Gerald Kimmersdorfer for the Visualization 2 course of the Technical University Vienna in the summer semester 2022.
 
 ## Download
-An already compiled version for *Windows 10 x64* of the Line Renderer can be downloaded [here](down/line_renderer_x64.zip).
+An already compiled version for *Windows 10 x64* of the Line Renderer can be downloaded [here](../down/vis2_linerenderer_x64.zip).
 
 If you have a different operating system you have to compile the application by yourself. Please feel free to download the source code from our [repository on github](https://github.com/MatzeOGH/Vis2.git). You may wanna follow the instructions in the [following chapter](#setup-dev-environment).
 
